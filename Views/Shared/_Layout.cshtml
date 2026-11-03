@@ -1,50 +1,69 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - NMCNPM</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/NMCNPM.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - HỆ THỐNG QUẢN LÝ NHÂN SỰ</title>
+    
+    <link rel="stylesheet" href="[suspicious link removed]">
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NMCNPM</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+
+    <!-- Sidebar Left -->
+    <aside class="app-sidebar">
+        <div class="brand-title">
+            <i class="bi bi-people-fill" style="font-size: 1.2rem;"></i> HỆ THỐNG QUẢN LÝ NHÂN SỰ
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item"><span><i class="bi bi-house-door-fill"></i> Trang chủ</span></a>
+            
+            <a asp-controller="NhanVien" asp-action="Index" class="nav-item active">
+                <span><i class="bi bi-person-fill"></i> Quản lý nhân viên</span>
+                <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+            </a>
+            <div class="sub-menu">
+                <a asp-controller="NhanVien" asp-action="Index" class="nav-item active">
+                    <i class="bi bi-circle-fill" style="font-size: 5px;"></i> Danh sách nhân viên
+                </a>
+                <a asp-controller="NhanVien" asp-action="Create" class="nav-item">
+                    <i class="bi bi-circle" style="font-size: 5px;"></i> Thêm nhân viên mới
+                </a>
+            </div>
+
+            <a href="#" class="nav-item"><span><i class="bi bi-building"></i> Quản lý phòng ban</span></a>
+            <a href="#" class="nav-item"><span><i class="bi bi-person-badge-fill"></i> Quản lý chức vụ</span></a>
+            <a href="#" class="nav-item"><span><i class="bi bi-clock-history"></i> Chấm công</span></a>
+            <a href="#" class="nav-item"><span><i class="bi bi-cash-stack"></i> Lương</span></a>
+            <a href="#" class="nav-item"><span><i class="bi bi-file-earmark-bar-graph"></i> Báo cáo</span></a>
+            <a href="#" class="nav-item"><span><i class="bi bi-gear-fill"></i> Cài đặt</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="app-main">
+        <header class="app-header">
+            <div class="breadcrumb-text">
+                <i class="bi bi-list" style="font-size: 1.2rem; cursor: pointer;"></i>
+                <i class="bi bi-house-door-fill" style="color: #0d6efd;"></i> / Quản lý nhân viên / <span style="color: #6c757d;">@ViewData["Title"]</span>
+            </div>
+            <div class="user-profile">
+                <i class="bi bi-bell-fill" style="color: #0d6efd; font-size: 1.1rem; cursor: pointer;"></i>
+                <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <i class="bi bi-person-circle" style="font-size: 1.5rem; color: #0d6efd;"></i>
+                    <span>Admin</span>
+                    <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        </header>
+
+        <main class="app-body">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - NMCNPM - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

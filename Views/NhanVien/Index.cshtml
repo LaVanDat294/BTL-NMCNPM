@@ -1,0 +1,100 @@
+@model IEnumerable<NMCNPM.Models.NhanVien>
+
+@{
+    ViewData["Title"] = "Danh sách nhân viên";
+    int stt = 1;
+}
+
+<div class="page-header">
+    <h1 class="page-title"><i class="bi bi-people-fill"></i> Danh sách nhân viên</h1>
+    <a asp-action="Create" class="btn-primary"><i class="bi bi-plus-lg"></i> + Thêm nhân viên</a>
+</div>
+
+<!-- Khung Bộ lọc Tìm kiếm -->
+<div class="card">
+    <div class="card-title"><i class="bi bi-funnel"></i> Bộ lọc tìm kiếm</div>
+    <form asp-action="Index" method="get" class="filter-grid">
+        <div class="form-group">
+            <label>Từ khóa</label>
+            <input type="text" name="searchString" class="form-control" placeholder="Mã NV, Họ tên, SĐT..." value="@Context.Request.Query["searchString"]" />
+        </div>
+        <div class="form-group">
+            <label>Phòng ban</label>
+            <select name="maPB" class="form-select" asp-items="ViewBag.PhongBans">
+                <option value="">-- Tất cả phòng ban --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Chức vụ</label>
+            <select name="maCV" class="form-select" asp-items="ViewBag.ChucVus">
+                <option value="">-- Tất cả chức vụ --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Trạng thái</label>
+            <select name="trangThai" class="form-select">
+                <option value="">-- Tất cả trạng thái --</option>
+                <option value="Đang làm việc">Đang làm việc</option>
+                <option value="Nghỉ việc">Nghỉ việc</option>
+            </select>
+        </div>
+        <div class="btn-group">
+            <button type="submit" class="btn-primary"><i class="bi bi-search"></i> Tìm kiếm</button>
+            <a asp-action="Index" class="btn-outline-primary"><i class="bi bi-arrow-clockwise"></i> Làm mới</a>
+        </div>
+    </form>
+</div>
+
+<!-- Bảng Danh sách chuẩn site.css -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã NV</th>
+                    <th>Họ và tên</th>
+                    <th>Ngày sinh</th>
+                    <th>Giới tính</th>
+                    <th>Số điện thoại</th>
+                    <th>Email</th>
+                    <th>Phòng ban</th>
+                    <th>Chức vụ</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>@(stt++)</td>
+                    <td><strong>@item.SMaNV</strong></td>
+                    <td class="text-left"><strong>@item.STenNV</strong></td>
+                    <td>@(item.DNgaySinh?.ToString("dd/MM/yyyy"))</td>
+                    <td>@item.SGioiTinh</td>
+                    <td>@item.SSDT</td>
+                    <td>@item.SEmail</td>
+                    <td>@item.FK_sMaPB</td>
+                    <td>@item.FK_sMaCV</td>
+                    <td>
+                        <span class="badge @(item.STrangThai == "Đang làm việc" ? "badge-success" : "badge-secondary")">
+                            @item.STrangThai
+                        </span>
+                    </td>
+                    <td class="action-icons">
+                        <a asp-action="Details" asp-route-id="@item.SMaNV" title="Xem chi tiết"><i class="bi bi-eye"></i></a>
+                        <a asp-action="Edit" asp-route-id="@item.SMaNV" title="Chỉnh sửa"><i class="bi bi-pencil-square"></i></a>
+                        <form asp-action="Delete" asp-route-id="@item.SMaNV" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhân viên @item.STenNV (@item.SMaNV)?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" style="background:none; border:none; padding:0; cursor:pointer;" class="delete" title="Xóa"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/nhanvien.css" />
+}

@@ -1,0 +1,41 @@
+@model NMCNPM.Models.NhanVien
+@{ ViewData["Title"] = "Chi tiết nhân viên"; }
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-primary fw-bold mb-0"><i class="bi bi-person-vcard-fill me-2"></i>Thông tin chi tiết nhân viên</h3>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Quay lại</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <div class="row">
+            <!-- Cột Avatar Bên Trái -->
+            <div class="col-md-4 text-center border-end pe-4">
+                <div class="my-3">
+                    <i class="bi bi-person-circle display-1 text-primary"></i>
+                </div>
+                <h4 class="fw-bold mb-1">@Model.STenNV</h4>
+                <p class="badge bg-primary fs-6">@Model.SMaNV</p>
+            </div>
+
+            <!-- Bảng Chi Tiết Bên Phải -->
+            <div class="col-md-8 ps-4">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr><th width="30%">Mã nhân viên:</th><td>@Model.SMaNV</td></tr>
+                        <tr><th>Họ và tên:</th><td><strong>@Model.STenNV</strong></td></tr>
+                        <tr><th>Ngày sinh:</th><td>@(Model.DNgaySinh?.ToString("dd/MM/yyyy"))</td></tr>
+                        <tr><th>CCCD:</th><td>@Model.SCCCD</td></tr>
+                        <tr><th>Giới tính:</th><td>@Model.SGioiTinh</td></tr>
+                        <tr><th>Địa chỉ:</th><td>@Model.SDiaChi</td></tr>
+                        <tr><th>Số điện thoại:</th><td>@Model.SSDT</td></tr>
+                        <tr><th>Email:</th><td>@Model.SEmail</td></tr>
+                        <tr><th>Trạng thái làm việc:</th><td><span class="badge bg-success">@Model.STrangThai</span></td></tr>
+                        <tr><th>Phòng ban:</th><td>@Model.FK_sMaPB</td></tr>
+                        <tr><th>Chức vụ:</th><td>@Model.FK_sMaCV</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

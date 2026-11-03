@@ -1,0 +1,63 @@
+@model NMCNPM.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Nhân viên";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Cập nhật Thông tin Nhân viên</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Mã Nhân viên (Khóa cố định)</label>
+                            <input asp-for="SMaNV" class="form-control bg-light" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Họ và Tên (*)</label>
+                            <input asp-for="STenNV" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số ĐT</label>
+                            <input asp-for="SSDT" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input asp-for="SEmail" type="email" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số CCCD</label>
+                            <input asp-for="SCCCD" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Trạng thái</label>
+                            <select asp-for="STrangThai" class="form-select">
+                                <option value="Đang làm việc">Đang làm việc</option>
+                                <option value="Nghỉ phép">Nghỉ phép</option>
+                                <option value="Đã nghỉ việc">Đã nghỉ việc</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phòng ban</label>
+                            <select asp-for="FK_sMaPB" class="form-select" asp-items="ViewBag.FK_sMaPB"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Chức vụ</label>
+                            <select asp-for="FK_sMaCV" class="form-select" asp-items="ViewBag.FK_sMaCV"></select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-success">Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
