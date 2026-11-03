@@ -139,3 +139,48 @@ INSERT INTO tbl_ChucVu (sMaCV, sTenCV, fPhuCap) VALUES
 ('CV_QLCH', N'Cửa hàng trưởng', 1500000),
 ('CV_TN', N'Thu ngân POS', 500000),
 ('CV_PC', N'Nhân viên pha chế', 500000);
+--Vũ Đức Anh--
+
+-- Người duyệt phải là nhân viên tồn tại
+ALTER TABLE tbl_DonTu
+ADD CONSTRAINT FK_DonTu_NguoiDuyet
+FOREIGN KEY (sNguoiDuyet)
+REFERENCES tbl_NhanVien(sMaNV);
+GO
+
+-- Kiểm tra loại đơn
+ALTER TABLE tbl_DonTu
+ADD CONSTRAINT CK_DonTu_LoaiDon
+CHECK (sLoaiDon IN (N'Nghỉ phép', N'Đổi ca', N'Giải trình'));
+GO
+
+-- Kiểm tra trạng thái
+ALTER TABLE tbl_DonTu
+ADD CONSTRAINT CK_DonTu_TrangThai
+CHECK (sTrangThai IN (N'Chờ duyệt', N'Đã duyệt', N'Từ chối'));
+GO
+--Create View DanhSachDonTu--
+CREATE VIEW vw_DanhSachDonTu
+AS
+SELECT
+    DT.sMaDon,
+    DT.FK_sMaNV,
+    NV.sTenNV AS sTenNguoiTao,
+    PB.sTenPB,
+    CV.sTenCV,
+    DT.sLoaiDon,
+    DT.dNgayGui,
+    DT.sLyDo,
+    DT.sTrangThai,
+    DT.sNguoiDuyet,
+    NVD.sTenNV AS sTenNguoiDuyet
+FROM tbl_DonTu DT
+INNER JOIN tbl_NhanVien NV
+    ON DT.FK_sMaNV = NV.sMaNV
+LEFT JOIN tbl_PhongBan PB
+    ON NV.FK_sMaPB = PB.sMaPB
+LEFT JOIN tbl_ChucVu CV
+    ON NV.FK_sMaCV = CV.sMaCV
+LEFT JOIN tbl_NhanVien NVD
+    ON DT.sNguoiDuyet = NVD.sMaNV;
+GO
