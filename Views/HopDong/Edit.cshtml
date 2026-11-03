@@ -23,7 +23,7 @@
     </div>
 
     <div class="card-body p-4">
-        <form asp-controller="HopDong" asp-action="ChinhSua" method="post">
+        <form asp-controller="HopDong" asp-action="Edit" method="post">
             @Html.AntiForgeryToken()
 
             <input type="hidden" asp-for="SMaHD" />

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using NMCNPM.Models;
-using System.Security.Claims;
 
 namespace NMCNPM.Controllers
 {
@@ -47,17 +46,6 @@ namespace NMCNPM.Controllers
             return query.Where(hd => hd.FK_sMaNV == maNV);
         }
 
-        private bool CoQuyenXem(HopDongLaoDong hd)
-        {
-            if (LaNhanSu())
-                return true;
-
-            string? maNV = LayMaNhanVienDangNhap();
-
-            return !string.IsNullOrEmpty(maNV)
-                && hd.FK_sMaNV == maNV;
-        }
-
         private bool CoQuyenQuanLy()
         {
             return LaNhanSu();
@@ -68,12 +56,6 @@ namespace NMCNPM.Controllers
             var nhanViens = _db.NhanViens
                 .AsNoTracking()
                 .Where(nv => nv.STrangThai != "Đã nghỉ việc");
-
-            if (!LaNhanSu())
-            {
-                string? maNV = LayMaNhanVienDangNhap();
-                nhanViens = nhanViens.Where(nv => nv.SMaNV == maNV);
-            }
 
             ViewBag.NhanViens = nhanViens
                 .OrderBy(nv => nv.STenNV)
@@ -96,6 +78,13 @@ namespace NMCNPM.Controllers
             ViewBag.LuongCoBan = nv?.FLuongcb ?? 0;
         }
 
+        private bool TrangThaiHopLe(string? trangThai)
+        {
+            return trangThai == "Còn hiệu lực"
+                || trangThai == "Hết hạn"
+                || trangThai == DaHuy;
+        }
+
         [HttpGet("")]
         public async Task<IActionResult> Index(
             string? tuKhoa,
@@ -106,7 +95,8 @@ namespace NMCNPM.Controllers
             if (page < 1)
                 page = 1;
 
-            var query = ApDungPhamVi(_db.HopDongs.AsNoTracking());
+            var query = ApDungPhamVi(
+                _db.HopDongs.AsNoTracking());
 
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
@@ -126,7 +116,8 @@ namespace NMCNPM.Controllers
                     hd.STrangThai == trangThai);
             }
 
-            int tongSoHopDong = await query.CountAsync(cancellationToken);
+            int tongSoHopDong = await query.CountAsync(
+                cancellationToken);
 
             var danhSach = await (
                 from hd in query
@@ -162,7 +153,7 @@ namespace NMCNPM.Controllers
         }
 
         [HttpGet("them-moi")]
-        public IActionResult ThemMoi()
+        public IActionResult Create()
         {
             if (!CoQuyenQuanLy())
                 return Forbid();
@@ -174,7 +165,7 @@ namespace NMCNPM.Controllers
 
         [HttpPost("them-moi")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ThemMoi(
+        public async Task<IActionResult> Create(
             HopDongLaoDong model,
             CancellationToken cancellationToken = default)
         {
@@ -186,31 +177,37 @@ namespace NMCNPM.Controllers
             model.SLoaiHD = model.SLoaiHD?.Trim() ?? "";
 
             if (string.IsNullOrWhiteSpace(model.SMaHD))
-                ModelState.AddModelError("SMaHD", "Vui lòng nhập mã hợp đồng.");
+                ModelState.AddModelError(
+                    "SMaHD", "Vui lòng nhập mã hợp đồng.");
 
             if (string.IsNullOrWhiteSpace(model.FK_sMaNV))
-                ModelState.AddModelError("FK_sMaNV", "Vui lòng chọn nhân viên.");
+                ModelState.AddModelError(
+                    "FK_sMaNV", "Vui lòng chọn nhân viên.");
 
             if (string.IsNullOrWhiteSpace(model.SLoaiHD))
-                ModelState.AddModelError("SLoaiHD", "Vui lòng chọn loại hợp đồng.");
+                ModelState.AddModelError(
+                    "SLoaiHD", "Vui lòng chọn loại hợp đồng.");
 
             if (!await _db.NhanViens.AnyAsync(
                 nv => nv.SMaNV == model.FK_sMaNV,
                 cancellationToken))
             {
-                ModelState.AddModelError("FK_sMaNV", "Nhân viên không tồn tại.");
+                ModelState.AddModelError(
+                    "FK_sMaNV", "Nhân viên không tồn tại.");
             }
 
             if (await _db.HopDongs.AnyAsync(
                 hd => hd.SMaHD == model.SMaHD,
                 cancellationToken))
             {
-                ModelState.AddModelError("SMaHD", "Mã hợp đồng đã tồn tại.");
+                ModelState.AddModelError(
+                    "SMaHD", "Mã hợp đồng đã tồn tại.");
             }
 
             if (!TrangThaiHopLe(model.STrangThai))
             {
-                ModelState.AddModelError("STrangThai", "Trạng thái không hợp lệ.");
+                ModelState.AddModelError(
+                    "STrangThai", "Trạng thái không hợp lệ.");
             }
 
             if (!ModelState.IsValid)
@@ -230,15 +227,17 @@ namespace NMCNPM.Controllers
             };
 
             _db.HopDongs.Add(hopDong);
+
             await _db.SaveChangesAsync(cancellationToken);
 
-            TempData["ThongBao"] = "Tạo hợp đồng lao động thành công.";
+            TempData["ThongBao"] =
+                "Tạo hợp đồng lao động thành công.";
 
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet("{ma}/sua")]
-        public async Task<IActionResult> ChinhSua(
+        public async Task<IActionResult> Edit(
             string ma,
             CancellationToken cancellationToken = default)
         {
@@ -259,7 +258,9 @@ namespace NMCNPM.Controllers
 
             if (hopDong.STrangThai == DaHuy)
             {
-                TempData["Loi"] = "Hợp đồng đã hủy, không thể sửa.";
+                TempData["Loi"] =
+                    "Hợp đồng đã hủy, không thể sửa.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -272,7 +273,7 @@ namespace NMCNPM.Controllers
 
         [HttpPost("{ma}/sua")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChinhSua(
+        public async Task<IActionResult> Edit(
             string ma,
             HopDongLaoDong model,
             CancellationToken cancellationToken = default)
@@ -293,13 +294,16 @@ namespace NMCNPM.Controllers
 
             if (hopDong.STrangThai == DaHuy)
             {
-                TempData["Loi"] = "Hợp đồng đã hủy, không thể sửa.";
+                TempData["Loi"] =
+                    "Hợp đồng đã hủy, không thể sửa.";
+
                 return RedirectToAction(nameof(Index));
             }
 
             if (!TrangThaiHopLe(model.STrangThai))
             {
-                ModelState.AddModelError("STrangThai", "Trạng thái không hợp lệ.");
+                ModelState.AddModelError(
+                    "STrangThai", "Trạng thái không hợp lệ.");
             }
 
             if (!ModelState.IsValid)
@@ -321,7 +325,8 @@ namespace NMCNPM.Controllers
 
             await _db.SaveChangesAsync(cancellationToken);
 
-            TempData["ThongBao"] = "Cập nhật hợp đồng thành công.";
+            TempData["ThongBao"] =
+                "Cập nhật hợp đồng thành công.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -348,7 +353,9 @@ namespace NMCNPM.Controllers
 
             if (hopDong.STrangThai == DaHuy)
             {
-                TempData["Loi"] = "Hợp đồng đã được hủy trước đó.";
+                TempData["Loi"] =
+                    "Hợp đồng đã được hủy trước đó.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -356,13 +363,14 @@ namespace NMCNPM.Controllers
 
             await _db.SaveChangesAsync(cancellationToken);
 
-            TempData["ThongBao"] = "Đã hủy hợp đồng thành công.";
+            TempData["ThongBao"] =
+                "Đã hủy hợp đồng thành công.";
 
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet("{ma}")]
-        public async Task<IActionResult> ChiTiet(
+        public async Task<IActionResult> Details(
             string ma,
             CancellationToken cancellationToken = default)
         {
@@ -388,18 +396,13 @@ namespace NMCNPM.Controllers
 
             if (hopDong == null)
             {
-                TempData["Loi"] = "Không tìm thấy hợp đồng hoặc bạn không có quyền xem.";
+                TempData["Loi"] =
+                    "Không tìm thấy hợp đồng hoặc bạn không có quyền xem.";
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(hopDong);
-        }
-
-        private bool TrangThaiHopLe(string? trangThai)
-        {
-            return trangThai == "Còn hiệu lực"
-                || trangThai == "Hết hạn"
-                || trangThai == DaHuy;
         }
     }
 
