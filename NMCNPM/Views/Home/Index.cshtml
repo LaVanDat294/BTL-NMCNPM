@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div>
+        <h2>📊 Tổng quan hệ thống</h2>
+        <p>Chào mừng bạn đến với hệ thống quản lý nhân sự</p>
+    </div>
+
+    <a href="@Url.Action("Index","NhanVien")" class="btn-primary">
+        + Quản lý nhân viên
+    </a>
+</div>
+
+<!-- THỐNG KÊ -->
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-icon icon-blue">♟</div>
+        <div>
+            <p>Tổng nhân viên</p>
+            <h2>120</h2>
+            <small>Nhân viên trong hệ thống</small>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon icon-green">▦</div>
+        <div>
+            <p>Phòng ban</p>
+            <h2>08</h2>
+            <small>Phòng ban hoạt động</small>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon icon-orange">◷</div>
+        <div>
+            <p>Đang làm việc</p>
+            <h2>105</h2>
+            <small>Nhân viên hiện tại</small>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon icon-purple">▣</div>
+        <div>
+            <p>Nghỉ phép hôm nay</p>
+            <h2>05</h2>
+            <small>Nhân viên nghỉ phép</small>
+        </div>
+    </div>
+
+</div>
+
+<!-- CHỨC NĂNG -->
+<div class="panel">
+    <div class="panel-header">
+        <h3>Chức năng quản lý</h3>
+    </div>
+
+    <div class="function-grid">
+
+        <a href="@Url.Action("Index","NhanVien")" class="function-card">
+            <div class="function-icon">♟</div>
+            <h4>Quản lý nhân viên</h4>
+            <p>Thêm, sửa, xóa và tìm kiếm nhân viên</p>
+        </a>
+
+        <a href="@Url.Action("Index","PhongBan")" class="function-card">
+            <div class="function-icon">▦</div>
+            <h4>Quản lý phòng ban</h4>
+            <p>Quản lý danh sách phòng ban</p>
+        </a>
+
+        <a href="@Url.Action("Index","ChucVu")" class="function-card">
+            <div class="function-icon">▣</div>
+            <h4>Quản lý chức vụ</h4>
+            <p>Quản lý chức vụ nhân viên</p>
+        </a>
+
+        <a href="@Url.Action("Index","ChamCong")" class="function-card">
+            <div class="function-icon">◷</div>
+            <h4>Quản lý chấm công</h4>
+            <p>Theo dõi thời gian làm việc</p>
+        </a>
+
+        <a href="@Url.Action("Index","Luong")" class="function-card">
+            <div class="function-icon">₫</div>
+            <h4>Quản lý lương</h4>
+            <p>Quản lý bảng lương nhân viên</p>
+        </a>
+
+        <a href="@Url.Action("Index","BaoCao")" class="function-card">
+            <div class="function-icon">▥</div>
+            <h4>Báo cáo thống kê</h4>
+            <p>Thống kê tình hình nhân sự</p>
+        </a>
+
+    </div>
+</div>
+
+<!-- HOẠT ĐỘNG GẦN ĐÂY -->
+<div class="panel">
+    <div class="panel-header">
+        <h3>Hoạt động gần đây</h3>
+        <a href="#" class="view-all">Xem tất cả →</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Nội dung</th>
+                    <th>Người thực hiện</th>
+                    <th>Thời gian</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Thêm nhân viên mới</td>
+                    <td>Admin</td>
+                    <td>04/11/2026</td>
+                    <td><span class="status success">Hoàn thành</span></td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>Cập nhật thông tin nhân viên</td>
+                    <td>Admin</td>
+                    <td>04/11/2026</td>
+                    <td><span class="status success">Hoàn thành</span></td>
+                </tr>
+
+                <tr>
+                    <td>3</td>
+                    <td>Kiểm tra bảng chấm công</td>
+                    <td>Admin</td>
+                    <td>03/11/2026</td>
+                    <td><span class="status success">Hoàn thành</span></td>
+                </tr>
+
+                <tr>
+                    <td>4</td>
+                    <td>Cập nhật phòng ban</td>
+                    <td>Admin</td>
+                    <td>03/11/2026</td>
+                    <td><span class="status success">Hoàn thành</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

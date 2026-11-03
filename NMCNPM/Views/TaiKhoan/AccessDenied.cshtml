@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Không có quyền truy cập";
+}
+
+<div style="text-align:center; padding:80px 20px;">
+
+    <h1 style="color:#b92f3e; font-size:70px;">
+        403
+    </h1>
+
+    <h2>Bạn không có quyền truy cập!</h2>
+
+    <p>
+        Tài khoản của bạn không được phép sử dụng chức năng này.
+    </p>
+
+    <a href="@Url.Action("Index", "Home")"
+       style="background:#b92f3e;color:white;
+              padding:12px 25px;
+              text-decoration:none;border-radius:6px;">
+        Quay lại trang chủ
+    </a>
+
+</div>
