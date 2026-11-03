@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -45,5 +46,11 @@ namespace NMCNPM.Models
 
         [Column("fLuongcb")]
         public decimal FLuongcb { get; set; }
+
+        [ForeignKey("FK_sMaPB")]
+        public virtual PhongBan? PhongBan { get; set; }
+
+        [ForeignKey("FK_sMaCV")]
+        public virtual ChucVu? ChucVu { get; set; }
     }
 }

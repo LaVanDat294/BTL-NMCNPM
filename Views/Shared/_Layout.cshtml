@@ -1,50 +1,137 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - NMCNPM</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/NMCNPM.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Hệ Thống Quản Lý Nhân Sự</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-size: 0.95rem;
+        }
+        /* Sidebar bên trái */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #0d3b66;
+            width: 260px;
+        }
+        .sidebar .brand-box {
+            padding: 20px 15px;
+            color: #fff;
+            background-color: #092c4a;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-radius: 0;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #1d4ed8;
+        }
+        .sidebar .nav-link .bi {
+            margin-right: 10px;
+        }
+        /* Khu vực nội dung chính */
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        @@media (max-width: 768px) {
+            .sidebar { width: 100%; position: relative; height: auto; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NMCNPM</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+
+    <!-- SIDEBAR BÊN TRÁI -->
+    <div class="sidebar d-flex flex-column flex-shrink-0">
+        <div class="brand-box d-flex align-items-center">
+            <i class="bi bi-people-fill fs-4 me-2"></i>
+            <span>HỆ THỐNG QUẢN LÝ NHÂN SỰ</span>
+        </div>
+        <ul class="nav flex-column mb-auto mt-2">
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door"></i>Trang chủ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="collapse" href="#nhanVienSubMenu" role="button" aria-expanded="true">
+                    <i class="bi bi-person-badge"></i>Quản lý nhân viên <i class="bi bi-chevron-down float-end small"></i>
+                </a>
+                <div class="collapse show" id="nhanVienSubMenu">
+                    <ul class="nav flex-column ps-3 bg-dark bg-opacity-10">
+                        <li><a class="nav-link py-2 active" asp-controller="NhanVien" asp-action="Index"><i class="bi bi-dot"></i>Danh sách nhân viên</a></li>
+                        <li><a class="nav-link py-2" asp-controller="NhanVien" asp-action="Create"><i class="bi bi-dot"></i>Thêm nhân viên mới</a></li>
                     </ul>
                 </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="PhongBan" asp-action="Index"><i class="bi bi-building"></i>Quản lý phòng ban</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="ChucVu" asp-action="Index"><i class="bi bi-briefcase"></i>Quản lý chức vụ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="bi bi-clock-history"></i>Chấm công</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="bi bi-cash-stack"></i>Lương</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i>Báo cáo</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="bi bi-gear"></i>Cài đặt</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- NAVBAR PHÍA TRÊN & NỘI DUNG -->
+    <div class="main-content">
+        <nav class="navbar navbar-expand navbar-light bg-white px-3 py-2 mb-4 shadow-sm rounded">
+            <div class="container-fluid">
+                <span class="navbar-text text-muted small">
+                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Trang chủ</a> / Quản lý nhân viên
+                </span>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-3">
+                        <a href="#" class="text-dark position-relative"><i class="bi bi-bell fs-5"></i></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle text-primary me-1"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - NMCNPM - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
