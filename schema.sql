@@ -140,7 +140,17 @@ INSERT INTO tbl_ChucVu (sMaCV, sTenCV, fPhuCap) VALUES
 ('CV_TN', N'Thu ngân POS', 500000),
 ('CV_PC', N'Nhân viên pha chế', 500000);
 --Vũ Đức Anh--
+--tạo thêm ngày duyệt
+ALTER TABLE tbl_DonTu
+ADD dNgayDuyet DATETIME NULL;
+GO
 
+-- Tạo khóa ngoại người duyệt
+ALTER TABLE tbl_DonTu
+ADD CONSTRAINT FK_DonTu_NguoiDuyet
+FOREIGN KEY (sNguoiDuyet)
+REFERENCES tbl_NhanVien(sMaNV);
+GO
 -- Người duyệt phải là nhân viên tồn tại
 ALTER TABLE tbl_DonTu
 ADD CONSTRAINT FK_DonTu_NguoiDuyet
@@ -159,7 +169,7 @@ ALTER TABLE tbl_DonTu
 ADD CONSTRAINT CK_DonTu_TrangThai
 CHECK (sTrangThai IN (N'Chờ duyệt', N'Đã duyệt', N'Từ chối'));
 GO
---Create View DanhSachDonTu--
+--Create View DanhSachDonTu
 CREATE VIEW vw_DanhSachDonTu
 AS
 SELECT
