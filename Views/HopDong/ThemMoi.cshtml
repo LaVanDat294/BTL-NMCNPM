@@ -1,0 +1,123 @@
+﻿@using NMCNPM.Models
+@using System.Linq
+
+@{
+    ViewData["Title"] = "Tạo hợp đồng mới";
+    Layout = "~/Views/HopDong/_LayoutHopDong.cshtml";
+
+    IEnumerable<NhanVien> nhanViens = ViewBag.NhanViens as IEnumerable<NhanVien> ?? Enumerable.Empty<NhanVien>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <div class="text-muted small mb-2">
+            Quản lý hợp đồng / Danh sách hợp đồng / Tạo hợp đồng mới
+        </div>
+        <h3 class="fw-bold text-primary mb-0">Tạo hợp đồng lao động mới</h3>
+    </div>
+    <a asp-controller="HopDong" asp-action="Index" class="btn btn-outline-primary">
+        &lt; Quay lại
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header text-center fw-bold text-primary bg-primary bg-opacity-10">
+        Thông tin hợp đồng
+    </div>
+
+    <div class="card-body p-4">
+        <form asp-controller="HopDong" asp-action="ThemMoi" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">
+                        Mã hợp đồng <span class="text-danger">(*)</span>
+                    </label>
+                    <input type="text" name="SMaHD" class="form-control"
+                           placeholder="Nhập mã hợp đồng" required />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">
+                        Nhân viên <span class="text-danger">(*)</span>
+                    </label>
+                    <select name="FK_sMaNV" id="nhanVien" class="form-select" required>
+                        <option value="">Chọn nhân viên</option>
+                        @foreach (var nv in nhanViens)
+                        {
+                            <option value="@nv.SMaNV" data-luong="@nv.FLuongcb">
+                                @nv.SMaNV - @nv.STenNV
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">
+                        Ngày ký hợp đồng <span class="text-danger">(*)</span>
+                    </label>
+                    <input type="date" name="DNgayKy" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                        Loại hợp đồng <span class="text-danger">(*)</span>
+                    </label>
+                    <select name="SLoaiHD" class="form-select" required>
+                        <option value="">Chọn loại hợp đồng</option>
+                        <option value="Thử việc">Thử việc</option>
+                        <option value="Xác định thời hạn">Xác định thời hạn</option>
+                        <option value="Không xác định thời hạn">Không xác định thời hạn</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                        Mức lương cơ bản (VNĐ)
+                    </label>
+                    <input type="text" id="luongCoBan" class="form-control"
+                           placeholder="Tự động hiển thị theo nhân viên"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                        Trạng thái <span class="text-danger">(*)</span>
+                    </label>
+                    <select name="STrangThai" class="form-select" required>
+                        <option value="">Chọn trạng thái</option>
+                        <option value="Còn hiệu lực">Còn hiệu lực</option>
+                        <option value="Hết hạn">Hết hạn</option>
+                        <option value="Đã hủy">Đã hủy</option>
+                    </select>
+                </div>
+
+                <div class="col-12 d-flex justify-content-center gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        + Thêm mới
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary px-4">
+                        Làm mới
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const nhanVien = document.getElementById("nhanVien");
+    const luongCoBan = document.getElementById("luongCoBan");
+
+    nhanVien.addEventListener("change", function () {
+        const option = this.options[this.selectedIndex];
+        const luong = option.getAttribute("data-luong");
+
+        if (luong) {
+            luongCoBan.value = Number(luong).toLocaleString("vi-VN") + " VNĐ";
+        } else {
+            luongCoBan.value = "";
+        }
+    });
+</script>
