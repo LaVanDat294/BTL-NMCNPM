@@ -1,63 +1,119 @@
 @model NMCNPM.Models.NhanVien
 
 @{
-    ViewData["Title"] = "Chỉnh sửa Nhân viên";
+    ViewData["Title"] = "Sửa thông tin nhân viên";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-warning text-dark">
-                <h4 class="mb-0">Cập nhật Thông tin Nhân viên</h4>
-            </div>
-            <div class="card-body">
-                <form asp-action="Edit" method="post">
-                    @Html.AntiForgeryToken()
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Mã Nhân viên (Khóa cố định)</label>
-                            <input asp-for="SMaNV" class="form-control bg-light" readonly />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Họ và Tên (*)</label>
-                            <input asp-for="STenNV" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Số ĐT</label>
-                            <input asp-for="SSDT" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email</label>
-                            <input asp-for="SEmail" type="email" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Số CCCD</label>
-                            <input asp-for="SCCCD" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Trạng thái</label>
-                            <select asp-for="STrangThai" class="form-select">
-                                <option value="Đang làm việc">Đang làm việc</option>
-                                <option value="Nghỉ phép">Nghỉ phép</option>
-                                <option value="Đã nghỉ việc">Đã nghỉ việc</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Phòng ban</label>
-                            <select asp-for="FK_sMaPB" class="form-select" asp-items="ViewBag.FK_sMaPB"></select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Chức vụ</label>
-                            <select asp-for="FK_sMaCV" class="form-select" asp-items="ViewBag.FK_sMaCV"></select>
-                        </div>
-                    </div>
+<div class="container-fluid px-0">
+    <!-- Tiêu đề trang & Nút quay lại -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0"><i class="bi bi-pencil-square me-2"></i>Sửa thông tin nhân viên</h3>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-chevron-left me-1"></i> Quay lại</a>
+    </div>
 
-                    <div class="mt-4 text-end">
-                        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
-                        <button type="submit" class="btn btn-success">Cập nhật</button>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary bg-opacity-10 py-3">
+            <span class="fw-bold text-primary"><i class="bi bi-info-circle me-1"></i> Thông tin nhân viên</span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post" class="row g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="SMaNV" />
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold text-muted">Mã nhân viên (*)</label>
+                    <input type="text" class="form-control bg-light text-dark fw-bold" value="@Model.SMaNV (Khóa chỉ đọc)" disabled />
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="STenNV" class="form-label fw-semibold">Họ và tên (*)</label>
+                    <input asp-for="STenNV" class="form-control" required />
+                    <span asp-validation-for="STenNV" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="DNgaySinh" class="form-label fw-semibold">Ngày sinh (*)</label>
+                    <input asp-for="DNgaySinh" type="date" class="form-control" required />
+                    <span asp-validation-for="DNgaySinh" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">CCCD (*)</label>
+                    <input asp-for="SCCCD" class="form-control" placeholder="Nhập số CCCD..." />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold d-block">Giới tính (*)</label>
+                    <div class="mt-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="SGioiTinh" id="nam" value="Nam" @(Model.SGioiTinh == "Nam" ? "checked" : "")>
+                            <label class="form-check-label" for="nam">Nam</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="SGioiTinh" id="nu" value="Nữ" @(Model.SGioiTinh == "Nữ" ? "checked" : "")>
+                            <label class="form-check-label" for="nu">Nữ</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="SGioiTinh" id="khac" value="Khác" @(Model.SGioiTinh == "Khác" ? "checked" : "")>
+                            <label class="form-check-label" for="khac">Khác</label>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="SSDT" class="form-label fw-semibold">Số điện thoại (*)</label>
+                    <input asp-for="SSDT" class="form-control" required />
+                    <span asp-validation-for="SSDT" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="SEmail" class="form-label fw-semibold">Email (*)</label>
+                    <input asp-for="SEmail" type="email" class="form-control" required />
+                    <span asp-validation-for="SEmail" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Địa chỉ (*)</label>
+                    <input asp-for="SDiaChi" class="form-control" placeholder="Nhập địa chỉ..." />
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="FLuongcb" class="form-label fw-semibold">Lương cơ bản (*)</label>
+                    <div class="input-group">
+                        <input asp-for="FLuongcb" type="number" class="form-control" placeholder="Nhập lương cơ bản..." />
+                        <span class="input-group-text">VNĐ</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Trạng thái (*)</label>
+                    <select asp-for="STrangThai" class="form-select" required>
+                        <option value="">-- Chọn trạng thái --</option>
+                        <option value="Đang làm việc" selected="@(Model.STrangThai == "Đang làm việc" || Model.STrangThai == "Đang làm")">Đang làm việc</option>
+                        <option value="Đã nghỉ việc" selected="@(Model.STrangThai == "Đã nghỉ việc" || Model.STrangThai == "Nghỉ việc")">Đã nghỉ việc</option>
+                    </select>
+                    <span asp-validation-for="STrangThai" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Phòng ban (*)</label>
+                    <select asp-for="FK_sMaPB" class="form-select" asp-items="ViewBag.PhongBans" required>
+                        <option value="">-- Chọn phòng ban --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Chức vụ (*)</label>
+                    <select asp-for="FK_sMaCV" class="form-select" asp-items="ViewBag.ChucVus" required>
+                        <option value="">-- Chọn chức vụ --</option>
+                    </select>
+                </div>
+
+                <div class="col-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-primary px-5 py-2 me-2"><i class="bi bi-check-circle me-1"></i> Cập nhật</button>
+                    <button type="reset" class="btn btn-outline-secondary px-4 py-2"><i class="bi bi-arrow-clockwise me-1"></i> Làm mới</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -17,14 +17,16 @@ namespace NMCNPM.Controllers
             _context = context;
         }
 
-        // =========================================================================
-        // 1. DANH SÁCH NHÂN VIÊN (INDEX) + BỘ LỌC TÌM KIẾM
-        // =========================================================================
-        // GET: NhanVien
+        // 1. DANH SÁCH NHÂN VIÊN
         public async Task<IActionResult> Index(string searchString, string maPB, string maCV, string trangThai)
         {
+            // Nạp danh sách Phòng ban & Chức vụ cho Dropdown lọc
             ViewBag.PhongBans = new SelectList(await _context.PhongBans.ToListAsync(), "SMaPB", "STenPB", maPB);
             ViewBag.ChucVus = new SelectList(await _context.ChucVus.ToListAsync(), "SMaCV", "STenCV", maCV);
+
+            // Nạp dictionary để tra cứu Tên phòng ban & Tên chức vụ theo Mã nhanh chóng trên View
+            ViewBag.PhongBanDict = await _context.PhongBans.ToDictionaryAsync(p => p.SMaPB, p => p.STenPB);
+            ViewBag.ChucVuDict = await _context.ChucVus.ToDictionaryAsync(c => c.SMaCV, c => c.STenCV);
 
             var query = _context.NhanViens.AsQueryable();
 
@@ -49,114 +51,86 @@ namespace NMCNPM.Controllers
 
             if (!string.IsNullOrWhiteSpace(trangThai))
             {
-                query = query.Where(n => n.STrangThai == trangThai);
+                trangThai = trangThai.Trim().ToLower();
+                
+                if (trangThai.Contains("nghỉ") || trangThai.Contains("nghi"))
+                {
+                    query = query.Where(n => n.STrangThai != null && (n.STrangThai.ToLower().Contains("nghỉ") || n.STrangThai.ToLower().Contains("nghi")));
+                }
+                else if (trangThai.Contains("làm") || trangThai.Contains("lam"))
+                {
+                    query = query.Where(n => n.STrangThai != null && (n.STrangThai.ToLower().Contains("làm") || n.STrangThai.ToLower().Contains("lam")));
+                }
+                else
+                {
+                    query = query.Where(n => n.STrangThai == trangThai);
+                }
             }
 
-            var listNhanVien = await query.OrderBy(n => n.SMaNV).ToListAsync();
-            return View(listNhanVien);
+            var result = await query.OrderBy(n => n.SMaNV).ToListAsync();
+            return View(result);
         }
 
-        // =========================================================================
-        // 2. XEM CHI TIẾT NHÂN VIÊN (DETAILS)
-        // =========================================================================
-        // GET: NhanVien/Details/NV001
+        // 2. CHI TIẾT NHÂN VIÊN
         public async Task<IActionResult> Details(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
+            if (string.IsNullOrEmpty(id)) return NotFound();
 
             var nhanVien = await _context.NhanViens.FirstOrDefaultAsync(m => m.SMaNV == id);
-            if (nhanVien == null)
-            {
-                return NotFound();
-            }
+            if (nhanVien == null) return NotFound();
 
-            var phongBan = await _context.PhongBans.FindAsync(nhanVien.FK_sMaPB);
-            var chucVu = await _context.ChucVus.FindAsync(nhanVien.FK_sMaCV);
+            var pb = await _context.PhongBans.FirstOrDefaultAsync(p => p.SMaPB == nhanVien.FK_sMaPB);
+            var cv = await _context.ChucVus.FirstOrDefaultAsync(c => c.SMaCV == nhanVien.FK_sMaCV);
 
-            ViewBag.TenPB = phongBan?.STenPB ?? nhanVien.FK_sMaPB;
-            ViewBag.TenCV = chucVu?.STenCV ?? nhanVien.FK_sMaCV;
+            ViewBag.TenPB = pb?.STenPB ?? nhanVien.FK_sMaPB;
+            ViewBag.TenCV = cv?.STenCV ?? nhanVien.FK_sMaCV;
 
             return View(nhanVien);
         }
 
-        // =========================================================================
-        // 3. THÊM MỚI NHÂN VIÊN (CREATE)
-        // =========================================================================
-        // GET: NhanVien/Create
+        // 3. THÊM NHÂN VIÊN (GET)
         public async Task<IActionResult> Create()
         {
-            await PopulateDropdownsAsync();
+            ViewBag.PhongBans = new SelectList(await _context.PhongBans.ToListAsync(), "SMaPB", "STenPB");
+            ViewBag.ChucVus = new SelectList(await _context.ChucVus.ToListAsync(), "SMaCV", "STenCV");
             return View();
         }
 
-        // POST: NhanVien/Create
+        // 3. THÊM NHÂN VIÊN (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(NhanVien nhanVien)
         {
-            if (await _context.NhanViens.AnyAsync(n => n.SMaNV == nhanVien.SMaNV))
-            {
-                ModelState.AddModelError("SMaNV", "Mã nhân viên này đã tồn tại trong hệ thống.");
-            }
-
-            if (await _context.NhanViens.AnyAsync(n => n.SCCCD == nhanVien.SCCCD))
-            {
-                ModelState.AddModelError("SCCCD", "Số CCCD này đã được đăng ký cho nhân viên khác.");
-            }
-
             if (ModelState.IsValid)
             {
-                if (nhanVien.DNgayVaoLam == null)
-                {
-                    nhanVien.DNgayVaoLam = DateTime.Now;
-                }
-                if (string.IsNullOrEmpty(nhanVien.STrangThai))
-                {
-                    nhanVien.STrangThai = "Đang làm việc";
-                }
-
                 _context.Add(nhanVien);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            await PopulateDropdownsAsync(nhanVien.FK_sMaPB, nhanVien.FK_sMaCV);
+            ViewBag.PhongBans = new SelectList(await _context.PhongBans.ToListAsync(), "SMaPB", "STenPB", nhanVien.FK_sMaPB);
+            ViewBag.ChucVus = new SelectList(await _context.ChucVus.ToListAsync(), "SMaCV", "STenCV", nhanVien.FK_sMaCV);
             return View(nhanVien);
         }
 
-        // =========================================================================
-        // 4. CHỈNH SỬA THÔNG TIN NHÂN VIÊN (EDIT)
-        // =========================================================================
-        // GET: NhanVien/Edit/NV001
+        // 4. SỬA NHÂN VIÊN (GET)
         public async Task<IActionResult> Edit(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
+            if (string.IsNullOrEmpty(id)) return NotFound();
 
             var nhanVien = await _context.NhanViens.FindAsync(id);
-            if (nhanVien == null)
-            {
-                return NotFound();
-            }
+            if (nhanVien == null) return NotFound();
 
-            await PopulateDropdownsAsync(nhanVien.FK_sMaPB, nhanVien.FK_sMaCV);
+            ViewBag.PhongBans = new SelectList(await _context.PhongBans.ToListAsync(), "SMaPB", "STenPB", nhanVien.FK_sMaPB);
+            ViewBag.ChucVus = new SelectList(await _context.ChucVus.ToListAsync(), "SMaCV", "STenCV", nhanVien.FK_sMaCV);
             return View(nhanVien);
         }
 
-        // POST: NhanVien/Edit/NV001
+        // 4. SỬA NHÂN VIÊN (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, NhanVien nhanVien)
         {
-            if (id != nhanVien.SMaNV)
-            {
-                return NotFound();
-            }
+            if (id != nhanVien.SMaNV) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -167,29 +141,22 @@ namespace NMCNPM.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!NhanVienExists(nhanVien.SMaNV))
-                    {
+                    if (!_context.NhanViens.Any(e => e.SMaNV == nhanVien.SMaNV))
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-
-            await PopulateDropdownsAsync(nhanVien.FK_sMaPB, nhanVien.FK_sMaCV);
+            ViewBag.PhongBans = new SelectList(await _context.PhongBans.ToListAsync(), "SMaPB", "STenPB", nhanVien.FK_sMaPB);
+            ViewBag.ChucVus = new SelectList(await _context.ChucVus.ToListAsync(), "SMaCV", "STenCV", nhanVien.FK_sMaCV);
             return View(nhanVien);
         }
 
-        // =========================================================================
-        // 5. XÓA NHÂN VIÊN (DELETE)
-        // =========================================================================
-        // POST: NhanVien/Delete/NV001
+        // 5. XÓA NHÂN VIÊN (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var nhanVien = await _context.NhanViens.FindAsync(id);
             if (nhanVien != null)
@@ -197,25 +164,7 @@ namespace NMCNPM.Controllers
                 _context.NhanViens.Remove(nhanVien);
                 await _context.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(Index));
-        }
-
-        // =========================================================================
-        // HÀM BỔ TRỢ (HELPER METHODS)
-        // =========================================================================
-        private async Task PopulateDropdownsAsync(string selectedPB = null, string selectedCV = null)
-        {
-            var phongBans = await _context.PhongBans.ToListAsync();
-            var chucVus = await _context.ChucVus.ToListAsync();
-
-            ViewBag.FK_sMaPB = new SelectList(phongBans, "SMaPB", "STenPB", selectedPB);
-            ViewBag.FK_sMaCV = new SelectList(chucVus, "SMaCV", "STenCV", selectedCV);
-        }
-
-        private bool NhanVienExists(string id)
-        {
-            return _context.NhanViens.Any(e => e.SMaNV == id);
         }
     }
 }
