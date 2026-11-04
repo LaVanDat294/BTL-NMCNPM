@@ -1,0 +1,87 @@
+﻿
+@model HRM_Tocotoco.Models.DonTu
+
+@{
+    ViewData["Title"] = "Tạo đơn từ";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">TẠO ĐƠN TỪ</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-controller="DonTu"
+                  asp-action="TaoDon"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Loại đơn
+                    </label>
+
+                    <select asp-for="sLoaiDon"
+                            class="form-select">
+                        <option value="">-- Chọn loại đơn --</option>
+                        <option value="Nghỉ phép">Đơn xin nghỉ phép</option>
+                        <option value="Đổi ca">Đơn xin đổi ca</option>
+                        <option value="Giải trình">Đơn giải trình</option>
+                    </select>
+
+                    <span asp-validation-for="sLoaiDon"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Lý do / Nội dung đơn
+                    </label>
+
+                    <textarea asp-for="sLyDo"
+                              class="form-control"
+                              rows="5"
+                              maxlength="500"
+                              placeholder="Nhập lý do gửi đơn...">
+                    </textarea>
+
+                    <span asp-validation-for="sLyDo"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="alert alert-info">
+                    Sau khi gửi, đơn sẽ được chuyển đến quản lý
+                    để xem xét và phê duyệt.
+                </div>
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Gửi đơn
+                </button>
+
+                <a asp-controller="DonTu"
+                   asp-action="Index"
+                   class="btn btn-secondary">
+                    Quay lại
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
