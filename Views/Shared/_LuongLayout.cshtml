@@ -1,0 +1,54 @@
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var xemBang = action == "BangLuong" || action == "DieuChinh";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hệ thống quản lý nhân sự</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/luong.css" asp-append-version="true" />
+</head>
+<body class="lt-body">
+<div class="lt-wrap" id="ltWrap">
+    <aside class="lt-sidebar">
+        <div class="lt-brand"><i class="bi bi-people"></i><span>HỆ THỐNG QUẢN LÝ<br />NHÂN SỰ</span></div>
+        <nav class="lt-nav">
+            <a class="lt-item" href="/"><i class="bi bi-house"></i>Trang chủ</a>
+            <a class="lt-item" href="/HopDong"><i class="bi bi-file-earmark-text"></i>Quản lý hợp đồng</a>
+            <a class="lt-item" href="/NhanVien"><i class="bi bi-person"></i>Quản lý nhân viên</a>
+            <a class="lt-item" href="/PhongBan"><i class="bi bi-building"></i>Quản lý phòng ban</a>
+            <a class="lt-item" href="/ChucVu"><i class="bi bi-briefcase"></i>Quản lý chức vụ</a>
+            <a class="lt-item" href="/ChamCong"><i class="bi bi-clock"></i>Chấm công</a>
+            <a class="lt-item active" href="/Luong"><i class="bi bi-currency-dollar"></i>Lương<i class="bi bi-chevron-down lt-chev"></i></a>
+            <a class="lt-sub @(!xemBang ? "active" : "")" asp-controller="Luong" asp-action="Index">Quản lý tính lương</a>
+            <a class="lt-sub @(xemBang ? "active" : "")" asp-controller="Luong" asp-action="BangLuong">Xem bảng lương</a>
+            <a class="lt-item" href="/BaoCao"><i class="bi bi-bar-chart"></i>Báo cáo</a>
+            <a class="lt-item" href="/CaiDat"><i class="bi bi-gear"></i>Cài đặt</a>
+        </nav>
+    </aside>
+
+    <div class="lt-main">
+        <div class="lt-topbar">
+            <button type="button" class="lt-burger" id="ltBurger" aria-label="Thu gọn menu"><i class="bi bi-list"></i></button>
+            <div class="lt-user"><i class="bi bi-person-circle"></i>Admin</div>
+        </div>
+        <div class="lt-crumb">/ Lương / @(ViewData["Crumb"] ?? ViewData["Title"])</div>
+        <div class="lt-content">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('ltBurger').addEventListener('click', function () {
+        document.getElementById('ltWrap').classList.toggle('collapsed');
+    });
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
