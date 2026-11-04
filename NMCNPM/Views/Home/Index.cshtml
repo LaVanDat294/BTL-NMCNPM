@@ -1,7 +1,251 @@
-﻿@{
+@{
     ViewBag.Title = "Trang chủ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    /* TIÊU ĐỀ TRANG */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+    }
+
+        .page-header h2 {
+            color: #0860aa;
+            font-size: 22px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .page-header p {
+            color: #8291a3;
+            font-size: 13px;
+            margin: 0;
+        }
+
+    /* NÚT CHÍNH */
+    .btn-primary {
+        background: #0874df;
+        color: white;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 5px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        display: inline-block;
+        transition: 0.2s;
+    }
+
+        .btn-primary:hover {
+            background: #055bb5;
+            color: white;
+        }
+
+    /* THẺ THỐNG KÊ */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 2px 7px rgba(0,0,0,.04);
+        border: 1px solid #eef2f6;
+    }
+
+        .stat-card p {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .stat-card h2 {
+            font-size: 25px;
+            color: #164c83;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .stat-card small {
+            font-size: 11px;
+            color: #9aa8b8;
+        }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        flex-shrink: 0;
+    }
+
+    .icon-blue {
+        background: #e1efff;
+        color: #0874df;
+    }
+
+    .icon-green {
+        background: #dcf7e8;
+        color: #168348;
+    }
+
+    .icon-orange {
+        background: #fff0dc;
+        color: #e58b22;
+    }
+
+    .icon-purple {
+        background: #eee6ff;
+        color: #8056c7;
+    }
+
+    /* KHUNG CHỨC NĂNG VÀ BẢNG */
+    .panel {
+        background: white;
+        border-radius: 7px;
+        padding: 20px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 7px rgba(0,0,0,.04);
+        border: 1px solid #eef2f6;
+    }
+
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+        .panel-header h3 {
+            font-size: 16px;
+            color: #145b9c;
+            font-weight: bold;
+            margin: 0;
+        }
+
+    .view-all {
+        text-decoration: none;
+        color: #0874df;
+        font-size: 12px;
+    }
+
+    /* DANH SÁCH CHỨC NĂNG */
+    .function-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .function-card {
+        text-decoration: none;
+        color: #26364a;
+        border: 1px solid #e4edf6;
+        border-radius: 7px;
+        padding: 18px;
+        transition: .2s;
+        display: block;
+        background: #fff;
+    }
+
+        .function-card:hover {
+            border-color: #1680dc;
+            background: #f5faff;
+            transform: translateY(-3px);
+            color: #26364a;
+        }
+
+    .function-icon {
+        font-size: 25px;
+        color: #0874df;
+        margin-bottom: 12px;
+    }
+
+    .function-card h4 {
+        font-size: 14px;
+        color: #145b9c;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .function-card p {
+        color: #8795a5;
+        font-size: 12px;
+        line-height: 20px;
+        margin: 0;
+    }
+
+    /* BẢNG DỮ LIỆU */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+        .data-table th {
+            background: #e5f0fc;
+            color: #174d7d;
+            text-align: left;
+            padding: 13px;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            padding: 13px;
+            border-bottom: 1px solid #e8edf3;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f5faff;
+        }
+
+    .status {
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+        .status.success {
+            background: #d9f4e2;
+            color: #168348;
+        }
+
+    @@media(max-width: 1100px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .function-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 700px) {
+        .stats-grid,
+        .function-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
 <div class="page-header">
     <div>
@@ -18,7 +262,9 @@
 <div class="stats-grid">
 
     <div class="stat-card">
-        <div class="stat-icon icon-blue">♟</div>
+        <div class="stat-icon icon-blue">
+            <i class="bi bi-people-fill"></i>
+        </div>
         <div>
             <p>Tổng nhân viên</p>
             <h2>120</h2>
@@ -27,7 +273,9 @@
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon icon-green">▦</div>
+        <div class="stat-icon icon-green">
+            <i class="bi bi-building"></i>
+        </div>
         <div>
             <p>Phòng ban</p>
             <h2>08</h2>
@@ -36,7 +284,9 @@
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon icon-orange">◷</div>
+        <div class="stat-icon icon-orange">
+            <i class="bi bi-person-check-fill"></i>
+        </div>
         <div>
             <p>Đang làm việc</p>
             <h2>105</h2>
@@ -45,7 +295,9 @@
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon icon-purple">▣</div>
+        <div class="stat-icon icon-purple">
+            <i class="bi bi-calendar2-x-fill"></i>
+        </div>
         <div>
             <p>Nghỉ phép hôm nay</p>
             <h2>05</h2>
@@ -64,37 +316,49 @@
     <div class="function-grid">
 
         <a href="@Url.Action("Index","NhanVien")" class="function-card">
-            <div class="function-icon">♟</div>
+            <div class="function-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
             <h4>Quản lý nhân viên</h4>
             <p>Thêm, sửa, xóa và tìm kiếm nhân viên</p>
         </a>
 
         <a href="@Url.Action("Index","PhongBan")" class="function-card">
-            <div class="function-icon">▦</div>
+            <div class="function-icon">
+                <i class="bi bi-building"></i>
+            </div>
             <h4>Quản lý phòng ban</h4>
             <p>Quản lý danh sách phòng ban</p>
         </a>
 
         <a href="@Url.Action("Index","ChucVu")" class="function-card">
-            <div class="function-icon">▣</div>
+            <div class="function-icon">
+                <i class="bi bi-person-badge"></i>
+            </div>
             <h4>Quản lý chức vụ</h4>
             <p>Quản lý chức vụ nhân viên</p>
         </a>
 
         <a href="@Url.Action("Index","ChamCong")" class="function-card">
-            <div class="function-icon">◷</div>
+            <div class="function-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
             <h4>Quản lý chấm công</h4>
             <p>Theo dõi thời gian làm việc</p>
         </a>
 
         <a href="@Url.Action("Index","Luong")" class="function-card">
-            <div class="function-icon">₫</div>
+            <div class="function-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
             <h4>Quản lý lương</h4>
             <p>Quản lý bảng lương nhân viên</p>
         </a>
 
         <a href="@Url.Action("Index","BaoCao")" class="function-card">
-            <div class="function-icon">▥</div>
+            <div class="function-icon">
+                <i class="bi bi-bar-chart-fill"></i>
+            </div>
             <h4>Báo cáo thống kê</h4>
             <p>Thống kê tình hình nhân sự</p>
         </a>
