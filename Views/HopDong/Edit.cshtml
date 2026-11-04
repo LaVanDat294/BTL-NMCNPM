@@ -1,0 +1,82 @@
+﻿@model NMCNPM.Models.HopDongLaoDong
+
+@{
+    ViewData["Title"] = "Sửa hợp đồng";
+    Layout = "~/Views/HopDong/_LayoutHopDong.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <div class="text-muted small mb-2">
+            Quản lý hợp đồng / Danh sách hợp đồng / Sửa hợp đồng
+        </div>
+        <h3 class="fw-bold text-primary mb-0">Sửa thông tin hợp đồng lao động</h3>
+    </div>
+    <a asp-controller="HopDong" asp-action="Index" class="btn btn-outline-primary">
+        &lt; Quay lại
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header text-center fw-bold text-primary bg-primary bg-opacity-10">
+        Thông tin hợp đồng
+    </div>
+
+    <div class="card-body p-4">
+        <form asp-controller="HopDong" asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="SMaHD" />
+            <input type="hidden" asp-for="SLoaiHD" />
+            <input type="hidden" asp-for="DNgayHetHan" />
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Mã hợp đồng</label>
+                    <input type="text" value="@Model.SMaHD" class="form-control bg-light" readonly />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Nhân viên</label>
+                    <input type="text" value="@ViewBag.TenNhanVien" class="form-control bg-light" readonly />
+                    <input type="hidden" asp-for="FK_sMaNV" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">
+                        Ngày ký hợp đồng <span class="text-danger">(*)</span>
+                    </label>
+                    <input asp-for="DNgayKy" type="date" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                        Mức lương cơ bản (VNĐ)
+                    </label>
+                    <input type="text" value="@(((decimal)ViewBag.LuongCoBan).ToString("N0"))"
+                           class="form-control bg-light" readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">
+                        Trạng thái <span class="text-danger">(*)</span>
+                    </label>
+                    <select asp-for="STrangThai" class="form-select" required>
+                        <option value="Còn hiệu lực">Còn hiệu lực</option>
+                        <option value="Hết hạn">Hết hạn</option>
+                        <option value="Đã hủy">Đã hủy</option>
+                    </select>
+                </div>
+
+                <div class="col-12 d-flex justify-content-center gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        Cập nhật
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary px-4">
+                        Làm mới
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
