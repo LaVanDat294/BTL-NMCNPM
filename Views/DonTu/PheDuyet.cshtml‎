@@ -1,0 +1,121 @@
+﻿
+@model IEnumerable<HRM_Tocotoco.Models.DonTu>
+
+@{
+    ViewData["Title"] = "Phê duyệt đơn từ";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">PHÊ DUYỆT ĐƠN TỪ</h2>
+
+    @if (TempData["ThongBao"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["ThongBao"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-dark text-white">
+            Danh sách đơn đang chờ duyệt
+        </div>
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Mã nhân viên</th>
+                        <th>Tên nhân viên</th>
+                        <th>Loại đơn</th>
+                        <th>Ngày gửi</th>
+                        <th>Lý do</th>
+                        <th style="min-width: 190px;">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.sMaDon</td>
+                                <td>@item.FK_sMaNV</td>
+                                <td>@item.sTenNguoiTao</td>
+                                <td>@item.sLoaiDon</td>
+
+                                <td>
+                                    @item.dNgayGui?.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>@item.sLyDo</td>
+
+                                <td>
+                                    <div class="d-flex gap-2">
+
+                                        <form asp-action="XuLyDon"
+                                              asp-controller="DonTu"
+                                              method="post">
+
+                                            <input type="hidden"
+                                                   name="maDon"
+                                                   value="@item.sMaDon" />
+
+                                            <input type="hidden"
+                                                   name="trangThai"
+                                                   value="Đã duyệt" />
+
+                                            <button type="submit"
+                                                    class="btn btn-success btn-sm"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn phê duyệt đơn này?')">
+                                                Duyệt
+                                            </button>
+                                        </form>
+
+                                        <form asp-action="XuLyDon"
+                                              asp-controller="DonTu"
+                                              method="post">
+
+                                            <input type="hidden"
+                                                   name="maDon"
+                                                   value="@item.sMaDon" />
+
+                                            <input type="hidden"
+                                                   name="trangThai"
+                                                   value="Từ chối" />
+
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn từ chối đơn này?')">
+                                                Từ chối
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                Hiện không có đơn nào chờ duyệt.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
