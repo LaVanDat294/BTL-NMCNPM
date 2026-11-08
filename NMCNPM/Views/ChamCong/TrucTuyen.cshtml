@@ -1,0 +1,511 @@
+﻿@using System.Linq
+
+@model NMCNPM.Models.TrucTuyenViewModel
+
+@{
+    ViewBag.Title = "Chấm công trực tuyến";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<style>
+    /* TIÊU ĐỀ TRANG */
+    .attendance-header {
+        margin-bottom: 22px;
+    }
+
+        .attendance-header h2 {
+            color: #0860aa;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .attendance-header p {
+            color: #8291a3;
+            font-size: 13px;
+            margin: 0;
+        }
+
+    /* KHU VỰC CHẤM CÔNG */
+    .attendance-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .attendance-card {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        padding: 25px;
+        box-shadow: 0 2px 7px rgba(0,0,0,.04);
+    }
+
+    /* ĐỒNG HỒ */
+    .clock-card {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 280px;
+    }
+
+    .current-date {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .realtime-clock {
+        font-size: 38px;
+        font-weight: bold;
+        color: #164c83;
+        margin-bottom: 22px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* NÚT CHẤM CÔNG */
+    .attendance-actions {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-bottom: 18px;
+    }
+
+    .attendance-btn {
+        padding: 12px 22px;
+        border: none;
+        border-radius: 5px;
+        color: white !important;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+        .attendance-btn:hover:not(:disabled) {
+            opacity: .85;
+        }
+
+    .btn-checkin {
+        background: #00a859 !important;
+    }
+
+    .btn-checkout {
+        background: #e53935 !important;
+    }
+
+    .attendance-btn:disabled {
+        cursor: default;
+        opacity: 1;
+        pointer-events: none;
+    }
+
+    /* Nút chấm công vào đã hoàn thành */
+    .btn-checkin:disabled {
+        background: #94a3b8 !important;
+        color: #ffffff !important;
+    }
+
+    /* Nút chấm công ra đã hoàn thành */
+    .btn-checkout:disabled {
+        background: #94a3b8 !important;
+        color: #ffffff !important;
+    }
+
+    .attendance-status-block {
+        width: 100%;
+        margin-top: 5px;
+        padding-top: 15px;
+        border-top: 1px dashed #cbd5e1;
+    }
+
+    .attendance-status {
+        color: #475569;
+        font-size: 14px;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+        .attendance-status span {
+            font-weight: bold;
+            color: #e53935;
+        }
+
+    .time-row {
+        display: flex;
+        justify-content: center;
+        gap: 30px; /* Khoảng cách giữa giờ vào và giờ ra */
+        width: 100%;
+    }
+
+    .time-item {
+        font-size: 13px;
+        color: #475569;
+        background: #f8fafc;
+        padding: 6px 14px;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+    }
+
+        .time-item strong {
+            color: #0f172a;
+            margin-left: 5px;
+        }
+
+
+    /* THÔNG TIN CA LÀM */
+    .attendance-card-header {
+        font-size: 16px;
+        font-weight: bold;
+        color: #145b9c;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e8edf3;
+        margin-bottom: 15px;
+    }
+
+    .employee-info {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .employee-info-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eef2f6;
+        font-size: 13px;
+    }
+
+        .employee-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .employee-info-item span:first-child {
+            color: #718096;
+        }
+
+        .employee-info-item span:last-child {
+            color: #26364a;
+            font-weight: 600;
+            text-align: right;
+        }
+
+    /* KHUNG LỊCH SỬ */
+    .attendance-panel {
+        background: #ffffff;
+        border: 1px solid #eef2f6;
+        border-radius: 7px;
+        padding: 20px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 7px rgba(0,0,0,.04);
+    }
+
+    .attendance-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+        .attendance-panel-header h3 {
+            font-size: 16px;
+            color: #145b9c;
+            font-weight: bold;
+            margin: 0;
+        }
+
+    /* BẢNG LỊCH SỬ */
+    .attendance-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        font-size: 12px;
+        min-width: 650px;
+    }
+
+        .attendance-table th {
+            background: #e5f0fc;
+            color: #174d7d;
+            padding: 13px 10px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .attendance-table td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #e8edf3;
+        }
+
+        .attendance-table tbody tr:hover {
+            background: #f5faff;
+        }
+
+    /* TRẠNG THÁI */
+    .attendance-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .badge-success {
+        background: #d9f4e2;
+        color: #168348;
+    }
+
+    .badge-warning {
+        background: #fff0dc;
+        color: #d97706;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .badge-info {
+        background: #e1efff;
+        color: #0874df;
+    }
+
+    /* RESPONSIVE */
+    @@media(max-width: 900px) {
+        .attendance-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media(max-width: 600px) {
+        .attendance-card {
+            padding: 18px;
+        }
+
+        .realtime-clock {
+            font-size: 30px;
+        }
+
+        .attendance-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .attendance-btn {
+            width: 100%;
+        }
+
+        .time-row {
+            flex-direction: row; /* Giữ nguyên 1 hàng kể cả trên mobile nhỏ */
+            gap: 10px;
+        }
+
+        .attendance-panel {
+            padding: 14px;
+        }
+
+        .employee-info-item {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+            .employee-info-item span:last-child {
+                text-align: left;
+            }
+    }
+</style>
+
+<!-- TIÊU ĐỀ -->
+<div class="attendance-header">
+    <h2>Chấm công trực tuyến</h2>
+    <p>Thực hiện chấm công và theo dõi lịch sử làm việc của nhân viên</p>
+</div>
+
+<!-- KHU VỰC CHẤM CÔNG VÀ THÔNG TIN CA LÀM VIỆC -->
+<div class="attendance-grid">
+
+    <!-- ĐỒNG HỒ VÀ CHECK IN / CHECK OUT -->
+    <div class="attendance-card clock-card">
+
+        <span id="current-date-display">
+            @Model.NgayHienTai.ToString("dd/MM/yyyy")
+        </span>
+
+        <div class="realtime-clock" id="realtime-clock">
+            08:00:00
+        </div>
+
+        <div class="attendance-actions">
+            <button type="button"
+                    class="attendance-btn btn-checkin"
+                    onclick="handleCheckIn()"
+                    @(Model.GioVao.HasValue ? "disabled" : "")>
+                Chấm công vào
+            </button>
+
+            <button type="button"
+                    class="attendance-btn btn-checkout"
+                    onclick="handleCheckOut()"
+                    @(!Model.GioVao.HasValue || Model.GioRa.HasValue ? "disabled" : "")>
+                Chấm công ra
+            </button>
+        </div>
+
+        <div class="attendance-status-block">
+
+            <div id="attendance-status" class="attendance-status">
+                Trạng thái: <span>@Model.TrangThaiChamCong</span>
+            </div>
+
+            <div class="time-row">
+
+                <div class="time-item">
+                    Giờ vào:
+                    <strong id="check-in-time">
+                        @(Model.GioVao.HasValue
+                            ? Model.GioVao.Value.ToString("HH:mm:ss")
+                            : "--:--:--")
+                    </strong>
+                </div>
+
+                <div class="time-item">
+                    Giờ ra:
+                    <strong id="check-out-time">
+                        @(Model.GioRa.HasValue
+                            ? Model.GioRa.Value.ToString("HH:mm:ss")
+                            : "--:--:--")
+                    </strong>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- THÔNG TIN CA LÀM VIỆC -->
+    <div class="attendance-card">
+
+        <div class="attendance-card-header">
+            <i class="bi bi-person-badge"></i>
+            Thông tin ca làm việc
+        </div>
+
+        <div class="employee-info">
+
+            <div class="employee-info-item">
+                <span>Mã nhân viên:</span>
+                <span>@Model.MaNV</span>
+            </div>
+
+            <div class="employee-info-item">
+                <span>Họ và tên:</span>
+                <span>@Model.TenNV</span>
+            </div>
+
+            <div class="employee-info-item">
+                <span>Phòng ban:</span>
+                <span>@Model.TenPB</span>
+            </div>
+
+            <div class="employee-info-item">
+                <span>Ca làm việc:</span>
+                <span>Ca hành chính (09:00 - 17:00)</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- LỊCH SỬ CHẤM CÔNG -->
+<div class="attendance-panel">
+
+    <div class="attendance-panel-header">
+        <h3>
+            <i class="bi bi-calendar-check"></i>
+            Lịch sử chấm công trong tuần
+        </h3>
+    </div>
+
+    <div class="attendance-table-wrapper">
+
+        <table class="attendance-table">
+
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Thứ</th>
+                    <th>Giờ vào (Check-in)</th>
+                    <th>Giờ ra (Check-out)</th>
+                    <th>Số giờ làm</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+
+            <tbody id="attendance-history-body">
+                @if (Model.LichSu7Ngay != null && Model.LichSu7Ngay.Any())
+                {
+                    foreach (var item in Model.LichSu7Ngay)
+                    {
+                        <tr>
+                            <td>
+                                @item.NgayChamCong.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+                                @(item.GioVao.HasValue
+                        ? item.GioVao.Value.ToString("HH:mm:ss")
+                        : "--")
+                            </td>
+
+                            <td>
+                                @(item.GioRa.HasValue
+                        ? item.GioRa.Value.ToString("HH:mm:ss")
+                        : "--")
+                            </td>
+
+                            <td>
+                                @item.SoGioLam giờ
+                            </td>
+
+                            <td>
+                                @item.TrangThai
+                            </td>
+
+                            <td>
+                                @item.GhiChu
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6">
+                            Chưa có dữ liệu chấm công trong 7 ngày gần nhất.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<script src="~/Scripts/ChamCongTrucTuyen.js"></script>  

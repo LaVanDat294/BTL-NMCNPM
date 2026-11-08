@@ -1,0 +1,575 @@
+﻿@model NMCNPM.Models.TheoDoiViewModel
+
+@{
+    ViewBag.Title = "Theo dõi chấm công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .attendance-page {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .page-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-color, #1e293b);
+        }
+
+    .page-description {
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .filter-card {
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .filter-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        color: var(--text-color, #1e293b);
+    }
+
+    .filter-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+    /* ĐẬM VIỀN CÁC Ô TÌM KIẾM */
+    .filter-control {
+        width: 100%;
+        height: 40px;
+        padding: 8px 10px;
+        border: 1.5px solid #94a3b8; /* Tăng độ dày và đổi màu viền rõ hơn */
+        border-radius: 6px;
+        background: #fff;
+        color: #0f172a;
+        font-size: 13px;
+        outline: none;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+    }
+
+        .filter-control:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 3px rgba(24, 119, 242, .15);
+        }
+
+    .date-range {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .filter-divider {
+        border: 0;
+        border-top: 1px solid #e2e8f0;
+        margin: 4px 0 18px;
+    }
+
+    .filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+        .filter-actions .btn {
+            min-width: 110px;
+            height: 38px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+    /* SỬA LỖI MÀU NỀN VÀ CHỮ NÚT TÌM KIẾM */
+    .btn-search {
+        background-color: #1877f2 !important; /* Chỉ định màu xanh đậm rõ ràng */
+        color: #ffffff !important; /* Ép chữ hiển thị màu trắng tinh */
+        border: 1px solid #1877f2 !important;
+    }
+
+        .btn-search:hover {
+            background-color: #1565c0 !important;
+            border-color: #1565c0 !important;
+        }
+
+    .btn-reset {
+        background: #fff;
+        color: #475569;
+        border: 1.5px solid #94a3b8;
+    }
+
+        .btn-reset:hover {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+    .attendance-panel {
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .attendance-panel-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .attendance-panel-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-color, #1e293b);
+        }
+
+    .attendance-count {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+        .attendance-table th {
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 13px 12px;
+            text-align: left;
+            white-space: nowrap;
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        .attendance-table td {
+            padding: 13px 12px;
+            font-size: 13px;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        .attendance-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .badge-success {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .badge-warning {
+        color: #9a3412;
+        background: #fef3c7;
+    }
+
+    .badge-danger {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .badge-info {
+        color: #1e40af;
+        background: #dbeafe;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 35px 15px !important;
+        color: #94a3b8 !important;
+    }
+</style>
+
+
+<div class="attendance-page">
+
+    <!-- Tiêu đề -->
+    <div class="page-header">
+        <div>
+            <h2>Theo dõi chấm công</h2>
+            <div class="page-description">
+                Theo dõi và tra cứu tình hình chấm công của nhân viên.
+            </div>
+        </div>
+    </div>
+
+    <!-- Bộ lọc -->
+    <div class="filter-card">
+
+        <div class="filter-title">
+            Bộ lọc tìm kiếm
+        </div>
+
+        @using (Html.BeginForm(
+            "TheoDoi",
+            "ChamCong",
+            FormMethod.Get,
+            new { @class = "filter-form" }))
+        {
+            <!-- Hàng 1 -->
+            <div class="filter-row">
+
+                <!-- Ngày -->
+                <div class="filter-group">
+                    <label>Ngày chấm công</label>
+
+                    <div class="date-range">
+                        @Html.TextBox(
+                            "TuNgay",
+                            Model.TuNgay.HasValue
+                                ? Model.TuNgay.Value.ToString("yyyy-MM-dd")
+                                : "",
+                            new
+                                 {
+                                type = "date",
+                                @class = "filter-control",
+                                title = "Từ ngày"
+                            })
+
+                        @Html.TextBox(
+                            "DenNgay",
+                            Model.DenNgay.HasValue
+                                ? Model.DenNgay.Value.ToString("yyyy-MM-dd")
+                                : "",
+                            new
+                                 {
+                                type = "date",
+                                @class = "filter-control",
+                                title = "Đến ngày"
+                            })
+                    </div>
+                </div>
+
+                <!-- Tên nhân viên -->
+                <div class="filter-group">
+                    <label for="TenNhanVien">Tên nhân viên</label>
+
+                    @Html.TextBoxFor(
+                        m => m.TenNhanVien,
+                        new
+                             {
+                            @class = "filter-control",
+                            placeholder = "Nhập tên nhân viên..."
+                        })
+                </div>
+
+                <!-- Phòng ban / Chi nhánh -->
+                <div class="filter-group">
+                    <label for="MaPhongBan">Chi nhánh / Phòng ban</label>
+
+                    @Html.DropDownListFor(
+                        m => m.MaPhongBan,
+                        Model.DanhSachChiNhanh,
+                        "Tất cả phòng ban",
+                        new
+                             {
+                            @class = "filter-control"
+                        })
+                </div>
+
+                <!-- Trạng thái -->
+                <div class="filter-group">
+                    <label for="TrangThai">Trạng thái</label>
+
+                    @Html.DropDownListFor(
+                        m => m.TrangThai,
+                        new List<SelectListItem>
+                        {
+                            new SelectListItem {
+                                Text = "Đã hoàn thành",
+                                Value = "Đã hoàn thành"
+                            },
+                            new SelectListItem {
+                                Text = "Đang làm việc",
+                                Value = "Đang làm việc"
+                            },
+                            new SelectListItem {
+                                Text = "Đi muộn",
+                                Value = "Đi muộn"
+                            },
+                            new SelectListItem {
+                                Text = "Vắng mặt",
+                                Value = "Vắng mặt"
+                            }
+                        },
+                        "Tất cả trạng thái",
+                        new
+                             {
+                            @class = "filter-control"
+                        })
+                </div>
+
+            </div>
+
+            <hr class="filter-divider" />
+
+            <!-- Hàng 2 -->
+            <div class="filter-row">
+
+                <div class="filter-group">
+                    <label for="TuGioVao">Giờ vào từ</label>
+
+                    @Html.TextBox(
+                        "TuGioVao",
+                        Model.TuGioVao.HasValue
+                            ? Model.TuGioVao.Value.ToString(@"hh\:mm")
+                            : "",
+                        new
+                             {
+                            type = "time",
+                            @class = "filter-control"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="DenGioVao">Giờ vào đến</label>
+
+                    @Html.TextBox(
+                        "DenGioVao",
+                        Model.DenGioVao.HasValue
+                            ? Model.DenGioVao.Value.ToString(@"hh\:mm")
+                            : "",
+                        new
+                             {
+                            type = "time",
+                            @class = "filter-control"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="TuGioRa">Giờ ra từ</label>
+
+                    @Html.TextBox(
+                        "TuGioRa",
+                        Model.TuGioRa.HasValue
+                            ? Model.TuGioRa.Value.ToString(@"hh\:mm")
+                            : "",
+                        new
+                             {
+                            type = "time",
+                            @class = "filter-control"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="DenGioRa">Giờ ra đến</label>
+
+                    @Html.TextBox(
+                        "DenGioRa",
+                        Model.DenGioRa.HasValue
+                            ? Model.DenGioRa.Value.ToString(@"hh\:mm")
+                            : "",
+                        new
+                             {
+                            type = "time",
+                            @class = "filter-control"
+                        })
+                </div>
+
+            </div>
+
+            <!-- Nút -->
+            <div class="filter-actions">
+
+                <a href="@Url.Action("TheoDoi", "ChamCong")"
+                   class="btn btn-reset">
+                    Đặt lại
+                </a>
+
+                <button type="submit"
+                        class="btn btn-search">
+                    Tìm kiếm
+                </button>
+
+            </div>
+        }
+    </div>
+
+    <!-- Bảng kết quả -->
+    <div class="attendance-panel">
+
+        <div class="attendance-panel-header">
+            <h3>Danh sách theo dõi chấm công</h3>
+
+            <span class="attendance-count">
+                Tổng số:
+                @(Model.DanhSachChamCong != null
+                    ? Model.DanhSachChamCong.Count
+                    : 0) bản ghi
+            </span>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="attendance-table">
+
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã nhân viên</th>
+                        <th>Họ và tên</th>
+                        <th>Ngày chấm công</th>
+                        <th>Giờ vào</th>
+                        <th>Giờ ra</th>
+                        <th>Số giờ làm</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.DanhSachChamCong != null
+                        && Model.DanhSachChamCong.Any())
+                    {
+                        int stt = 1;
+
+                        foreach (var item in Model.DanhSachChamCong)
+                        {
+                            <tr>
+                                <td>@stt</td>
+
+                                <td>@item.MaNV</td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.TenNV)
+                                        ? "--"
+                                        : item.TenNV)
+                                </td>
+
+                                <td>
+                                    @item.NgayChamCong.ToString("dd/MM/yyyy")
+                                </td>
+
+                                <td>
+                                    @(item.GioVao.HasValue
+                                        ? item.GioVao.Value.ToString("HH:mm")
+                                        : "--")
+                                </td>
+
+                                <td>
+                                    @(item.GioRa.HasValue
+                                        ? item.GioRa.Value.ToString("HH:mm")
+                                        : "--")
+                                </td>
+
+                                <td>
+                                    @item.SoGioLam giờ
+                                </td>
+
+                                <td>
+                                    @{
+                                        string trangThai = item.TrangThai ?? "";
+                                        string badgeClass = "badge-info";
+
+                                        if (trangThai.Contains("hoàn thành"))
+                                        {
+                                            badgeClass = "badge-success";
+                                        }
+                                        else if (trangThai.Contains("muộn"))
+                                        {
+                                            badgeClass = "badge-warning";
+                                        }
+                                        else if (trangThai.Contains("vắng"))
+                                        {
+                                            badgeClass = "badge-danger";
+                                        }
+                                    }
+
+                                    <span class="status-badge @badgeClass">
+                                        @(string.IsNullOrWhiteSpace(item.TrangThai)
+                                            ? "--"
+                                            : item.TrangThai)
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.GhiChu)
+                                        ? "--"
+                                        : item.GhiChu)
+                                </td>
+                            </tr>
+
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="empty-message">
+                                Không tìm thấy dữ liệu chấm công phù hợp.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

@@ -265,10 +265,42 @@
 
                 <div class="menu-title">Quản lý công việc</div>
 
-                <a href="@Url.Action("Index", "ChamCong")">
-                    <i class="bi bi-calendar-check"></i>
-                    <span>Chấm công</span>
-                </a>
+                @*<a href="@Url.Action("Index", "ChamCong")">
+            <i class="bi bi-calendar-check"></i>
+            <span>Chấm công</span>
+        </a>*@
+
+
+
+                <div>
+                    <!-- Menu chính Chấm công (Chữ trắng, viết đậm) -->
+                    <a href="@Url.Action("Index", "ChamCong")" class="text-white text-decoration-none fw-bold">
+                        <i class="bi bi-calendar-check text-white"></i>
+                        <span>Chấm công</span>
+                    </a>
+
+                    <!-- 3 Chức năng con hiện sẵn bên dưới (Chữ trắng) -->
+                    <ul class="list-unstyled ms-4 mt-1">
+                        <li class="mb-1">
+                            <a href="@Url.Action("TrucTuyen", "ChamCong")" class="text-white text-decoration-none">
+                                <i class="bi bi-arrow-right-short text-white"></i> Chấm công hàng ngày
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="@Url.Action("LichSu", "ChamCong")" class="text-white text-decoration-none">
+                                <i class="bi bi-arrow-right-short text-white"></i> Lịch sử chấm công
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="@Url.Action("TheoDoi", "ChamCong")" class="text-white text-decoration-none">
+                                <i class="bi bi-arrow-right-short text-white"></i> Theo dõi chấm công
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+
+
 
                 <a href="@Url.Action("Index", "Luong")">
                     <i class="bi bi-cash-stack"></i>

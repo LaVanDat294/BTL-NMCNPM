@@ -120,6 +120,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\ChamCongController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TaiKhoanController.cs" />
     <Compile Include="Data\TaiKhoanRepository.cs" />
@@ -128,10 +129,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\PasswordHelper.cs" />
+    <Compile Include="Models\ChamCong.cs" />
     <Compile Include="Models\DoiMatKhauViewModel.cs" />
+    <Compile Include="Models\LichSuViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\TaiKhoan.cs" />
+    <Compile Include="Models\TheoDoiViewModel.cs" />
+    <Compile Include="Models\TrucTuyenViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +167,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
+    <Content Include="Scripts\ChamCongTrucTuyen.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.js" />
@@ -190,6 +196,9 @@
     <Content Include="Views\TaiKhoan\DoiMatKhau.cshtml" />
     <Content Include="Views\TaiKhoan\AccessDenied.cshtml" />
     <Content Include="Views\TaiKhoan\Register.cshtml" />
+    <Content Include="Views\ChamCong\LichSu.cshtml" />
+    <Content Include="Views\ChamCong\TheoDoi.cshtml" />
+    <Content Include="Views\ChamCong\TrucTuyen.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
