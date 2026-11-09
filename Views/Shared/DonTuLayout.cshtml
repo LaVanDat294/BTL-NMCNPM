@@ -1,0 +1,412 @@
+﻿
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    string Active(string c, string? a = null)
+    {
+        return controller == c && (a == null || action == a)
+            ? "active" : "";
+    }
+
+    string maNV = Context.Session.GetString("sMaNV") ?? "";
+    string quyen = Context.Session.GetString("sMaQuyen") ?? "";
+    bool laQuanLy = quyen == "Q_MANAGER" || quyen == "Q_ADMIN";
+    bool daDangNhap = !string.IsNullOrEmpty(maNV);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TocoToco HRM</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: #f0f4fa;
+            color: #173f66;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 292px;
+            height: 100vh;
+            overflow-y: auto;
+            background: #123e68;
+            color: white;
+            z-index: 1000;
+            transition: .25s;
+        }
+
+        .sidebar-brand {
+            min-height: 101px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 27px;
+            border-bottom: 1px solid rgba(255,255,255,.12);
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .sidebar-brand i { font-size: 26px; }
+
+        .sidebar-menu { padding: 20px 18px; }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 18px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            color: #e4edf8;
+            text-decoration: none;
+            font-size: 15px;
+            transition: .2s;
+        }
+
+        .menu-item i {
+            width: 27px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .menu-item:hover {
+            background: #1d568b;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #1976ed;
+            color: white;
+            font-weight: bold;
+        }
+
+        .submenu {
+            padding-left: 55px;
+            margin: 0 0 12px;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 9px 0;
+            color: #dceafa;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .submenu a:hover, .submenu a.active {
+            color: white;
+            font-weight: bold;
+        }
+
+        .main-wrapper {
+            margin-left: 292px;
+            min-height: 100vh;
+            transition: .25s;
+        }
+
+        .topbar {
+            height: 68px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            box-shadow: 0 1px 4px rgba(0,0,0,.05);
+        }
+
+        .menu-toggle {
+            border: 0;
+            background: transparent;
+            color: #172b40;
+            font-size: 27px;
+            cursor: pointer;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .topbar-right .bi-bell {
+            color: #f44336;
+            font-size: 23px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #173f66;
+        }
+
+        .user-info .bi-person-circle {
+            color: #1976ed;
+            font-size: 28px;
+        }
+
+        .breadcrumb-bar {
+            padding: 13px 27px;
+            background: #e5effa;
+            color: #345779;
+            font-size: 14px;
+        }
+
+        .content {
+            min-height: calc(100vh - 145px);
+            padding: 27px;
+        }
+
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .page-heading h2 {
+            margin: 0;
+            color: #123e68;
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .page-heading h2 i {
+            color: #1976ed;
+            margin-right: 8px;
+        }
+
+        .hrm-card {
+            overflow: hidden;
+            border: 1px solid #d9e4f1;
+            border-radius: 14px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(20,60,100,.04);
+        }
+
+        .hrm-card-header {
+            padding: 16px 23px;
+            background: #e8f1fd;
+            color: #123e68;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .hrm-card-body { padding: 23px; }
+
+        .form-label {
+            color: #173f66;
+            font-weight: 500;
+        }
+
+        .form-control, .form-select {
+            min-height: 44px;
+            border: 1px solid #d6e2f0;
+            border-radius: 9px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #1976ed;
+            box-shadow: 0 0 0 .2rem rgba(25,118,237,.12);
+        }
+
+        .btn-primary {
+            background: #1976ed;
+            border-color: #1976ed;
+        }
+
+        .btn-primary:hover {
+            background: #1265cf;
+            border-color: #1265cf;
+        }
+
+        .btn-outline-secondary {
+            border-color: #d6e2f0;
+            color: #345779;
+            background: white;
+        }
+
+        .table thead th {
+            padding: 14px 12px;
+            background: #e8f1fd;
+            color: #123e68;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .table tbody td {
+            padding: 13px 12px;
+            vertical-align: middle;
+        }
+
+        .footer {
+            padding: 15px;
+            text-align: center;
+            color: #8291a4;
+            font-size: 13px;
+        }
+
+        body.sidebar-hidden .sidebar { margin-left: -292px; }
+        body.sidebar-hidden .main-wrapper { margin-left: 0; }
+
+        @@media (max-width: 768px) {
+            .sidebar { margin-left: -292px; }
+            .main-wrapper { margin-left: 0; }
+            body.mobile-sidebar-open .sidebar { margin-left: 0; }
+            .content { padding: 15px; }
+            .topbar { padding: 0 15px; }
+            .page-heading { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="bi bi-people"></i>
+            <span>HỆ THỐNG QUẢN LÝ<br />NHÂN SỰ</span>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a asp-controller="Home" asp-action="Index"
+               class="menu-item @Active("Home", "Index")">
+                <i class="bi bi-house-door"></i>
+                <span>Trang chủ</span>
+            </a>
+
+            <a asp-controller="NhanVien" asp-action="Index"
+               class="menu-item @Active("NhanVien")">
+                <i class="bi bi-people"></i>
+                <span>Quản lý nhân viên</span>
+            </a>
+
+            @if (laQuanLy)
+            {
+                <a asp-controller="PhongBan" asp-action="Index"
+                   class="menu-item @Active("PhongBan")">
+                    <i class="bi bi-building"></i>
+                    <span>Quản lý phòng ban</span>
+                </a>
+
+                <a asp-controller="ChucVu" asp-action="Index"
+                   class="menu-item @Active("ChucVu")">
+                    <i class="bi bi-briefcase"></i>
+                    <span>Quản lý chức vụ</span>
+                </a>
+            }
+
+            <a asp-controller="DonTu" asp-action="Index"
+               class="menu-item @Active("DonTu")">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Đơn từ</span>
+            </a>
+
+            @if (laQuanLy)
+            {
+                <a asp-controller="DonTu" asp-action="PheDuyet"
+                   class="menu-item @Active("DonTu", "PheDuyet")">
+                    <i class="bi bi-check2-square"></i>
+                    <span>Phê duyệt đơn từ</span>
+                </a>
+            }
+
+            <a asp-controller="ChamCong" asp-action="Index"
+               class="menu-item @Active("ChamCong")">
+                <i class="bi bi-clock-history"></i>
+                <span>Chấm công</span>
+            </a>
+
+            <a asp-controller="Luong" asp-action="Index"
+               class="menu-item @Active("Luong")">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Tiền lương</span>
+            </a>
+
+            @if (laQuanLy)
+            {
+                <a asp-controller="BaoCao" asp-action="Index"
+                   class="menu-item @Active("BaoCao")">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Báo cáo</span>
+                </a>
+            }
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="topbar">
+            <button type="button" class="menu-toggle" id="btnToggle">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="topbar-right">
+                <i class="bi bi-bell"></i>
+
+                <div class="user-info">
+                    <i class="bi bi-person-circle"></i>
+
+                    @if (daDangNhap)
+                    {
+                        <span>@maNV</span>
+                        <a asp-controller="Account" asp-action="Logout"
+                           class="btn btn-sm btn-outline-secondary">
+                            Đăng xuất
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login">
+                            Đăng nhập
+                        </a>
+                    }
+                </div>
+            </div>
+        </header>
+
+        <div class="breadcrumb-bar">
+            <i class="bi bi-house-door"></i>
+            / @ViewData["Title"]
+        </div>
+
+        <main class="content">
+            @RenderBody()
+        </main>
+
+        <footer class="footer">
+            © 2026 - HỆ THỐNG QUẢN LÝ NHÂN SỰ TOCOTOCO
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById("btnToggle").addEventListener("click", function () {
+            if (window.innerWidth <= 768) {
+                document.body.classList.toggle("mobile-sidebar-open");
+            } else {
+                document.body.classList.toggle("sidebar-hidden");
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

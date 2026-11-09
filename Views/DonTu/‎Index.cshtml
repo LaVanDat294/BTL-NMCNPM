@@ -1,38 +1,38 @@
 ﻿
-@model IEnumerable<HRM_Tocotoco.Models.DonTu>
+@model IEnumerable<NMCNPM.Models.DonTu>
 
 @{
-    ViewData["Title"] = "Danh sách đơn từ";
+    ViewData["Title"] = "Quản lý đơn từ";
 }
 
-<div class="container mt-4">
+<div class="page-heading">
+    <h2><i class="bi bi-file-earmark-text"></i> Danh sách đơn từ của tôi</h2>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>QUẢN LÝ ĐƠN TỪ</h2>
+    <a asp-controller="DonTu" asp-action="TaoDon"
+       class="btn btn-primary px-4 py-2">
+        <i class="bi bi-plus-lg"></i> Tạo đơn mới
+    </a>
+</div>
 
-        <a asp-controller="DonTu"
-           asp-action="TaoDon"
-           class="btn btn-primary">
-            + Tạo đơn mới
-        </a>
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show">
+        @TempData["ThongBao"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="hrm-card">
+    <div class="hrm-card-header">
+        <i class="bi bi-list-ul"></i> Lịch sử gửi đơn
     </div>
 
-    @if (TempData["ThongBao"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["ThongBao"]
-        </div>
-    }
-
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            Danh sách đơn của tôi
-        </div>
-
-        <div class="card-body table-responsive">
+    <div class="hrm-card-body">
+        <div class="table-responsive">
             <table class="table table-bordered table-hover align-middle">
-                <thead class="table-light">
+                <thead>
                     <tr>
+                        <th>STT</th>
                         <th>Mã đơn</th>
                         <th>Loại đơn</th>
                         <th>Ngày gửi</th>
@@ -41,50 +41,43 @@
                         <th>Người duyệt</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @if (Model != null && Model.Any())
                     {
+                        int stt = 1;
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.sMaDon</td>
+                                <td>@stt</td>
+                                <td><strong>@item.sMaDon</strong></td>
                                 <td>@item.sLoaiDon</td>
-                                <td>
-                                    @item.dNgayGui?.ToString("dd/MM/yyyy HH:mm")
-                                </td>
+                                <td>@item.dNgayGui.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td>@item.sLyDo</td>
                                 <td>
-                                    @if (item.sTrangThai == "Chờ duyệt")
+                                    @if (item.sTrangThai == "Đã duyệt")
                                     {
-                                        <span class="badge bg-warning text-dark">
-                                            Chờ duyệt
-                                        </span>
+                                        <span class="badge bg-success">Đã duyệt</span>
                                     }
-                                    else if (item.sTrangThai == "Đã duyệt")
+                                    else if (item.sTrangThai == "Từ chối")
                                     {
-                                        <span class="badge bg-success">
-                                            Đã duyệt
-                                        </span>
+                                        <span class="badge bg-danger">Từ chối</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">
-                                            Từ chối
-                                        </span>
+                                        <span class="badge bg-warning text-dark">Chờ duyệt</span>
                                     }
                                 </td>
-                                <td>
-                                    @(item.sTenNguoiDuyet ?? "Chưa có")
-                                </td>
+                                <td>@(string.IsNullOrEmpty(item.sTenNguoiDuyet) ? "Chưa có" : item.sTenNguoiDuyet)</td>
                             </tr>
+                            stt++;
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center">
-                                Bạn chưa có đơn từ nào.
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                Bạn chưa gửi đơn từ nào.
                             </td>
                         </tr>
                     }
@@ -92,5 +85,4 @@
             </table>
         </div>
     </div>
-
 </div>

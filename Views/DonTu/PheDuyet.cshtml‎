@@ -1,121 +1,110 @@
 ﻿
-@model IEnumerable<HRM_Tocotoco.Models.DonTu>
+@model IEnumerable<NMCNPM.Models.DonTu>
 
 @{
     ViewData["Title"] = "Phê duyệt đơn từ";
 }
 
-<div class="container mt-4">
+<div class="page-heading">
+    <h2><i class="bi bi-check2-square"></i> Phê duyệt đơn từ</h2>
+</div>
 
-    <h2 class="mb-4">PHÊ DUYỆT ĐƠN TỪ</h2>
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show">
+        @TempData["ThongBao"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-    @if (TempData["ThongBao"] != null)
-    {
-        <div class="alert alert-info">
-            @TempData["ThongBao"]
-        </div>
-    }
+<div class="hrm-card">
+    <div class="hrm-card-header">
+        <i class="bi bi-hourglass-split"></i> Danh sách đơn chờ phê duyệt
+    </div>
 
-    <div class="card shadow-sm">
-
-        <div class="card-header bg-dark text-white">
-            Danh sách đơn đang chờ duyệt
-        </div>
-
-        <div class="card-body table-responsive">
-
-            <table class="table table-bordered table-hover align-middle">
-
-                <thead class="table-light">
+    <div class="hrm-card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
                     <tr>
+                        <th>STT</th>
                         <th>Mã đơn</th>
-                        <th>Mã nhân viên</th>
-                        <th>Tên nhân viên</th>
+                        <th>Nhân viên</th>
                         <th>Loại đơn</th>
                         <th>Ngày gửi</th>
                         <th>Lý do</th>
-                        <th style="min-width: 190px;">Thao tác</th>
+                        <th>Trạng thái</th>
+                        <th style="min-width: 160px;">Thao tác</th>
                     </tr>
                 </thead>
 
                 <tbody>
-
                     @if (Model != null && Model.Any())
                     {
+                        int stt = 1;
+
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.sMaDon</td>
-                                <td>@item.FK_sMaNV</td>
-                                <td>@item.sTenNguoiTao</td>
-                                <td>@item.sLoaiDon</td>
-
+                                <td>@stt</td>
+                                <td><strong>@item.sMaDon</strong></td>
                                 <td>
-                                    @item.dNgayGui?.ToString("dd/MM/yyyy HH:mm")
+                                    <div>@item.sTenNguoiTao</div>
+                                    <small class="text-muted">@item.FK_sMaNV</small>
                                 </td>
-
+                                <td>@item.sLoaiDon</td>
+                                <td>@item.dNgayGui.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td>@item.sLyDo</td>
-
                                 <td>
-                                    <div class="d-flex gap-2">
+                                    <span class="badge bg-warning text-dark">
+                                        Chờ duyệt
+                                    </span>
+                                </td>
+                                <td>
+                                    <form asp-controller="DonTu"
+                                          asp-action="XuLyDon"
+                                          method="post"
+                                          class="d-flex flex-column gap-2">
 
-                                        <form asp-action="XuLyDon"
-                                              asp-controller="DonTu"
-                                              method="post">
+                                        @Html.AntiForgeryToken()
 
-                                            <input type="hidden"
-                                                   name="maDon"
-                                                   value="@item.sMaDon" />
+                                        <input type="hidden"
+                                               name="sMaDon"
+                                               value="@item.sMaDon" />
 
-                                            <input type="hidden"
-                                                   name="trangThai"
-                                                   value="Đã duyệt" />
+                                        <button type="submit"
+                                                name="sTrangThai"
+                                                value="Đã duyệt"
+                                                class="btn btn-success btn-sm"
+                                                onclick="return confirm('Bạn có chắc chắn muốn duyệt đơn này?')">
+                                            <i class="bi bi-check-lg"></i> Duyệt
+                                        </button>
 
-                                            <button type="submit"
-                                                    class="btn btn-success btn-sm"
-                                                    onclick="return confirm('Bạn có chắc chắn muốn phê duyệt đơn này?')">
-                                                Duyệt
-                                            </button>
-                                        </form>
-
-                                        <form asp-action="XuLyDon"
-                                              asp-controller="DonTu"
-                                              method="post">
-
-                                            <input type="hidden"
-                                                   name="maDon"
-                                                   value="@item.sMaDon" />
-
-                                            <input type="hidden"
-                                                   name="trangThai"
-                                                   value="Từ chối" />
-
-                                            <button type="submit"
-                                                    class="btn btn-danger btn-sm"
-                                                    onclick="return confirm('Bạn có chắc chắn muốn từ chối đơn này?')">
-                                                Từ chối
-                                            </button>
-                                        </form>
-
-                                    </div>
+                                        <button type="submit"
+                                                name="sTrangThai"
+                                                value="Từ chối"
+                                                class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Bạn có chắc chắn muốn từ chối đơn này?')">
+                                            <i class="bi bi-x-lg"></i> Từ chối
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
+
+                            stt++;
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center">
-                                Hiện không có đơn nào chờ duyệt.
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-check-circle fs-2 d-block mb-2"></i>
+                                Hiện không có đơn nào cần phê duyệt.
                             </td>
                         </tr>
                     }
-
                 </tbody>
-
             </table>
-
         </div>
     </div>
-
 </div>

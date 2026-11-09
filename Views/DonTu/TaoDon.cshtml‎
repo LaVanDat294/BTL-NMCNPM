@@ -1,85 +1,87 @@
 ﻿
-@model HRM_Tocotoco.Models.DonTu
+@model NMCNPM.Models.DonTu
 
 @{
-    ViewData["Title"] = "Tạo đơn từ";
+    ViewData["Title"] = "Tạo đơn từ mới";
 }
 
-<div class="container mt-4">
+<div class="page-heading">
+    <h2><i class="bi bi-file-earmark-plus"></i> Tạo đơn từ mới</h2>
 
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">TẠO ĐƠN TỪ</h4>
-        </div>
+    <a asp-controller="DonTu" asp-action="Index"
+       class="btn btn-outline-secondary px-4 py-2">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+</div>
 
-        <div class="card-body">
+<div class="hrm-card">
+    <div class="hrm-card-header">
+        <i class="bi bi-card-text"></i> Thông tin đơn từ
+    </div>
 
-            <form asp-controller="DonTu"
-                  asp-action="TaoDon"
-                  method="post">
+    <div class="hrm-card-body">
+        <form asp-controller="DonTu" asp-action="TaoDon" method="post">
+            @Html.AntiForgeryToken()
 
-                @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly"
+                 class="alert alert-danger"></div>
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3">
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">
-                        Loại đơn
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label asp-for="sLoaiDon" class="form-label">
+                        Loại đơn <span class="text-danger">(*)</span>
                     </label>
 
-                    <select asp-for="sLoaiDon"
-                            class="form-select">
+                    <select asp-for="sLoaiDon" class="form-select">
                         <option value="">-- Chọn loại đơn --</option>
-                        <option value="Nghỉ phép">Đơn xin nghỉ phép</option>
-                        <option value="Đổi ca">Đơn xin đổi ca</option>
-                        <option value="Giải trình">Đơn giải trình</option>
+                        <option value="Nghỉ phép">Nghỉ phép</option>
+                        <option value="Đổi ca">Đổi ca</option>
+                        <option value="Giải trình">Giải trình</option>
                     </select>
 
                     <span asp-validation-for="sLoaiDon"
-                          class="text-danger">
-                    </span>
+                          class="text-danger"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">
-                        Lý do / Nội dung đơn
+                <div class="col-md-6">
+                    <label class="form-label">Ngày gửi đơn</label>
+                    <input type="text" class="form-control"
+                           value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")"
+                           readonly />
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="sLyDo" class="form-label">
+                        Lý do <span class="text-danger">(*)</span>
                     </label>
 
                     <textarea asp-for="sLyDo"
                               class="form-control"
-                              rows="5"
-                              maxlength="500"
-                              placeholder="Nhập lý do gửi đơn...">
-                    </textarea>
+                              rows="6"
+                              placeholder="Nhập nội dung và lý do gửi đơn..."></textarea>
 
                     <span asp-validation-for="sLyDo"
-                          class="text-danger">
-                    </span>
+                          class="text-danger"></span>
                 </div>
+            </div>
 
-                <div class="alert alert-info">
-                    Sau khi gửi, đơn sẽ được chuyển đến quản lý
-                    để xem xét và phê duyệt.
-                </div>
-
-                <button type="submit"
-                        class="btn btn-success">
-                    Gửi đơn
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <button type="submit" class="btn btn-primary px-4 py-2">
+                    <i class="bi bi-send"></i> Gửi đơn
                 </button>
 
-                <a asp-controller="DonTu"
-                   asp-action="Index"
-                   class="btn btn-secondary">
-                    Quay lại
+                <button type="reset"
+                        class="btn btn-outline-secondary px-4 py-2">
+                    <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                </button>
+
+                <a asp-controller="DonTu" asp-action="Index"
+                   class="btn btn-outline-secondary px-4 py-2">
+                    Hủy
                 </a>
-
-            </form>
-
-        </div>
+            </div>
+        </form>
     </div>
-
 </div>
 
 @section Scripts {
