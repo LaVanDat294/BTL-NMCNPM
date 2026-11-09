@@ -347,19 +347,25 @@
                                 Value = "Đang làm việc"
                             },
                             new SelectListItem {
-                                Text = "Đi muộn",
-                                Value = "Đi muộn"
+                                Text = "Vắng",
+                                Value = "Vắng"
                             },
                             new SelectListItem {
-                                Text = "Vắng mặt",
-                                Value = "Vắng mặt"
+                                Text = "Đến muộn",
+                                Value = "Đến muộn"
+                            },
+                            new SelectListItem {
+                                Text = "Về sớm",
+                                Value = "Về sớm"
+                            },
+                            new SelectListItem {
+                                Text = "Đến muộn và về sớm",
+                                Value = "Đi muộn và Về sớm"
                             }
                         },
                         "Tất cả trạng thái",
-                        new
-                             {
-                            @class = "filter-control"
-                        })
+                        new { @class = "filter-control" }
+                    )
                 </div>
 
             </div>
@@ -471,6 +477,7 @@
                         <th>STT</th>
                         <th>Mã nhân viên</th>
                         <th>Họ và tên</th>
+                        <th>Phòng ban / Chi nhánh</th>
                         <th>Ngày chấm công</th>
                         <th>Giờ vào</th>
                         <th>Giờ ra</th>
@@ -501,6 +508,12 @@
                                 </td>
 
                                 <td>
+                                    @(string.IsNullOrWhiteSpace(item.TenPhongBan)
+                                        ? "--"
+                                        : item.TenPhongBan)
+                                </td>
+
+                                <td>
                                     @item.NgayChamCong.ToString("dd/MM/yyyy")
                                 </td>
 
@@ -520,29 +533,56 @@
                                     @item.SoGioLam giờ
                                 </td>
 
+
                                 <td>
                                     @{
                                         string trangThai = item.TrangThai ?? "";
                                         string badgeClass = "badge-info";
 
-                                        if (trangThai.Contains("hoàn thành"))
+                                        bool vang = trangThai == "Vắng"
+                                                    || trangThai == "Vắng mặt";
+
+                                        bool denMuon = trangThai == "Đi muộn"
+                                                       || item.TrangThaiVao == "Đến muộn";
+
+                                        bool veSom = trangThai == "Về sớm"
+                                                     || item.TrangThaiRa == "Về sớm"
+                                                     || item.TrangThaiRa == "Ra về sớm";
+
+                                        bool ketHop = trangThai == "Đi muộn và Về sớm";
+
+                                        if (vang)
+                                        {
+                                            trangThai = "Vắng";
+                                            badgeClass = "badge-danger";
+                                        }
+                                        else if (ketHop || (denMuon && veSom))
+                                        {
+                                            trangThai = "Đi muộn và Về sớm";
+                                            badgeClass = "badge-danger";
+                                        }
+                                        else if (denMuon)
+                                        {
+                                            trangThai = "Đến muộn";
+                                            badgeClass = "badge-warning";
+                                        }
+                                        else if (veSom)
+                                        {
+                                            trangThai = "Về sớm";
+                                            badgeClass = "badge-warning";
+                                        }
+                                        else if (trangThai == "Đã hoàn thành")
                                         {
                                             badgeClass = "badge-success";
                                         }
-                                        else if (trangThai.Contains("muộn"))
+                                        else if (trangThai == "Đang làm việc")
                                         {
-                                            badgeClass = "badge-warning";
-                                        }
-                                        else if (trangThai.Contains("vắng"))
-                                        {
-                                            badgeClass = "badge-danger";
+                                            badgeClass = "badge-info";
                                         }
                                     }
 
                                     <span class="status-badge @badgeClass">
-                                        @(string.IsNullOrWhiteSpace(item.TrangThai)
-                                            ? "--"
-                                            : item.TrangThai)
+                                        @(string.IsNullOrWhiteSpace(trangThai) ? "--" : trangThai)
                                     </span>
                                 </td>
 
@@ -559,7 +599,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="9" class="empty-message">
+                            <td colspan="10" class="empty-message">
                                 Không tìm thấy dữ liệu chấm công phù hợp.
                             </td>
                         </tr>

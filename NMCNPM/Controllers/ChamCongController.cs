@@ -122,7 +122,8 @@ namespace NMCNPM.Controllers
                     gioVao = chamCong.GioVao.HasValue
                         ? chamCong.GioVao.Value.ToString("HH:mm:ss")
                         : "",
-                    trangThai = chamCong.TrangThai
+                    trangThai = chamCong.TrangThai,
+                    trangThaiVao = chamCong.TrangThaiVao
                 }
             });
         }
@@ -185,7 +186,9 @@ namespace NMCNPM.Controllers
                         ? chamCong.GioRa.Value.ToString("HH:mm:ss")
                         : "",
                     soGioLam = chamCong.SoGioLam,
-                    trangThai = chamCong.TrangThai
+                    trangThai = chamCong.TrangThai,
+                    trangThaiVao = chamCong.TrangThaiVao,
+                    trangThaiRa = chamCong.TrangThaiRa
                 }
             });
         }
@@ -433,30 +436,49 @@ namespace NMCNPM.Controllers
                     }
 
                     // Lấy lịch sử 7 ngày gần nhất
-                    string sqlLichSu = @"
-                        SELECT
-                            sMaChamCong,
-                            FK_sMaNV,
-                            dNgayChamCong,
-                            dGioVao,
-                            dGioRa,
-                            iSoGioLam,
-                            sTrangThai,
-                            sGhiChu
-                        FROM tbl_ChamCong
-                        WHERE FK_sMaNV = @MaNV
-                          AND dNgayChamCong >= DATEADD(
-                              DAY, -6, CONVERT(date, GETDATE()))
-                        ORDER BY dNgayChamCong DESC";
+                    // =====================================================
+                    // LẤY LỊCH SỬ CHẤM CÔNG 7 NGÀY GẦN NHẤT
+                    // =====================================================
 
-                    using (SqlCommand cmd =
-                        new SqlCommand(sqlLichSu, conn))
+                    DateTime ngayHienTai = DateTime.Today;
+                    DateTime ngayBatDau = ngayHienTai.AddDays(-6);
+                    DateTime ngayKetThuc = ngayHienTai.AddDays(1);
+
+                    string sqlLichSu = @"
+    SELECT
+        sMaChamCong,
+        FK_sMaNV,
+        dNgayChamCong,
+        dGioVao,
+        dGioRa,
+        iSoGioLam,
+        sTrangThai,
+        sTrangThaiVao,
+        sTrangThaiRa,
+        sGhiChu
+    FROM tbl_ChamCong
+    WHERE FK_sMaNV = @MaNV
+      AND dNgayChamCong >= @NgayBatDau
+      AND dNgayChamCong < @NgayKetThuc
+    ORDER BY dNgayChamCong DESC";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlLichSu, conn))
                     {
                         cmd.Parameters.Add(
                             "@MaNV",
                             SqlDbType.VarChar,
                             20
                         ).Value = maNV;
+
+                        cmd.Parameters.Add(
+                            "@NgayBatDau",
+                            SqlDbType.Date
+                        ).Value = ngayBatDau;
+
+                        cmd.Parameters.Add(
+                            "@NgayKetThuc",
+                            SqlDbType.Date
+                        ).Value = ngayKetThuc;
 
                         using (SqlDataReader rd = cmd.ExecuteReader())
                         {
@@ -468,7 +490,67 @@ namespace NMCNPM.Controllers
                             }
                         }
                     }
+
+                    // =====================================================
+                    // TẠO TRẠNG THÁI VẮNG TRONG BỘ NHỚ
+                    // Không thêm bản ghi vào database
+                    // =====================================================
+
+                    // Lưu những ngày đã có dữ liệu chấm công
+                    HashSet<DateTime> danhSachNgayDaChamCong =
+                        new HashSet<DateTime>();
+
+                    foreach (ChamCong item in model.LichSu7Ngay)
+                    {
+                        danhSachNgayDaChamCong.Add(
+                            item.NgayChamCong.Date
+                        );
+                    }
+
+                    // Nếu chưa đến 17:00 thì chưa tính hôm nay là vắng
+                    DateTime ngayCuoiCungTinhVang = ngayHienTai;
+
+                    if (DateTime.Now.TimeOfDay < new TimeSpan(17, 0, 0))
+                    {
+                        ngayCuoiCungTinhVang = ngayHienTai.AddDays(-1);
+                    }
+
+                    // Duyệt 7 ngày gần nhất
+                    for (DateTime ngay = ngayBatDau;
+                         ngay <= ngayCuoiCungTinhVang;
+                         ngay = ngay.AddDays(1))
+                    {
+                        // Chủ nhật không phải ngày làm việc
+                        if (ngay.DayOfWeek == DayOfWeek.Sunday)
+                        {
+                            continue;
+                        }
+
+                        // Nếu ngày chưa có dữ liệu thì tạo trạng thái Vắng
+                        if (!danhSachNgayDaChamCong.Contains(ngay.Date))
+                        {
+                            ChamCong chamCongVang = new ChamCong();
+
+                            chamCongVang.NgayChamCong = ngay;
+                            chamCongVang.GioVao = null;
+                            chamCongVang.GioRa = null;
+                            chamCongVang.SoGioLam = 0;
+                            chamCongVang.TrangThai = "Vắng";
+                            chamCongVang.GhiChu = "Không có dữ liệu chấm công";
+
+                            chamCongVang.TrangThaiVao = null;
+                            chamCongVang.TrangThaiRa = null;
+
+                            model.LichSu7Ngay.Add(chamCongVang);
+                        }
+                    }
+
+                    // Sắp xếp ngày mới nhất lên đầu
+                    model.LichSu7Ngay = model.LichSu7Ngay
+                        .OrderByDescending(x => x.NgayChamCong)
+                        .ToList();
                 }
+
 
                 thongBao = "Lấy thông tin chấm công thành công.";
 
@@ -504,51 +586,35 @@ namespace NMCNPM.Controllers
 
             try
             {
-                using (SqlConnection conn =
-                    new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    // Kiểm tra nhân viên đã chấm công hôm nay chưa
                     string sqlKiemTra = @"
                 SELECT COUNT(*)
                 FROM tbl_ChamCong
                 WHERE FK_sMaNV = @MaNV
                   AND dNgayChamCong = @NgayChamCong";
 
-                    using (SqlCommand cmd =
-                        new SqlCommand(sqlKiemTra, conn))
+                    using (SqlCommand cmd = new SqlCommand(sqlKiemTra, conn))
                     {
-                        cmd.Parameters.Add(
-                            "@MaNV",
-                            SqlDbType.VarChar,
-                            20
-                        ).Value = maNV;
+                        cmd.Parameters.Add("@MaNV", SqlDbType.VarChar, 20).Value = maNV;
+                        cmd.Parameters.Add("@NgayChamCong", SqlDbType.Date).Value = DateTime.Today;
 
-                        cmd.Parameters.Add(
-                            "@NgayChamCong",
-                            SqlDbType.Date
-                        ).Value = DateTime.Today;
-
-                        int soLuong =
-                            Convert.ToInt32(cmd.ExecuteScalar());
+                        int soLuong = Convert.ToInt32(cmd.ExecuteScalar());
 
                         if (soLuong > 0)
                         {
-                            thongBao =
-                                "Bạn đã có bản ghi chấm công hôm nay.";
-
+                            thongBao = "Bạn đã có bản ghi chấm công hôm nay.";
                             return false;
                         }
                     }
 
                     DateTime gioVao = DateTime.Now;
 
-                    // Quy định giờ bắt đầu: 09:00
                     TimeSpan gioBatDau = new TimeSpan(9, 0, 0);
 
-                    // Xác định trạng thái
-                    string trangThai =
+                    string trangThaiVao =
                         gioVao.TimeOfDay > gioBatDau
                         ? "Đến muộn"
                         : "Đúng giờ";
@@ -566,6 +632,8 @@ namespace NMCNPM.Controllers
                     dGioRa,
                     iSoGioLam,
                     sTrangThai,
+                    sTrangThaiVao,
+                    sTrangThaiRa,
                     sGhiChu
                 )
                 VALUES
@@ -576,40 +644,19 @@ namespace NMCNPM.Controllers
                     @GioVao,
                     NULL,
                     0,
-                    @TrangThai,
+                    N'Đang làm việc',
+                    @TrangThaiVao,
+                    NULL,
                     NULL
                 )";
 
-                    using (SqlCommand cmd =
-                        new SqlCommand(sqlThem, conn))
+                    using (SqlCommand cmd = new SqlCommand(sqlThem, conn))
                     {
-                        cmd.Parameters.Add(
-                            "@MaChamCong",
-                            SqlDbType.VarChar,
-                            20
-                        ).Value = maChamCong;
-
-                        cmd.Parameters.Add(
-                            "@MaNV",
-                            SqlDbType.VarChar,
-                            20
-                        ).Value = maNV;
-
-                        cmd.Parameters.Add(
-                            "@NgayChamCong",
-                            SqlDbType.Date
-                        ).Value = DateTime.Today;
-
-                        cmd.Parameters.Add(
-                            "@GioVao",
-                            SqlDbType.DateTime
-                        ).Value = gioVao;
-
-                        cmd.Parameters.Add(
-                            "@TrangThai",
-                            SqlDbType.NVarChar,
-                            50
-                        ).Value = trangThai;
+                        cmd.Parameters.Add("@MaChamCong", SqlDbType.VarChar, 20).Value = maChamCong;
+                        cmd.Parameters.Add("@MaNV", SqlDbType.VarChar, 20).Value = maNV;
+                        cmd.Parameters.Add("@NgayChamCong", SqlDbType.Date).Value = DateTime.Today;
+                        cmd.Parameters.Add("@GioVao", SqlDbType.DateTime).Value = gioVao;
+                        cmd.Parameters.Add("@TrangThaiVao", SqlDbType.NVarChar, 50).Value = trangThaiVao;
 
                         cmd.ExecuteNonQuery();
                     }
@@ -622,12 +669,13 @@ namespace NMCNPM.Controllers
                         GioVao = gioVao,
                         GioRa = null,
                         SoGioLam = 0,
-                        TrangThai = trangThai
+                        TrangThai = "Đang làm việc",
+                        TrangThaiVao = trangThaiVao,
+                        TrangThaiRa = null
                     };
                 }
 
                 thongBao = "Chấm công vào thành công.";
-
                 return true;
             }
             catch (SqlException ex)
@@ -680,45 +728,47 @@ namespace NMCNPM.Controllers
                     TimeSpan gioKetThuc = new TimeSpan(17, 0, 0);
 
                     string sql = @"
-                UPDATE tbl_ChamCong
-                SET
-                    dGioRa = @GioRa,
-                    iSoGioLam = DATEDIFF(HOUR, dGioVao, @GioRa),
-                    sTrangThai = CASE
-                        WHEN CAST(@GioRa AS time) < @GioKetThuc
-                            THEN N'Ra về sớm'
-                        ELSE sTrangThai
-                    END
-                WHERE FK_sMaNV = @MaNV
-                  AND dNgayChamCong = @NgayChamCong
-                  AND dGioVao IS NOT NULL
-                  AND dGioRa IS NULL";
+                        UPDATE tbl_ChamCong
+                        SET
+                            dGioRa = @GioRa,
+
+                            iSoGioLam =
+                                DATEDIFF(MINUTE, dGioVao, @GioRa) / 60,
+
+                            sTrangThai = 
+                                CASE
+                                    -- Trường hợp 1: Đi muộn VÀ Về sớm
+                                    WHEN CAST(dGioVao AS TIME) > '08:00:00' AND CAST(@GioRa AS TIME) < '17:00:00'
+                                        THEN N'Đi muộn và Về sớm'
+
+                                    -- Trường hợp 2: Đi muộn (nhưng về đúng giờ)
+                                    WHEN CAST(dGioVao AS TIME) > '08:00:00'
+                                        THEN N'Đi muộn'
+
+                                    -- Trường hợp 3: Về sớm (nhưng đi đúng giờ)
+                                    WHEN CAST(@GioRa AS TIME) < '17:00:00'
+                                        THEN N'Về sớm'
+
+                                    -- Trường hợp 4: Đi đúng giờ VÀ về đúng giờ
+                                    ELSE N'Đã hoàn thành'
+                                END
+
+                        WHERE FK_sMaNV = @MaNV
+                          AND dNgayChamCong = @NgayChamCong
+                          AND dGioVao IS NOT NULL
+                          AND dGioRa IS NULL";
+
 
                     int soDong;
 
                     using (SqlCommand cmd =
                         new SqlCommand(sql, conn))
                     {
-                        cmd.Parameters.Add(
-                            "@GioRa",
-                            SqlDbType.DateTime
-                        ).Value = gioRa;
+                        cmd.Parameters.Add("@GioRa", SqlDbType.DateTime).Value = gioRa;
 
-                        cmd.Parameters.Add(
-                            "@GioKetThuc",
-                            SqlDbType.Time
-                        ).Value = gioKetThuc;
+                        cmd.Parameters.Add("@MaNV", SqlDbType.VarChar, 20).Value = maNV;
 
-                        cmd.Parameters.Add(
-                            "@MaNV",
-                            SqlDbType.VarChar,
-                            20
-                        ).Value = maNV;
-
-                        cmd.Parameters.Add(
-                            "@NgayChamCong",
-                            SqlDbType.Date
-                        ).Value = DateTime.Today;
+                        cmd.Parameters.Add("@NgayChamCong", SqlDbType.Date).Value = DateTime.Today;
 
                         soDong = cmd.ExecuteNonQuery();
                     }
@@ -805,116 +855,217 @@ namespace NMCNPM.Controllers
 
             try
             {
-                StringBuilder sql = new StringBuilder(@"
-            SELECT
-                sMaChamCong,
-                FK_sMaNV,
-                dNgayChamCong,
-                dGioVao,
-                dGioRa,
-                iSoGioLam,
-                sTrangThai,
-                sGhiChu
-            FROM tbl_ChamCong
-            WHERE FK_sMaNV = @MaNV
-        ");
-
-                using (SqlConnection conn =
-                    new SqlConnection(connectionString))
-
-                using (SqlCommand cmd = new SqlCommand())
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    cmd.Connection = conn;
-
-                    // Chỉ lấy lịch sử của nhân viên đang đăng nhập
-                    cmd.Parameters.Add(
-                        "@MaNV",
-                        SqlDbType.VarChar,
-                        20
-                    ).Value = maNV;
-
-                    // Lọc từ ngày
-                    if (boLoc.TuNgay.HasValue)
-                    {
-                        sql.Append(
-                            " AND dNgayChamCong >= @TuNgay");
-
-                        cmd.Parameters.Add(
-                            "@TuNgay",
-                            SqlDbType.Date
-                        ).Value = boLoc.TuNgay.Value.Date;
-                    }
-
-                    // Lọc đến ngày
-                    if (boLoc.DenNgay.HasValue)
-                    {
-                        sql.Append(
-                            " AND dNgayChamCong < @DenNgay");
-
-                        cmd.Parameters.Add(
-                            "@DenNgay",
-                            SqlDbType.Date
-                        ).Value = boLoc.DenNgay.Value.Date.AddDays(1);
-                    }
-
-                    // Lọc trạng thái
-                    if (!string.IsNullOrWhiteSpace(boLoc.TrangThai))
-                    {
-                        sql.Append(
-                            " AND sTrangThai = @TrangThai");
-
-                        cmd.Parameters.Add(
-                            "@TrangThai",
-                            SqlDbType.NVarChar,
-                            50
-                        ).Value = boLoc.TrangThai.Trim();
-                    }
-
-                    // Sắp xếp ngày mới nhất lên đầu
-                    sql.Append(@"
-                ORDER BY
-                    dNgayChamCong DESC,
-                    dGioVao DESC
-            ");
-
-                    cmd.CommandText = sql.ToString();
-
                     conn.Open();
 
-                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    // =========================================
+                    // 1. LẤY NGÀY VÀO LÀM CỦA NHÂN VIÊN
+                    // =========================================
+
+                    DateTime ngayVaoLam;
+
+                    string sqlNhanVien = @"
+                SELECT dNgayVaoLam
+                FROM tbl_NhanVien
+                WHERE sMaNV = @MaNV";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlNhanVien, conn))
                     {
-                        while (rd.Read())
+                        cmd.Parameters.Add(
+                            "@MaNV",
+                            SqlDbType.VarChar,
+                            20
+                        ).Value = maNV;
+
+                        object ketQua = cmd.ExecuteScalar();
+
+                        if (ketQua == null || ketQua == DBNull.Value)
                         {
-                            danhSach.Add(
-                                ChuyenDuLieuChamCong(rd)
-                            );
+                            thongBao = "Không tìm thấy ngày vào làm của nhân viên.";
+                            return false;
                         }
+
+                        ngayVaoLam = Convert.ToDateTime(ketQua).Date;
+                    }
+
+                    // =========================================
+                    // 2. XÁC ĐỊNH KHOẢNG THỜI GIAN
+                    // =========================================
+
+                    DateTime ngayHienTai = DateTime.Today;
+
+                    DateTime ngayTu = boLoc.TuNgay.HasValue
+                        ? boLoc.TuNgay.Value.Date
+                        : ngayVaoLam;
+
+                    DateTime ngayDen = boLoc.DenNgay.HasValue
+                        ? boLoc.DenNgay.Value.Date
+                        : ngayHienTai;
+
+                    // Không tính trước ngày nhân viên vào làm.
+                    if (ngayTu < ngayVaoLam)
+                    {
+                        ngayTu = ngayVaoLam;
+                    }
+
+                    // Không lấy ngày trong tương lai.
+                    if (ngayDen > ngayHienTai)
+                    {
+                        ngayDen = ngayHienTai;
+                    }
+
+                    if (ngayTu > ngayDen)
+                    {
+                        thongBao = "Khoảng thời gian tìm kiếm không hợp lệ.";
+                        return false;
+                    }
+
+                    // =========================================
+                    // 3. LẤY DỮ LIỆU CHẤM CÔNG THỰC TẾ
+                    // =========================================
+
+                    string sqlChamCong = @"
+                SELECT
+                    sMaChamCong,
+                    FK_sMaNV,
+                    dNgayChamCong,
+                    dGioVao,
+                    dGioRa,
+                    iSoGioLam,
+                    sTrangThai,
+                    sTrangThaiVao,
+                    sTrangThaiRa,
+                    sGhiChu
+                FROM tbl_ChamCong
+                WHERE FK_sMaNV = @MaNV
+                  AND dNgayChamCong >= @NgayTu
+                  AND dNgayChamCong < @NgayDen
+                ORDER BY dNgayChamCong DESC";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlChamCong, conn))
+                    {
+                        cmd.Parameters.Add(
+                            "@MaNV",
+                            SqlDbType.VarChar,
+                            20
+                        ).Value = maNV;
+
+                        cmd.Parameters.Add(
+                            "@NgayTu",
+                            SqlDbType.Date
+                        ).Value = ngayTu;
+
+                        cmd.Parameters.Add(
+                            "@NgayDen",
+                            SqlDbType.Date
+                        ).Value = ngayDen.AddDays(1);
+
+                        using (SqlDataReader rd = cmd.ExecuteReader())
+                        {
+                            while (rd.Read())
+                            {
+                                danhSach.Add(ChuyenDuLieuChamCong(rd));
+                            }
+                        }
+                    }
+
+                    // =========================================
+                    // 4. TỰ ĐỘNG BỔ SUNG NGÀY VẮNG TRONG BỘ NHỚ
+                    // =========================================
+
+                    // Nếu chưa đến 17:00 thì chưa tính hôm nay là vắng.
+                    DateTime ngayKetThucTinhVang = ngayDen;
+
+                    if (ngayDen == ngayHienTai &&
+                        DateTime.Now.TimeOfDay < new TimeSpan(17, 0, 0))
+                    {
+                        ngayKetThucTinhVang = ngayHienTai.AddDays(-1);
+                    }
+
+                    // Tạo danh sách các ngày đã có bản ghi thực tế.
+                    HashSet<DateTime> ngayDaChamCong =
+                        new HashSet<DateTime>();
+
+                    foreach (ChamCong item in danhSach)
+                    {
+                        ngayDaChamCong.Add(item.NgayChamCong.Date);
+                    }
+
+                    // Duyệt từng ngày làm việc.
+                    for (DateTime ngay = ngayTu;
+                         ngay <= ngayKetThucTinhVang;
+                         ngay = ngay.AddDays(1))
+                    {
+                        // Chủ nhật không phải ngày làm việc.
+                        if (ngay.DayOfWeek == DayOfWeek.Sunday)
+                        {
+                            continue;
+                        }
+
+                        // Nếu đã có bản ghi thì không tính vắng.
+                        if (ngayDaChamCong.Contains(ngay))
+                        {
+                            continue;
+                        }
+
+                        // Tạo đối tượng vắng trong bộ nhớ.
+                        // Không INSERT xuống database.
+                        danhSach.Add(new ChamCong
+                        {
+                            MaChamCong = "",
+                            MaNV = maNV,
+                            NgayChamCong = ngay,
+                            GioVao = null,
+                            GioRa = null,
+                            SoGioLam = 0,
+                            TrangThai = "Vắng",
+                            TrangThaiVao = "",
+                            TrangThaiRa = "",
+                            GhiChu = "Không có dữ liệu chấm công"
+                        });
                     }
                 }
 
                 // =========================================
-                // TÍNH CÁC CHỈ SỐ THỐNG KÊ
+                // 5. LỌC TRẠNG THÁI
                 // =========================================
 
-                // Số ngày có bản ghi chấm công
+                if (!string.IsNullOrWhiteSpace(boLoc.TrangThai))
+                {
+                    string trangThaiLoc = boLoc.TrangThai.Trim();
+
+                    danhSach = danhSach.Where(x =>
+                        x.TrangThai == trangThaiLoc ||
+                        x.TrangThaiVao == trangThaiLoc ||
+                        x.TrangThaiRa == trangThaiLoc
+                    ).ToList();
+                }
+
+                // =========================================
+                // 6. SẮP XẾP NGÀY MỚI NHẤT LÊN ĐẦU
+                // =========================================
+
+                danhSach = danhSach
+                    .OrderByDescending(x => x.NgayChamCong)
+                    .ToList();
+
+                // =========================================
+                // 7. TÍNH THỐNG KÊ
+                // =========================================
+
                 boLoc.SoNgayCong = danhSach
-                    .Select(x => x.NgayChamCong.Date)
-                    .Distinct()
-                    .Count();
+                    .Count(x => x.GioVao.HasValue);
 
-                // Số ngày đến muộn
                 boLoc.SoNgayMuon = danhSach
-                    .Count(x => x.TrangThai == "Đến muộn");
+                    .Count(x => x.TrangThaiVao == "Đến muộn");
 
-                // Số ngày ra về sớm
                 boLoc.SoNgayVeSom = danhSach
-                    .Count(x => x.TrangThai == "Ra về sớm");
+                    .Count(x => x.TrangThaiRa == "Ra về sớm");
 
-                // Số ngày vắng
                 boLoc.SoNgayNghi = danhSach
                     .Count(x => x.TrangThai == "Vắng");
 
-                // Tổng số giờ làm
                 boLoc.TongSoGioLam = danhSach
                     .Sum(x => (decimal)x.SoGioLam);
 
@@ -924,9 +1075,7 @@ namespace NMCNPM.Controllers
             }
             catch (Exception ex)
             {
-                thongBao =
-                    "Lỗi lấy lịch sử chấm công: " + ex.Message;
-
+                thongBao = "Lỗi lấy lịch sử chấm công: " + ex.Message;
                 return false;
             }
         }
@@ -948,23 +1097,26 @@ namespace NMCNPM.Controllers
             try
             {
                 StringBuilder sql = new StringBuilder(@"
-            SELECT
-                cc.sMaChamCong,
-                cc.FK_sMaNV,
-                nv.sTenNV,
-                cc.dNgayChamCong,
-                cc.dGioVao,
-                cc.dGioRa,
-                cc.iSoGioLam,
-                cc.sTrangThai,
-                cc.sGhiChu
-            FROM tbl_ChamCong cc
-            INNER JOIN tbl_NhanVien nv
-                ON cc.FK_sMaNV = nv.sMaNV
-            LEFT JOIN tbl_PhongBan pb
-                ON nv.FK_sMaPB = pb.sMaPB
-            WHERE 1 = 1
-        ");
+    SELECT
+        cc.sMaChamCong,
+        cc.FK_sMaNV,
+        cc.dNgayChamCong,
+        cc.dGioVao,
+        cc.dGioRa,
+        cc.iSoGioLam,
+        cc.sTrangThai,
+        cc.sTrangThaiVao,
+        cc.sTrangThaiRa,
+        cc.sGhiChu,
+        nv.sTenNV,
+        pb.sTenPB
+    FROM tbl_ChamCong cc
+    INNER JOIN tbl_NhanVien nv
+        ON cc.FK_sMaNV = nv.sMaNV
+    LEFT JOIN tbl_PhongBan pb
+        ON nv.FK_sMaPB = pb.sMaPB
+    WHERE 1 = 1
+");
 
                 using (SqlConnection conn =
                     new SqlConnection(connectionString))
@@ -1149,16 +1301,41 @@ namespace NMCNPM.Controllers
         private ChamCong ChuyenDuLieuChamCong(SqlDataReader rd)
         {
             int viTriTenNV = -1;
+            int viTriTenPB = -1;
+            int viTriTrangThaiVao = -1;
+            int viTriTrangThaiRa = -1;
 
-            // Kiểm tra truy vấn có trả về cột sTenNV hay không
+            // Kiểm tra các cột có tồn tại trong truy vấn hay không
             for (int i = 0; i < rd.FieldCount; i++)
             {
-                if (rd.GetName(i).Equals(
+                string tenCot = rd.GetName(i);
+
+                if (tenCot.Equals(
                     "sTenNV",
                     StringComparison.OrdinalIgnoreCase))
                 {
                     viTriTenNV = i;
-                    break;
+                }
+
+                if (tenCot.Equals(
+                    "sTenPB",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    viTriTenPB = i;
+                }
+
+                if (tenCot.Equals(
+                    "sTrangThaiVao",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    viTriTrangThaiVao = i;
+                }
+
+                if (tenCot.Equals(
+                    "sTrangThaiRa",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    viTriTrangThaiRa = i;
                 }
             }
 
@@ -1168,8 +1345,14 @@ namespace NMCNPM.Controllers
 
                 MaNV = rd["FK_sMaNV"].ToString(),
 
-                TenNV = viTriTenNV >= 0 && rd[viTriTenNV] != DBNull.Value
+                TenNV = viTriTenNV >= 0 &&
+                        rd[viTriTenNV] != DBNull.Value
                     ? rd[viTriTenNV].ToString()
+                    : "",
+
+                TenPhongBan = viTriTenPB >= 0 &&
+                              rd[viTriTenPB] != DBNull.Value
+                    ? rd[viTriTenPB].ToString()
                     : "",
 
                 NgayChamCong = Convert.ToDateTime(
@@ -1191,6 +1374,16 @@ namespace NMCNPM.Controllers
                 TrangThai = rd["sTrangThai"] == DBNull.Value
                     ? ""
                     : rd["sTrangThai"].ToString(),
+
+                TrangThaiVao = viTriTrangThaiVao >= 0 &&
+                               rd[viTriTrangThaiVao] != DBNull.Value
+                    ? rd[viTriTrangThaiVao].ToString()
+                    : null,
+
+                TrangThaiRa = viTriTrangThaiRa >= 0 &&
+                              rd[viTriTrangThaiRa] != DBNull.Value
+                    ? rd[viTriTrangThaiRa].ToString()
+                    : null,
 
                 GhiChu = rd["sGhiChu"] == DBNull.Value
                     ? ""

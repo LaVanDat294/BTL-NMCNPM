@@ -341,6 +341,26 @@
                     <select name="TrangThai" class="filter-control">
                         <option value="">Tất cả trạng thái</option>
 
+                        <option value="Vắng"
+                                @(Model.TrangThai == "Vắng" ? "selected" : "")>
+                            Vắng
+                        </option>
+
+                        <option value="Đến muộn"
+                                @(Model.TrangThai == "Đến muộn" ? "selected" : "")>
+                            Đến muộn
+                        </option>
+
+                        <option value="Về sớm"
+                                @(Model.TrangThai == "Về sớm" ? "selected" : "")>
+                            Về sớm
+                        </option>
+
+                        <option value="Đi muộn và Về sớm"
+                                @(Model.TrangThai == "Đi muộn và Về sớm" ? "selected" : "")>
+                            Đi muộn và Về sớm
+                        </option>
+
                         <option value="Đang làm việc"
                                 @(Model.TrangThai == "Đang làm việc" ? "selected" : "")>
                             Đang làm việc
@@ -349,16 +369,6 @@
                         <option value="Đã hoàn thành"
                                 @(Model.TrangThai == "Đã hoàn thành" ? "selected" : "")>
                             Đã hoàn thành
-                        </option>
-
-                        <option value="Đi muộn"
-                                @(Model.TrangThai == "Đi muộn" ? "selected" : "")>
-                            Đi muộn
-                        </option>
-
-                        <option value="Vắng mặt"
-                                @(Model.TrangThai == "Vắng mặt" ? "selected" : "")>
-                            Vắng mặt
                         </option>
                     </select>
                 </div>
@@ -458,20 +468,48 @@
                     int stt = 1;
 
                     foreach (var item in Model.DanhSachChamCong)
+                    // Xóa dấu @ trước dấu ngoặc nhọn ở đây vì đã ở trong khối code C# sẵn rồi
                     {
+                        string trangThaiHienThi = item.TrangThai ?? "";
                         string badgeClass = "status-working";
 
-                        if (item.TrangThai == "Đã hoàn thành")
+                        bool vang = trangThaiHienThi == "Vắng"
+                                    || trangThaiHienThi == "Vắng mặt";
+
+                        bool denMuon = trangThaiHienThi == "Đi muộn"
+                                       || item.TrangThaiVao == "Đến muộn";
+
+                        bool veSom = trangThaiHienThi == "Về sớm"
+                                     || item.TrangThaiRa == "Về sớm"
+                                     || item.TrangThaiRa == "Ra về sớm";
+
+                        if (vang)
+                        {
+                            trangThaiHienThi = "Vắng";
+                            badgeClass = "status-danger";
+                        }
+                        else if (denMuon && veSom)
+                        {
+                            trangThaiHienThi = "Đi muộn và Về sớm";
+                            badgeClass = "status-danger";
+                        }
+                        else if (denMuon)
+                        {
+                            trangThaiHienThi = "Đến muộn";
+                            badgeClass = "status-warning";
+                        }
+                        else if (veSom)
+                        {
+                            trangThaiHienThi = "Về sớm";
+                            badgeClass = "status-warning";
+                        }
+                        else if (trangThaiHienThi == "Đã hoàn thành")
                         {
                             badgeClass = "status-complete";
                         }
-                        else if (item.TrangThai == "Đi muộn")
+                        else if (trangThaiHienThi == "Đang làm việc")
                         {
-                            badgeClass = "status-warning";
-                        }
-                        else if (item.TrangThai == "Vắng mặt")
-                        {
-                            badgeClass = "status-danger";
+                            badgeClass = "status-working";
                         }
 
                         <tr>
@@ -483,28 +521,29 @@
 
                             <td>
                                 @(item.GioVao.HasValue
-                                    ? item.GioVao.Value.ToString("HH:mm:ss")
-                                    : "--")
+                    ? item.GioVao.Value.ToString("HH:mm:ss")
+                    : "--")
                             </td>
 
                             <td>
                                 @(item.GioRa.HasValue
-                                    ? item.GioRa.Value.ToString("HH:mm:ss")
-                                    : "--")
+                    ? item.GioRa.Value.ToString("HH:mm:ss")
+                    : "--")
                             </td>
 
                             <td>@item.SoGioLam giờ</td>
 
+                            <!-- Gợi ý: Bạn có thể đổi sang dùng biến @badgeClass cho cột trạng thái gốc nếu muốn đồng bộ màu sắc -->
                             <td>
-                                <span class="status-badge @badgeClass">
+                                <span class="status-badge">
                                     @item.TrangThai
                                 </span>
                             </td>
 
                             <td>
-                                @(string.IsNullOrWhiteSpace(item.GhiChu)
-                                    ? "--"
-                                    : item.GhiChu)
+                                <span class="status-badge @badgeClass">
+                                    @trangThaiHienThi
+                                </span>
                             </td>
                         </tr>
 
@@ -513,6 +552,15 @@
                 }
                 else
                 {
+                    <tr>
+                        <td colspan="7" class="empty-message">
+                            Không tìm thấy dữ liệu chấm công phù hợp.
+                        </td>
+                    </tr>
+
+
+
+
                     <tr>
                         <td colspan="7" class="empty-message">
                             Không tìm thấy dữ liệu chấm công phù hợp.

@@ -20,6 +20,12 @@ namespace NMCNPM.Models
 
         public string TrangThai { get; set; }
 
+        public string TrangThaiVao { get; set; }
+
+        public string TrangThaiRa { get; set; }
+
         public string GhiChu { get; set; }
+
+        public string TenPhongBan { get; set; }
     }
 }

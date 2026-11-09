@@ -457,51 +457,102 @@
                 </tr>
             </thead>
 
-            <tbody id="attendance-history-body">
-                @if (Model.LichSu7Ngay != null && Model.LichSu7Ngay.Any())
-                {
-                    foreach (var item in Model.LichSu7Ngay)
-                    {
-                        <tr>
-                            <td>
-                                @item.NgayChamCong.ToString("dd/MM/yyyy")
-                            </td>
-
-                            <td>
-                                @(item.GioVao.HasValue
-                        ? item.GioVao.Value.ToString("HH:mm:ss")
-                        : "--")
-                            </td>
-
-                            <td>
-                                @(item.GioRa.HasValue
-                        ? item.GioRa.Value.ToString("HH:mm:ss")
-                        : "--")
-                            </td>
-
-                            <td>
-                                @item.SoGioLam giờ
-                            </td>
-
-                            <td>
-                                @item.TrangThai
-                            </td>
-
-                            <td>
-                                @item.GhiChu
-                            </td>
-                        </tr>
-                    }
-                }
-                else
+            @if (Model.LichSu7Ngay != null && Model.LichSu7Ngay.Any())
+            {
+                foreach (var item in Model.LichSu7Ngay)
                 {
                     <tr>
-                        <td colspan="6">
-                            Chưa có dữ liệu chấm công trong 7 ngày gần nhất.
+                        <td>
+                            @item.NgayChamCong.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td>
+                            @item.NgayChamCong.ToString("dddd",
+                                new System.Globalization.CultureInfo("vi-VN"))
+                        </td>
+
+                        <td>
+                            @(item.GioVao.HasValue
+                    ? item.GioVao.Value.ToString("HH:mm:ss")
+                    : "--")
+                        </td>
+
+                        <td>
+                            @(item.GioRa.HasValue
+                    ? item.GioRa.Value.ToString("HH:mm:ss")
+                    : "--")
+                        </td>
+
+                        <td>
+                            @item.SoGioLam giờ
+                        </td>
+
+                        <td>
+                            @if (item.TrangThai == "Vắng")
+                            {
+                                <span class="attendance-badge badge-danger">
+                                    Vắng
+                                </span>
+                            }
+                            else if (item.TrangThai == "Đi muộn và Về sớm")
+                            {
+                                <span class="attendance-badge badge-danger">
+                                    Đi muộn và về sớm
+                                </span>
+                            }
+                            else
+                            {
+                                if (item.TrangThaiVao == "Đến muộn")
+                                {
+                                    <span class="attendance-badge badge-warning">
+                                        Đến muộn
+                                    </span>
+                                }
+                                else if (item.TrangThaiVao == "Đúng giờ")
+                                {
+                                    <span class="attendance-badge badge-success">
+                                        Đúng giờ
+                                    </span>
+                                }
+
+                                if (item.TrangThaiRa == "Về sớm")
+                                {
+                                    <span class="attendance-badge badge-warning">
+                                        Về sớm
+                                    </span>
+                                }
+                                else if (item.TrangThaiRa == "Đúng giờ")
+                                {
+                                    <span class="attendance-badge badge-success">
+                                        Đúng giờ
+                                    </span>
+                                }
+
+                                if (item.TrangThai == "Đang làm việc")
+                                {
+                                    <span class="attendance-badge badge-info">
+                                        Đang làm việc
+                                    </span>
+                                }
+                                else if (item.TrangThai == "Đã hoàn thành")
+                                {
+                                    <span class="attendance-badge badge-success">
+                                        Đã hoàn thành
+                                    </span>
+                                }
+                            }
                         </td>
                     </tr>
                 }
-            </tbody>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">
+                        Chưa có dữ liệu chấm công trong 7 ngày gần nhất.
+                    </td>
+                </tr>
+            }
 
         </table>
 

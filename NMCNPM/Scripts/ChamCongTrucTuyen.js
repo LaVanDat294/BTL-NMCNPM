@@ -1,23 +1,90 @@
-﻿// Lấy token bảo mật từ Razor
+﻿// Lấy mã bảo mật AntiForgeryToken
 function layAntiForgeryToken() {
-    const token = document.querySelector(
+    var token = document.querySelector(
         'input[name="__RequestVerificationToken"]'
     );
 
     return token ? token.value : "";
 }
 
-// Gửi yêu cầu chấm công
-async function guiYeuCauChamCong(url) {
-    const token = layAntiForgeryToken();
+// Lấy hai nút chấm công
+function layNutChamCong() {
+    return {
+        nutVao: document.querySelector(".btn-checkin"),
+        nutRa: document.querySelector(".btn-checkout")
+    };
+}
+
+// Cập nhật trạng thái hiển thị
+function capNhatTrangThai(trangThai, trangThaiVao, trangThaiRa) {
+    var statusElement = document.getElementById("attendance-status");
+
+    if (!statusElement) {
+        return;
+    }
+
+    var noiDung = trangThai || "";
+
+    if (trangThaiVao) {
+        noiDung += " - " + trangThaiVao;
+    }
+
+    if (trangThaiRa) {
+        noiDung += " - " + trangThaiRa;
+    }
+
+    var span = statusElement.querySelector("span");
+
+    if (span) {
+        span.textContent = noiDung;
+    } else {
+        statusElement.textContent = "Trạng thái: " + noiDung;
+    }
+}
+
+// Cập nhật giờ vào
+function capNhatGioVao(gioVao) {
+    var element = document.getElementById("check-in-time");
+
+    if (element) {
+        element.textContent = gioVao || "--:--:--";
+    }
+}
+
+// Cập nhật giờ ra
+function capNhatGioRa(gioRa) {
+    var element = document.getElementById("check-out-time");
+
+    if (element) {
+        element.textContent = gioRa || "--:--:--";
+    }
+}
+
+// Xử lý yêu cầu chấm công
+async function guiYeuCauChamCong(url, loaiChamCong) {
+    var token = layAntiForgeryToken();
+    var nut = layNutChamCong();
 
     if (!token) {
         alert("Không tìm thấy mã bảo mật. Vui lòng tải lại trang.");
         return;
     }
 
+    if (!nut.nutVao || !nut.nutRa) {
+        alert("Không tìm thấy nút chấm công trên giao diện.");
+        return;
+    }
+
+    // Lưu trạng thái ban đầu để khôi phục nếu có lỗi
+    var trangThaiNutVao = nut.nutVao.disabled;
+    var trangThaiNutRa = nut.nutRa.disabled;
+
+    // Khóa nút trong khi gửi yêu cầu, tránh bấm nhiều lần
+    nut.nutVao.disabled = true;
+    nut.nutRa.disabled = true;
+
     try {
-        const response = await fetch(url, {
+        var response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -28,64 +95,112 @@ async function guiYeuCauChamCong(url) {
             credentials: "same-origin"
         });
 
+        var result = await response.json();
+
         if (!response.ok) {
-            alert("Không thể gửi yêu cầu chấm công.");
+            throw new Error(
+                result.message || "Không thể gửi yêu cầu chấm công."
+            );
+        }
+
+        if (!result.success) {
+            alert(result.message || "Chấm công không thành công.");
+
+            // Khôi phục trạng thái nút nếu máy chủ từ chối
+            nut.nutVao.disabled = trangThaiNutVao;
+            nut.nutRa.disabled = trangThaiNutRa;
+
             return;
         }
 
-        const result = await response.json();
+        var data = result.data;
 
-        // THAY ĐỔI TẠI ĐÂY:
-        if (result.success) {
-            // Nếu thành công, không alert nữa mà tải lại dữ liệu mới từ Database luôn
-            location.reload();
-        } else {
-            // Chỉ hiện thông báo (alert) trong trường hợp có lỗi xảy ra (ví dụ: hết giờ, sai ca...)
-            alert(result.message);
+        if (!data) {
+            throw new Error("Máy chủ không trả về dữ liệu chấm công.");
+        }
+
+        // CẬP NHẬT SAU KHI CHẤM CÔNG VÀO
+        if (loaiChamCong === "vao") {
+            capNhatGioVao(data.gioVao);
+
+            // Khóa nút vào, mở nút ra
+            nut.nutVao.disabled = true;
+            nut.nutRa.disabled = false;
+
+            capNhatTrangThai(
+                data.trangThai,
+                data.trangThaiVao,
+                null
+            );
+
+            alert(result.message || "Chấm công vào thành công.");
+        }
+
+        // CẬP NHẬT SAU KHI CHẤM CÔNG RA
+        else if (loaiChamCong === "ra") {
+            capNhatGioVao(data.gioVao);
+            capNhatGioRa(data.gioRa);
+
+            // Khóa cả hai nút
+            nut.nutVao.disabled = true;
+            nut.nutRa.disabled = true;
+
+            capNhatTrangThai(
+                data.trangThai,
+                data.trangThaiVao,
+                data.trangThaiRa
+            );
+
+            alert(result.message || "Chấm công ra thành công.");
         }
 
     } catch (error) {
-        console.error(error);
-        alert("Có lỗi xảy ra khi kết nối máy chủ.");
+        console.error("Lỗi chấm công:", error);
+
+        alert(error.message || "Có lỗi xảy ra khi kết nối máy chủ.");
+
+        // Khôi phục trạng thái nút khi xảy ra lỗi
+        nut.nutVao.disabled = trangThaiNutVao;
+        nut.nutRa.disabled = trangThaiNutRa;
     }
 }
 
-// Chấm công vào (Bấm là chạy luôn, không hỏi lại)
+// Chấm công vào
 function handleCheckIn() {
-    const url = "/ChamCong/ChamCongVao";
-    guiYeuCauChamCong(url);
+    guiYeuCauChamCong(
+        "/ChamCong/ChamCongVao",
+        "vao"
+    );
 }
 
-// Chấm công ra (Bấm là chạy luôn, không hỏi lại)
+// Chấm công ra
 function handleCheckOut() {
-    const url = "/ChamCong/ChamCongRa";
-    guiYeuCauChamCong(url);
+    guiYeuCauChamCong(
+        "/ChamCong/ChamCongRa",
+        "ra"
+    );
 }
 
-
-
+// ĐỒNG HỒ THỜI GIAN THỰC
 document.addEventListener("DOMContentLoaded", function () {
-    // 1. Tìm phần tử hiển thị đồng hồ bằng ID
-    const clockElement = document.getElementById("realtime-clock");
+    var clockElement = document.getElementById("realtime-clock");
 
-    if (clockElement) {
-        // 2. Tạo hàm cập nhật thời gian
-        function updateClock() {
-            const now = new Date();
-
-            // Lấy giờ, phút, giây và tự động thêm số 0 ở trước nếu < 10
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            // Định dạng chuỗi HH:mm:ss
-            clockElement.innerText = `${hours}:${minutes}:${seconds}`;
-        }
-
-        // 3. Chạy hàm ngay lập tức khi trang vừa load xong
-        updateClock();
-
-        // 4. Thiết lập cứ mỗi 1000ms (1 giây) sẽ cập nhật lại đồng hồ một lần
-        setInterval(updateClock, 1000);
+    if (!clockElement) {
+        return;
     }
+
+    function updateClock() {
+        var now = new Date();
+
+        var hours = String(now.getHours()).padStart(2, "0");
+        var minutes = String(now.getMinutes()).padStart(2, "0");
+        var seconds = String(now.getSeconds()).padStart(2, "0");
+
+        clockElement.textContent =
+            hours + ":" + minutes + ":" + seconds;
+    }
+
+    updateClock();
+
+    setInterval(updateClock, 1000);
 });
