@@ -139,3 +139,28 @@ INSERT INTO tbl_ChucVu (sMaCV, sTenCV, fPhuCap) VALUES
 ('CV_QLCH', N'Cửa hàng trưởng', 1500000),
 ('CV_TN', N'Thu ngân POS', 500000),
 ('CV_PC', N'Nhân viên pha chế', 500000);
+
+
+
+
+
+
+
+
+
+--Pham Thanh Dat cập nhật--
+-- Thêm trạng thái giờ vào nếu chưa tồn tại
+IF COL_LENGTH('dbo.tbl_ChamCong', 'sTrangThaiVao') IS NULL
+BEGIN
+    ALTER TABLE dbo.tbl_ChamCong
+    ADD sTrangThaiVao NVARCHAR(50) NULL;
+END;
+GO
+
+-- Thêm trạng thái giờ ra nếu chưa tồn tại
+IF COL_LENGTH('dbo.tbl_ChamCong', 'sTrangThaiRa') IS NULL
+BEGIN
+    ALTER TABLE dbo.tbl_ChamCong
+    ADD sTrangThaiRa NVARCHAR(50) NULL;
+END;
+GO
