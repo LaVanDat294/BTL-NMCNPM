@@ -1,0 +1,133 @@
+﻿@model NMCNPM.Models.HopDongLaoDong
+
+@{
+    ViewData["Title"] = "Chi tiết hợp đồng";
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0">
+            <i class="bi bi-file-earmark-text-fill me-2"></i>Chi tiết hợp đồng lao động
+        </h3>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-chevron-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary bg-opacity-10 py-3 text-center">
+            <span class="fw-bold text-primary">
+                <i class="bi bi-card-heading me-1"></i> Thông tin hợp đồng
+            </span>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <table class="table table-borderless align-middle">
+                        <tbody>
+                            <tr>
+                                <th width="35%" class="text-primary">Mã hợp đồng</th>
+                                <td class="fw-bold">@Model.SMaHD</td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Mã nhân viên</th>
+                                <td>@Model.FK_sMaNV</td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Họ và tên</th>
+                                <td class="fw-bold">@ViewBag.TenNhanVien</td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Loại hợp đồng</th>
+                                <td>@Model.SLoaiHD</td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Ngày ký hợp đồng</th>
+                                <td>@Model.DNgayKy.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Ngày hết hạn</th>
+                                <td>
+                                    @(Model.DNgayHetHan.HasValue
+                                        ? Model.DNgayHetHan.Value.ToString("dd/MM/yyyy")
+                                        : "Không thời hạn")
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-primary">Trạng thái</th>
+                                <td>
+                                    @if (Model.STrangThai == "Còn hiệu lực")
+                                    {
+                                        <span class="badge bg-success px-3 py-2">Còn hiệu lực</span>
+                                    }
+                                    else if (Model.STrangThai == "Đã huỷ")
+                                    {
+                                        <span class="badge bg-danger px-3 py-2">Đã huỷ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary px-3 py-2">Chưa cập nhật</span>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.STrangThai != "Đã huỷ")
+        {
+            <div class="card-footer bg-white text-center py-3">
+                <a asp-action="Sua" asp-route-id="@Model.SMaHD"
+                   class="btn btn-primary px-4 me-2">
+                    <i class="bi bi-pencil me-1"></i> Sửa
+                </a>
+
+                <button type="button" class="btn btn-danger px-4"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteModal">
+                    <i class="bi bi-x-circle me-1"></i> Hủy
+                </button>
+            </div>
+
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Xác nhận hủy hợp đồng
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white"
+                                    data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body text-center">
+                            <i class="bi bi-exclamation-circle text-danger fs-1"></i>
+                            <p class="mt-3">Bạn có chắc chắn muốn hủy hợp đồng này không?</p>
+                            <div class="alert alert-secondary">
+                                Mã hợp đồng: <strong>@Model.SMaHD</strong>
+                            </div>
+                            <div class="text-danger small">
+                                Hợp đồng sẽ chuyển sang trạng thái "Đã huỷ".
+                            </div>
+                        </div>
+
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-secondary px-4"
+                                    data-bs-dismiss="modal">
+                                Đóng
+                            </button>
+
+                            <form asp-action="Xoa" asp-route-id="@Model.SMaHD" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger px-4">Xác nhận hủy</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
