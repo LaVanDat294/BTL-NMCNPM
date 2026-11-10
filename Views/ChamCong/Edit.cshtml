@@ -1,0 +1,76 @@
+﻿@model NMCNPM.Models.ChamCong
+@{
+    ViewData["Title"] = "Cập nhật bản ghi chấm công";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Cập nhật bản ghi chấm công</h4>
+                </div>
+                <div class="card-body">
+                    <!-- 1. Đổi hành động gửi form từ Create sang Edit -->
+                    <form asp-action="Edit" method="post">
+                        
+                        <!-- 2. Quan trọng: Thêm input ẩn giữ mã chấm công để gửi lên Controller khi lưu -->
+                        <input type="hidden" asp-for="SMaChamCong" />
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="SMaChamCong" class="form-label font-weight-bold">Mã Chấm Công</label>
+                                <!-- Khóa chính nên để thuộc tính disabled/readonly không cho sửa -->
+                                <input asp-for="SMaChamCong" class="form-control" readonly />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="FK_sMaNV" class="form-label font-weight-bold">Nhân Viên</label>
+                                <select asp-for="FK_sMaNV" class="form-select" asp-items="ViewBag.FK_sMaNV" required>
+                                    <option value="">-- Chọn nhân viên --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DNgayChamCong" class="form-label font-weight-bold">Ngày Chấm Công</label>
+                                <!-- Đổi định dạng hiển thị ngày cũ từ DB lên ô dữ liệu -->
+                                <input asp-for="DNgayChamCong" type="date" class="form-control" 
+                                       value="@(Model?.DNgayChamCong.ToString("yyyy-MM-dd"))" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ISoGioLam" class="form-label font-weight-bold">Số Giờ Làm</label>
+                                <input asp-for="ISoGioLam" type="number" min="0" max="24" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DGioVao" class="form-label font-weight-bold">Giờ Vào</label>
+                                <input asp-for="DGioVao" type="datetime-local" class="form-control" 
+                                       value="@(Model?.DGioVao?.ToString("yyyy-MM-ddTHH:mm"))" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DGioRa" class="form-label font-weight-bold">Giờ Ra</label>
+                                <input asp-for="DGioRa" type="datetime-local" class="form-control" 
+                                       value="@(Model?.DGioRa?.ToString("yyyy-MM-ddTHH:mm"))" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="STrangThai" class="form-label font-weight-bold">Trạng Thái</label>
+                                <select asp-for="STrangThai" class="form-select">
+                                    <option value="Đúng giờ">Đúng giờ</option>
+                                    <option value="Đi muộn">Đi muộn</option>
+                                    <option value="Về sớm">Về sớm</option>
+                                    <option value="Vắng mặt">Vắng mặt</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="SGhiChu" class="form-label font-weight-bold">Ghi Chú</label>
+                                <input asp-for="SGhiChu" class="form-control" placeholder="Ghi chú thêm..." />
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                            <!-- Đổi màu nút từ xanh lam (Primary) sang vàng cam (Warning) để đồng bộ giao diện Sửa -->
+                            <button type="submit" class="btn btn-warning text-dark"><i class="bi bi-check-lg"></i> Cập nhật</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
