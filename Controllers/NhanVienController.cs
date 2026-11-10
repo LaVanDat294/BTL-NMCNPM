@@ -99,9 +99,12 @@ namespace NMCNPM.Controllers
             {
                 ModelState.AddModelError("SMaNV", "Mã nhân viên đã tồn tại!");
             }
-            if (await _context.NhanViens.AnyAsync(n => n.SCCCD == nhanVien.SCCCD))
+            if (!string.IsNullOrWhiteSpace(nhanVien.SCCCD))
             {
-                ModelState.AddModelError("SCCCD", "Số CCCD đã tồn tại!");
+                if (await _context.NhanViens.AnyAsync(n => n.SCCCD == nhanVien.SCCCD))
+                {
+                    ModelState.AddModelError("SCCCD", "Số CCCD đã tồn tại!");
+                }
             }
 
             if (ModelState.IsValid)
