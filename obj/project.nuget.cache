@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Cl+QEVRfz58=",
+  "dgSpecHash": "eKAG+r0pkbM=",
   "success": true,
-  "projectFilePath": "E:\\TocoTocoHRM\\TocoTocoHRM.csproj",
+  "projectFilePath": "E:\\NMCNPM\\TocoTocoHRM.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
@@ -85,15 +85,5 @@
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.22\\microsoft.aspnetcore.app.ref.8.0.22.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.22\\microsoft.netcore.app.host.win-x64.8.0.22.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1900",
-      "level": "Warning",
-      "message": "Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json.",
-      "projectPath": "E:\\TocoTocoHRM\\TocoTocoHRM.csproj",
-      "warningLevel": 1,
-      "filePath": "E:\\TocoTocoHRM\\TocoTocoHRM.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "logs": []
 }

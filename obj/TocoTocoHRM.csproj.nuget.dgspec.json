@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\TocoTocoHRM\\TocoTocoHRM.csproj": {}
+    "E:\\NMCNPM\\TocoTocoHRM.csproj": {}
   },
   "projects": {
-    "E:\\TocoTocoHRM\\TocoTocoHRM.csproj": {
+    "E:\\NMCNPM\\TocoTocoHRM.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TocoTocoHRM\\TocoTocoHRM.csproj",
+        "projectUniqueName": "E:\\NMCNPM\\TocoTocoHRM.csproj",
         "projectName": "TocoTocoHRM",
-        "projectPath": "E:\\TocoTocoHRM\\TocoTocoHRM.csproj",
+        "projectPath": "E:\\NMCNPM\\TocoTocoHRM.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "E:\\TocoTocoHRM\\obj\\",
+        "outputPath": "E:\\NMCNPM\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
