@@ -1,0 +1,60 @@
+@model NMCNPM.Models.HopDongLaoDong
+@{
+    ViewData["Title"] = "Thêm hợp đồng lao động";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-file-earmark-plus me-2"></i>Thêm Hợp Đồng Lao Động</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="SMaHD" class="form-label fw-bold">Mã Hợp Đồng</label>
+                                <input asp-for="SMaHD" class="form-control" placeholder="HD001..." required />
+                                <span asp-validation-for="SMaHD" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="FK_sMaNV" class="form-label fw-bold">Nhân Viên</label>
+                                <select asp-for="FK_sMaNV" class="form-select" asp-items="ViewBag.FK_sMaNV" required>
+                                    <option value="">-- Chọn nhân viên --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="SLoaiHD" class="form-label fw-bold">Loại Hợp Đồng</label>
+                                <select asp-for="SLoaiHD" class="form-select" required>
+                                    <option value="Hợp đồng thử việc">Hợp đồng thử việc</option>
+                                    <option value="Hợp đồng xác định thời hạn">Hợp đồng xác định thời hạn (1 năm, 2 năm)</option>
+                                    <option value="Hợp đồng không xác định thời hạn">Hợp đồng không xác định thời hạn</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="STrangThai" class="form-label fw-bold">Trạng Thái</label>
+                                <select asp-for="STrangThai" class="form-select">
+                                    <option value="Đang hiệu lực">Đang hiệu lực</option>
+                                    <option value="Đã thanh lý">Đã thanh lý</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DNgayKy" class="form-label fw-bold">Ngày Ký</label>
+                                <input asp-for="DNgayKy" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DNgayHetHan" class="form-label fw-bold">Ngày Hết Hạn (nếu có)</label>
+                                <input asp-for="DNgayHetHan" type="date" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Lưu hợp đồng</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

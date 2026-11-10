@@ -17,14 +17,11 @@ namespace NMCNPM.Controllers
             _context = context;
         }
 
-        // 1. DANH SÁCH NHÂN VIÊN
         public async Task<IActionResult> Index(string searchString, string maPB, string maCV, string trangThai)
         {
-            // Nạp danh sách Phòng ban & Chức vụ cho Dropdown lọc
             ViewBag.PhongBans = new SelectList(await _context.PhongBans.ToListAsync(), "SMaPB", "STenPB", maPB);
             ViewBag.ChucVus = new SelectList(await _context.ChucVus.ToListAsync(), "SMaCV", "STenCV", maCV);
 
-            // Nạp dictionary để tra cứu Tên phòng ban & Tên chức vụ theo Mã nhanh chóng trên View
             ViewBag.PhongBanDict = await _context.PhongBans.ToDictionaryAsync(p => p.SMaPB, p => p.STenPB);
             ViewBag.ChucVuDict = await _context.ChucVus.ToDictionaryAsync(c => c.SMaCV, c => c.STenCV);
 
@@ -71,7 +68,6 @@ namespace NMCNPM.Controllers
             return View(result);
         }
 
-        // 2. CHI TIẾT NHÂN VIÊN
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
@@ -88,7 +84,6 @@ namespace NMCNPM.Controllers
             return View(nhanVien);
         }
 
-        // 3. THÊM NHÂN VIÊN (GET)
         public async Task<IActionResult> Create()
         {
             ViewBag.PhongBans = new SelectList(await _context.PhongBans.ToListAsync(), "SMaPB", "STenPB");
@@ -96,11 +91,22 @@ namespace NMCNPM.Controllers
             return View();
         }
 
-        // 3. THÊM NHÂN VIÊN (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(NhanVien nhanVien)
         {
+            if (await _context.NhanViens.AnyAsync(n => n.SMaNV == nhanVien.SMaNV))
+            {
+                ModelState.AddModelError("SMaNV", "Mã nhân viên đã tồn tại!");
+            }
+            if (!string.IsNullOrWhiteSpace(nhanVien.SCCCD))
+            {
+                if (await _context.NhanViens.AnyAsync(n => n.SCCCD == nhanVien.SCCCD))
+                {
+                    ModelState.AddModelError("SCCCD", "Số CCCD đã tồn tại!");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(nhanVien);
@@ -112,7 +118,6 @@ namespace NMCNPM.Controllers
             return View(nhanVien);
         }
 
-        // 4. SỬA NHÂN VIÊN (GET)
         public async Task<IActionResult> Edit(string id)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
@@ -125,7 +130,6 @@ namespace NMCNPM.Controllers
             return View(nhanVien);
         }
 
-        // 4. SỬA NHÂN VIÊN (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, NhanVien nhanVien)
@@ -153,7 +157,21 @@ namespace NMCNPM.Controllers
             return View(nhanVien);
         }
 
-        // 5. XÓA NHÂN VIÊN (POST)
+        // GET: NhanVien/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return NotFound();
+
+            var nhanVien = await _context.NhanViens
+                .Include(n => n.PhongBan)
+                .Include(n => n.ChucVu)
+                .FirstOrDefaultAsync(m => m.SMaNV == id);
+
+            if (nhanVien == null) return NotFound();
+
+            return View(nhanVien);
+        }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -161,8 +179,37 @@ namespace NMCNPM.Controllers
             var nhanVien = await _context.NhanViens.FindAsync(id);
             if (nhanVien != null)
             {
-                _context.NhanViens.Remove(nhanVien);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    // Xóa các bản ghi liên quan ở các bảng phụ trước để tránh xung đột khóa ngoại FK
+                    var taiKhoans = await _context.TaiKhoans.Where(t => t.FK_sMaNV == id).ToListAsync();
+                    _context.TaiKhoans.RemoveRange(taiKhoans);
+
+                    var donTus = await _context.DonTus.Where(d => d.FK_sMaNV == id).ToListAsync();
+                    _context.DonTus.RemoveRange(donTus);
+
+                    var chamCongs = await _context.ChamCongs.Where(c => c.FK_sMaNV == id).ToListAsync();
+                    _context.ChamCongs.RemoveRange(chamCongs);
+
+                    var luongs = await _context.Luongs.Where(l => l.FK_sMaNV == id).ToListAsync();
+                    _context.Luongs.RemoveRange(luongs);
+
+                    var hopDongs = await _context.HopDongs.Where(h => h.FK_sMaNV == id).ToListAsync();
+                    _context.HopDongs.RemoveRange(hopDongs);
+
+                    // Sau đó mới xóa Nhân viên
+                    _context.NhanViens.Remove(nhanVien);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Không thể xóa nhân viên này vì có dữ liệu liên quan. Chi tiết: " + ex.Message);
+                    var nv = await _context.NhanViens
+                        .Include(n => n.PhongBan)
+                        .Include(n => n.ChucVu)
+                        .FirstOrDefaultAsync(m => m.SMaNV == id);
+                    return View("Delete", nv ?? nhanVien);
+                }
             }
             return RedirectToAction(nameof(Index));
         }

@@ -1,161 +1,40 @@
 @model IEnumerable<NMCNPM.Models.NhanVien>
-
 @{
-    ViewData["Title"] = "Danh sách nhân viên";
-    var pbDict = ViewBag.PhongBanDict as Dictionary<string, string> ?? new Dictionary<string, string>();
-    var cvDict = ViewBag.ChucVuDict as Dictionary<string, string> ?? new Dictionary<string, string>();
+    ViewData["Title"] = "Quản lý Nhân viên";
 }
 
-<div class="container-fluid px-0">
-    <!-- Tiêu đề trang & Nút thêm mới -->
+<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-primary mb-0"><i class="bi bi-people-fill me-2"></i>Danh sách nhân viên</h3>
-        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm nhân viên mới</a>
+        <h3>Quản lý Nhân viên</h3>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-person-plus"></i> Thêm nhân viên</a>
     </div>
 
-    <!-- Bộ lọc tìm kiếm -->
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-light py-3">
-            <span class="fw-bold text-secondary"><i class="bi bi-funnel-fill me-1"></i> Tiêu chí tìm kiếm và lọc nhân viên</span>
-        </div>
-        <div class="card-body">
-            <form asp-action="Index" method="get" class="row g-3 align-items-center">
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold text-muted">Từ khóa (Mã / Họ tên / SĐT)</label>
-                    <input type="text" name="searchString" class="form-control" placeholder="Nhập mã, họ tên, SĐT..." value="@Context.Request.Query["searchString"]" />
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-bold text-muted">Phòng ban</label>
-                    <select name="maPB" class="form-select" asp-items="ViewBag.PhongBans">
-                        <option value="">Tất cả phòng ban</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-muted">Chức vụ</label>
-                    <select name="maCV" class="form-select" asp-items="ViewBag.ChucVus">
-                        <option value="">Tất cả chức vụ</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label small fw-bold text-muted">Trạng thái</label>
-                    <select name="trangThai" class="form-select">
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="Đang làm việc" selected="@(Context.Request.Query["trangThai"] == "Đang làm việc" || Context.Request.Query["trangThai"] == "Đang làm")">Đang làm việc</option>
-                        <option value="Đã nghỉ việc" selected="@(Context.Request.Query["trangThai"] == "Đã nghỉ việc" || Context.Request.Query["trangThai"] == "Nghỉ việc")">Đã nghỉ việc</option>
-                    </select>
-                </div>
-                <div class="col-md-2 d-flex align-items-end gap-2 pt-4">
-                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-1"></i> Tìm kiếm</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary" title="Làm mới"><i class="bi bi-arrow-clockwise"></i></a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Bảng dữ liệu -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-light py-3">
-            <span class="fw-bold text-secondary"><i class="bi bi-table me-1"></i> Danh sách hồ sơ nhân viên</span>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-primary text-dark">
-                        <tr>
-                            <th class="ps-3">STT</th>
-                            <th>Mã NV</th>
-                            <th>Họ và tên</th>
-                            <th>Ngày sinh</th>
-                            <th>Giới tính</th>
-                            <th>Số điện thoại</th>
-                            <th>Email</th>
-                            <th>Phòng ban</th>
-                            <th>Chức vụ</th>
-                            <th>Trạng thái</th>
-                            <th class="text-center pe-3">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            int stt = 1;
-                            foreach (var item in Model)
-                            {
-                                var tenPhongBan = pbDict.ContainsKey(item.FK_sMaPB ?? "") ? pbDict[item.FK_sMaPB] : item.FK_sMaPB;
-                                var tenChucVu = cvDict.ContainsKey(item.FK_sMaCV ?? "") ? cvDict[item.FK_sMaCV] : item.FK_sMaCV;
-
-                                <tr>
-                                    <td class="ps-3">@(stt++)</td>
-                                    <td class="fw-bold text-primary">@item.SMaNV</td>
-                                    <td>@item.STenNV</td>
-                                    <td>@(item.DNgaySinh.HasValue ? item.DNgaySinh.Value.ToString("dd/MM/yyyy") : "")</td>
-                                    <td>@item.SGioiTinh</td>
-                                    <td>@item.SSDT</td>
-                                    <td>@item.SEmail</td>
-                                    <td>@tenPhongBan</td>
-                                    <td>@tenChucVu</td>
-                                    <td>
-                                        @if (string.IsNullOrEmpty(item.STrangThai))
-                                        {
-                                            <span class="badge bg-secondary px-2 py-1">Chưa cập nhật</span>
-                                        }
-                                        else if (item.STrangThai.ToLower().Contains("làm") || item.STrangThai.ToLower().Contains("lam"))
-                                        {
-                                            <span class="badge bg-success bg-opacity-75 text-white px-2 py-1">@item.STrangThai</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-danger bg-opacity-75 text-white px-2 py-1">@item.STrangThai</span>
-                                        }
-                                    </td>
-                                    <td class="text-center pe-3">
-                                        <a asp-action="Details" asp-route-id="@item.SMaNV" class="btn btn-sm btn-info text-white me-1" title="Xem chi tiết"><i class="bi bi-eye"></i></a>
-                                        <a asp-action="Edit" asp-route-id="@item.SMaNV" class="btn btn-sm btn-primary me-1" title="Sửa"><i class="bi bi-pencil"></i></a>
-                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.SMaNV" title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-
-                                        <!-- Modal xóa -->
-                                        <div class="modal fade" id="deleteModal-@item.SMaNV" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-danger text-white">
-                                                        <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Xác nhận xóa thông tin nhân viên</h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body text-start">
-                                                        <div class="text-center mb-3">
-                                                            <i class="bi bi-exclamation-circle text-danger fs-1"></i>
-                                                        </div>
-                                                        <p class="text-center">Bạn có chắc chắn muốn xóa nhân viên dưới đây không?</p>
-                                                        <div class="alert alert-secondary text-center py-2">
-                                                            <strong>Mã NV: @item.SMaNV</strong> - Họ tên: <strong>@item.STenNV</strong>
-                                                        </div>
-                                                        <div class="text-danger small text-center">(*) Lưu ý: Hành động xóa dữ liệu không thể hoàn tác!</div>
-                                                    </div>
-                                                    <div class="modal-footer justify-content-center">
-                                                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Hủy bỏ</button>
-                                                        <form asp-action="Delete" asp-route-id="@item.SMaNV" method="post" class="d-inline">
-                                                            @Html.AntiForgeryToken()
-                                                            <button type="submit" class="btn btn-danger px-4">Xóa nhân viên</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="11" class="text-center py-4 text-muted">Không tìm thấy nhân viên nào phù hợp.</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <table class="table table-bordered table-hover bg-white">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã NV</th>
+                <th>Họ tên</th>
+                <th>CCCD</th>
+                <th>Phòng ban</th>
+                <th>Chức vụ</th>
+                <th class="text-center">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>@item.SMaNV</td>
+                    <td>@item.STenNV</td>
+                    <td>@item.SCCCD</td>
+                    <td>@(item.PhongBan?.STenPB ?? "N/A")</td>
+                    <td>@(item.ChucVu?.STenCV ?? "N/A")</td>
+                    <td class="text-center">
+                        <a asp-action="Details" asp-route-id="@item.SMaNV" class="btn btn-sm btn-info text-white" title="Xem chi tiết"><i class="bi bi-eye"></i> Xem</a>
+                        <a asp-action="Edit" asp-route-id="@item.SMaNV" class="btn btn-sm btn-warning" title="Chỉnh sửa"><i class="bi bi-pencil"></i> Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.SMaNV" class="btn btn-sm btn-danger" title="Xóa nhân viên"><i class="bi bi-trash"></i> Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

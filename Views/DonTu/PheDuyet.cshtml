@@ -1,0 +1,45 @@
+@model NMCNPM.Models.DonTu
+@{
+    ViewData["Title"] = "Phê duyệt đơn";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-check-circle me-2"></i>Phê Duyệt Đơn</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Thông tin đơn</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>Mã đơn:</strong> @Model.SMaDon</li>
+                            <li class="list-group-item"><strong>Nhân viên:</strong> @Model.NhanVien?.STenNV</li>
+                            <li class="list-group-item"><strong>Loại đơn:</strong> @Model.SLoaiDon</li>
+                            <li class="list-group-item"><strong>Lý do:</strong> @Model.SLyDo</li>
+                        </ul>
+                    </div>
+                    <form asp-action="PheDuyet" method="post">
+                        <input type="hidden" name="id" value="@Model.SMaDon" />
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Người duyệt (Admin)</label>
+                            <input type="text" name="nguoiDuyet" class="form-control" value="Admin" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Trạng thái duyệt</label>
+                            <select name="trangThai" class="form-select">
+                                <option value="Đã duyệt">Đã duyệt (Phê duyệt)</option>
+                                <option value="Từ chối">Từ chối (Hủy đơn)</option>
+                            </select>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                            <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Cập nhật trạng thái</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

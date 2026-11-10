@@ -1,0 +1,31 @@
+@model NMCNPM.Models.PhongBan
+@{
+    ViewData["Title"] = "Sửa Phòng ban";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <h2>Cập nhật Phòng ban</h2>
+    <hr />
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="SMaPB" />
+        <div class="mb-3">
+            <label class="form-label">Mã Phòng ban</label>
+            <input class="form-control" value="@Model.SMaPB" disabled />
+        </div>
+        <div class="mb-3">
+            <label asp-for="STenPB" class="form-label">Tên Phòng ban</label>
+            <input asp-for="STenPB" class="form-control" required />
+            <span asp-validation-for="STenPB" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="SGhiChu" class="form-label">Ghi chú</label>
+            <textarea asp-for="SGhiChu" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="SGhiChu" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Cập nhật</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+    </form>
+</div>

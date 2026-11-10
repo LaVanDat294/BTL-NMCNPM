@@ -1,0 +1,53 @@
+@model IEnumerable<NMCNPM.Models.ChucVu>
+@{
+    ViewData["Title"] = "Quản lý Chức vụ";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Danh sách Chức vụ</h2>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Thêm chức vụ mới</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Mã Chức vụ</th>
+                        <th>Tên Chức vụ</th>
+                        <th class="text-end">Phụ cấp (VNĐ)</th>
+                        <th class="text-center" style="width: 150px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-bold">@item.SMaCV</td>
+                                <td>@item.STenCV</td>
+                                <td class="text-end text-success fw-semibold">@item.FPhuCap.ToString("N0") đ</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.SMaCV" class="btn btn-sm btn-outline-warning" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.SMaCV" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">Chưa có chức vụ nào trong hệ thống.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

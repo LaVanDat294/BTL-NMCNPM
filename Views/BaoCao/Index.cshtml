@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Báo cáo tổng hợp nhân sự";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-bar-chart-fill me-2"></i>Báo cáo & Thống kê nhân sự</h4>
+        <button class="btn btn-sm btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i>In báo cáo</button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small">Tổng số nhân viên</span>
+                    <h3 class="fw-bold text-primary mt-1">@ViewBag.TotalNhanVien</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small">Tổng quỹ lương thực lĩnh</span>
+                    <h4 class="fw-bold text-success mt-1">@(((decimal)ViewBag.TongQuyLuong).ToString("N0")) đ</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small">Hợp đồng sắp hết hạn</span>
+                    <h3 class="fw-bold text-warning mt-1">@(((List<NMCNPM.Models.HopDongLaoDong>)ViewBag.ExpiringContracts).Count)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small">Tổng số chi nhánh/phòng ban</span>
+                    <h3 class="fw-bold text-info mt-1">@ViewBag.TotalPhongBan</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Tables -->
+    <div class="card border shadow-sm">
+        <div class="card-header bg-white fw-bold">
+            <i class="bi bi-exclamation-circle text-warning me-2"></i>Danh sách hợp đồng lao động sắp hết hạn (30 ngày tới)
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Họ và tên</th>
+                        <th>Mã HĐ</th>
+                        <th>Loại hợp đồng</th>
+                        <th>Ngày hết hạn</th>
+                        <th class="text-center">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (((List<NMCNPM.Models.HopDongLaoDong>)ViewBag.ExpiringContracts).Any())
+                    {
+                        foreach (var item in (List<NMCNPM.Models.HopDongLaoDong>)ViewBag.ExpiringContracts)
+                        {
+                            <tr>
+                                <td>@item.FK_sMaNV</td>
+                                <td class="fw-bold">@item.NhanVien?.STenNV</td>
+                                <td>@item.SMaHD</td>
+                                <td>@item.SLoaiHD</td>
+                                <td class="text-danger fw-bold">@item.DNgayHetHan?.ToString("dd/MM/yyyy")</td>
+                                <td class="text-center"><span class="badge bg-warning text-dark">Cần gia hạn</span></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">Không có hợp đồng nào sắp hết hạn trong 30 ngày tới.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

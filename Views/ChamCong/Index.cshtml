@@ -1,0 +1,71 @@
+@model IEnumerable<NMCNPM.Models.ChamCong>
+@{
+    ViewData["Title"] = "Quản lý Chấm công";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-clock-history text-primary me-2"></i>Quản lý Chấm công</h2>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Chấm công mới</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã CC</th>
+                        <th>Nhân viên</th>
+                        <th>Ngày chấm công</th>
+                        <th>Giờ vào</th>
+                        <th>Giờ ra</th>
+                        <th>Số giờ làm</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.SMaChamCong</td>
+                                <td>@(item.NhanVien?.STenNV ?? item.FK_sMaNV)</td>
+                                <td>@item.DNgayChamCong.ToString("dd/MM/yyyy")</td>
+                                <td>@(item.DGioVao.HasValue ? item.DGioVao.Value.ToString("HH:mm") : "-")</td>
+                                <td>@(item.DGioRa.HasValue ? item.DGioRa.Value.ToString("HH:mm") : "-")</td>
+                                <td><span class="badge bg-info text-dark">@item.ISoGioLam giờ</span></td>
+                                <td>
+                                    @if (item.STrangThai == "Đúng giờ")
+                                    {
+                                        <span class="badge bg-success">@item.STrangThai</span>
+                                    }
+                                    else if (item.STrangThai == "Đi muộn")
+                                    {
+                                        <span class="badge bg-warning text-dark">@item.STrangThai</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@(item.STrangThai ?? "Đã chấm")</span>
+                                    }
+                                </td>
+                                <td>@item.SGhiChu</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.SMaChamCong" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil"></i> Sửa</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">Chưa có dữ liệu chấm công nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
