@@ -29,7 +29,7 @@ namespace NMCNPM.Models
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [Column("fThucLinh", TypeName = "decimal(18,0)")]
-        public decimal FThucLinh { get; private set; }
+        public decimal FThucLinh { get; set; }
 
         [Column("dNgayTinhLuong")]
         public DateTime? DNgayTinhLuong { get; set; }
