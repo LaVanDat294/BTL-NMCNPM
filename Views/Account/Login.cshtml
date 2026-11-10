@@ -1,0 +1,59 @@
+@model NMCNPM.ViewModels.LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Đăng nhập";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Đăng nhập - TocoToco HRM</title>
+    <link rel="stylesheet" href="~/css/style.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="login-page">
+<div class="login-card">
+    <div class="login-logo"><i class="fa-solid fa-users"></i></div>
+    <h1>TocoToco</h1>
+    <h2>HỆ THỐNG QUẢN LÝ NHÂN SỰ</h2>
+    <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+        <label class="login-input">
+            <i class="fa-solid fa-user"></i>
+            <input asp-for="TenDangNhap" placeholder="Tên đăng nhập" autocomplete="username"/>
+        </label>
+        <span asp-validation-for="TenDangNhap" class="field-error"></span>
+        <label class="login-input">
+            <i class="fa-solid fa-lock"></i>
+            <input asp-for="MatKhau" id="password" placeholder="Mật khẩu" autocomplete="current-password"/>
+            <button type="button" class="eye-btn" onclick="togglePassword()" aria-label="Hiện/ẩn mật khẩu">
+                <i class="fa-regular fa-eye" id="eyeIcon"></i>
+            </button>
+        </label>
+        <span asp-validation-for="MatKhau" class="field-error"></span>
+        <label class="remember">
+            <input asp-for="GhiNho" type="checkbox"/> Ghi nhớ đăng nhập
+        </label>
+        <button class="btn-primary login-submit" type="submit">
+            <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+        </button>
+    </form>
+    <div class="login-footer">© 2026 TocoToco. All rights reserved.</div>
+</div>
+<script>
+    function togglePassword() {
+        const p = document.getElementById('password');
+        const icon = document.getElementById('eyeIcon');
+        const isPassword = p.type === 'password';
+        p.type = isPassword ? 'text' : 'password';
+        if (icon) {
+            icon.classList.toggle('fa-eye', !isPassword);
+            icon.classList.toggle('fa-eye-slash', isPassword);
+        }
+    }
+</script>
+</body>
+</html>
+
