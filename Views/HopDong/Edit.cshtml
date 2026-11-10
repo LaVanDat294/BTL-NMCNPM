@@ -1,82 +1,94 @@
 ﻿@model NMCNPM.Models.HopDongLaoDong
 
 @{
-    ViewData["Title"] = "Sửa hợp đồng";
-    Layout = "~/Views/HopDong/_LayoutHopDong.cshtml";
+    ViewData["Title"] = "Sửa thông tin hợp đồng";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <div class="text-muted small mb-2">
-            Quản lý hợp đồng / Danh sách hợp đồng / Sửa hợp đồng
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0">
+            <i class="bi bi-pencil-square me-2"></i>Sửa thông tin hợp đồng lao động
+        </h3>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-chevron-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary bg-opacity-10 py-3">
+            <span class="fw-bold text-primary">
+                <i class="bi bi-info-circle me-1"></i> Thông tin hợp đồng
+            </span>
         </div>
-        <h3 class="fw-bold text-primary mb-0">Sửa thông tin hợp đồng lao động</h3>
-    </div>
-    <a asp-controller="HopDong" asp-action="Index" class="btn btn-outline-primary">
-        &lt; Quay lại
-    </a>
-</div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-header text-center fw-bold text-primary bg-primary bg-opacity-10">
-        Thông tin hợp đồng
-    </div>
+        <div class="card-body">
+            <form asp-action="Sua" asp-route-id="@Model.SMaHD" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
 
-    <div class="card-body p-4">
-        <form asp-controller="HopDong" asp-action="Edit" method="post">
-            @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <input type="hidden" asp-for="SMaHD" />
-            <input type="hidden" asp-for="SLoaiHD" />
-            <input type="hidden" asp-for="DNgayHetHan" />
+                <input type="hidden" asp-for="SMaHD" />
 
-            <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Mã hợp đồng</label>
-                    <input type="text" value="@Model.SMaHD" class="form-control bg-light" readonly />
+                    <input type="text" class="form-control bg-light text-dark fw-bold"
+                           value="@Model.SMaHD (Khóa chỉ đọc)" disabled />
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Nhân viên</label>
-                    <input type="text" value="@ViewBag.TenNhanVien" class="form-control bg-light" readonly />
-                    <input type="hidden" asp-for="FK_sMaNV" />
+                    <input type="text" class="form-control bg-light text-dark"
+                           value="@Model.FK_sMaNV - @ViewBag.TenNhanVien" disabled />
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">
-                        Ngày ký hợp đồng <span class="text-danger">(*)</span>
+                    <label asp-for="SLoaiHD" class="form-label fw-semibold">
+                        Loại hợp đồng (<span class="text-danger">*</span>)
+                    </label>
+                    <input asp-for="SLoaiHD" class="form-control"
+                           placeholder="Nhập loại hợp đồng..." required />
+                    <span asp-validation-for="SLoaiHD" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="DNgayKy" class="form-label fw-semibold">
+                        Ngày ký hợp đồng (<span class="text-danger">*</span>)
                     </label>
                     <input asp-for="DNgayKy" type="date" class="form-control" required />
+                    <span asp-validation-for="DNgayKy" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">
-                        Mức lương cơ bản (VNĐ)
+                    <label asp-for="DNgayHetHan" class="form-label fw-semibold">
+                        Ngày hết hạn
                     </label>
-                    <input type="text" value="@(((decimal)ViewBag.LuongCoBan).ToString("N0"))"
-                           class="form-control bg-light" readonly />
+                    <input asp-for="DNgayHetHan" type="date" class="form-control" />
+                    <span asp-validation-for="DNgayHetHan" class="text-danger"></span>
                 </div>
 
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">
-                        Trạng thái <span class="text-danger">(*)</span>
-                    </label>
-                    <select asp-for="STrangThai" class="form-select" required>
-                        <option value="Còn hiệu lực">Còn hiệu lực</option>
-                        <option value="Hết hạn">Hết hạn</option>
-                        <option value="Đã hủy">Đã hủy</option>
-                    </select>
+                <div class="col-12">
+                    <div class="alert alert-info py-2 mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Trạng thái hiện tại:
+                        <strong>@Model.STrangThai</strong>
+                    </div>
                 </div>
 
-                <div class="col-12 d-flex justify-content-center gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary px-4">
-                        Cập nhật
+                <div class="col-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-primary px-5 py-2 me-2">
+                        <i class="bi bi-check-circle me-1"></i> Cập nhật
                     </button>
-                    <button type="reset" class="btn btn-outline-secondary px-4">
-                        Làm mới
+                    <button type="reset" class="btn btn-outline-secondary px-4 py-2">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,441 +1,270 @@
-﻿
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NMCNPM.Models;
 
 namespace NMCNPM.Controllers
 {
-    [Authorize]
     [Route("HopDong")]
     public class HopDongController : Controller
     {
-        private readonly HrmDbContext _db;
+        private readonly HrmDbContext _context;
 
-        private const int SoDongMoiTrang = 10;
-        private const string DaHuy = "Đã hủy";
-
-        public HopDongController(HrmDbContext db)
+        public HopDongController(HrmDbContext context)
         {
-            _db = db;
+            _context = context;
         }
 
-        private bool LaNhanSu()
+        private async Task LoadNhanVien()
         {
-            return User.IsInRole("Admin")
-                || User.IsInRole("HR")
-                || User.IsInRole("NhanSu");
-        }
-
-        private string? LayMaNhanVienDangNhap()
-        {
-            return User.FindFirst("MaNV")?.Value;
-        }
-
-        private IQueryable<HopDongLaoDong> ApDungPhamVi(
-            IQueryable<HopDongLaoDong> query)
-        {
-            if (LaNhanSu())
-                return query;
-
-            string? maNV = LayMaNhanVienDangNhap();
-
-            if (string.IsNullOrEmpty(maNV))
-                return query.Where(hd => false);
-
-            return query.Where(hd => hd.FK_sMaNV == maNV);
-        }
-
-        private bool CoQuyenQuanLy()
-        {
-            return LaNhanSu();
-        }
-
-        private void NapDanhSachNhanVien(string? maNVChon = null)
-        {
-            var nhanViens = _db.NhanViens
-                .AsNoTracking()
-                .Where(nv => nv.STrangThai != "Đã nghỉ việc");
-
-            ViewBag.NhanViens = nhanViens
+            var nhanViens = await _context.NhanViens
                 .OrderBy(nv => nv.STenNV)
-                .ToList();
+                .ToListAsync();
 
-            ViewBag.MaNVChon = maNVChon;
-        }
-
-        private async Task NapThongTinNhanVienAsync(
-            string maNV,
-            CancellationToken cancellationToken = default)
-        {
-            var nv = await _db.NhanViens
-                .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    x => x.SMaNV == maNV,
-                    cancellationToken);
-
-            ViewBag.TenNhanVien = nv?.STenNV ?? "";
-            ViewBag.LuongCoBan = nv?.FLuongcb ?? 0;
-        }
-
-        private bool TrangThaiHopLe(string? trangThai)
-        {
-            return trangThai == "Còn hiệu lực"
-                || trangThai == "Hết hạn"
-                || trangThai == DaHuy;
+            ViewBag.DanhSachNhanVien = new SelectList(
+                nhanViens,
+                "SMaNV",
+                "STenNV"
+            );
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Index(
-            string? tuKhoa,
-            string? trangThai,
-            int page = 1,
-            CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Index(string searchString, string trangThai)
         {
-            if (page < 1)
-                page = 1;
+            var query = _context.HopDongs.AsQueryable();
 
-            var query = ApDungPhamVi(
-                _db.HopDongs.AsNoTracking());
-
-            if (!string.IsNullOrWhiteSpace(tuKhoa))
+            if (!string.IsNullOrWhiteSpace(searchString))
             {
-                tuKhoa = tuKhoa.Trim();
+                searchString = searchString.Trim();
 
                 query = query.Where(hd =>
-                    hd.SMaHD.Contains(tuKhoa)
-                    || hd.FK_sMaNV.Contains(tuKhoa)
-                    || _db.NhanViens.Any(nv =>
-                        nv.SMaNV == hd.FK_sMaNV
-                        && nv.STenNV.Contains(tuKhoa)));
+                    hd.SMaHD.Contains(searchString) ||
+                    hd.FK_sMaNV.Contains(searchString) ||
+                    _context.NhanViens.Any(nv =>
+                        nv.SMaNV == hd.FK_sMaNV &&
+                        nv.STenNV.Contains(searchString)
+                    )
+                );
             }
 
             if (!string.IsNullOrWhiteSpace(trangThai))
             {
-                query = query.Where(hd =>
-                    hd.STrangThai == trangThai);
+                query = query.Where(hd => hd.STrangThai == trangThai);
             }
 
-            int tongSoHopDong = await query.CountAsync(
-                cancellationToken);
+            var danhSach = await query
+                .OrderByDescending(hd => hd.DNgayKy)
+                .ToListAsync();
 
-            var danhSach = await (
-                from hd in query
-                join nv in _db.NhanViens.AsNoTracking()
-                    on hd.FK_sMaNV equals nv.SMaNV
-                orderby hd.DNgayKy descending
-                select new HopDongDanhSachVM
-                {
-                    SMaHD = hd.SMaHD,
-                    MaNV = nv.SMaNV,
-                    TenNV = nv.STenNV,
-                    NgayKy = hd.DNgayKy,
-                    NgayHetHan = hd.DNgayHetHan,
-                    LuongCoBan = nv.FLuongcb,
-                    TrangThai = hd.STrangThai
-                })
-                .Skip((page - 1) * SoDongMoiTrang)
-                .Take(SoDongMoiTrang)
-                .ToListAsync(cancellationToken);
+            ViewBag.TenNhanVien = await _context.NhanViens
+                .ToDictionaryAsync(nv => nv.SMaNV, nv => nv.STenNV);
 
-            var model = new HopDongDanhSachTrangVM
+            ViewBag.SearchString = searchString;
+            ViewBag.TrangThai = trangThai;
+
+            return View(danhSach);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Details(string id)
+        {
+            var hopDong = await _context.HopDongs
+                .FirstOrDefaultAsync(hd => hd.SMaHD == id);
+
+            if (hopDong == null)
             {
-                DanhSach = danhSach,
-                TuKhoa = tuKhoa,
-                TrangThai = trangThai,
-                TrangHienTai = page,
-                TongSoTrang = (int)Math.Ceiling(
-                    tongSoHopDong / (double)SoDongMoiTrang),
-                TongSoHopDong = tongSoHopDong
-            };
+                TempData["Error"] = "Không tìm thấy hợp đồng.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            return View(model);
+            var nhanVien = await _context.NhanViens
+                .FirstOrDefaultAsync(nv => nv.SMaNV == hopDong.FK_sMaNV);
+
+            ViewBag.TenNhanVien = nhanVien?.STenNV;
+
+            return View(hopDong);
         }
 
         [HttpGet("them-moi")]
-        public IActionResult Create()
+        public async Task<IActionResult> ThemMoi()
         {
-            if (!CoQuyenQuanLy())
-                return Forbid();
-
-            NapDanhSachNhanVien();
-
-            return View();
+            await LoadNhanVien();
+            return View("Create");
         }
 
         [HttpPost("them-moi")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            HopDongLaoDong model,
-            CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ThemMoi(HopDongLaoDong hopDong)
         {
-            if (!CoQuyenQuanLy())
-                return Forbid();
-
-            model.SMaHD = model.SMaHD?.Trim() ?? "";
-            model.FK_sMaNV = model.FK_sMaNV?.Trim() ?? "";
-            model.SLoaiHD = model.SLoaiHD?.Trim() ?? "";
-
-            if (string.IsNullOrWhiteSpace(model.SMaHD))
-                ModelState.AddModelError(
-                    "SMaHD", "Vui lòng nhập mã hợp đồng.");
-
-            if (string.IsNullOrWhiteSpace(model.FK_sMaNV))
-                ModelState.AddModelError(
-                    "FK_sMaNV", "Vui lòng chọn nhân viên.");
-
-            if (string.IsNullOrWhiteSpace(model.SLoaiHD))
-                ModelState.AddModelError(
-                    "SLoaiHD", "Vui lòng chọn loại hợp đồng.");
-
-            if (!await _db.NhanViens.AnyAsync(
-                nv => nv.SMaNV == model.FK_sMaNV,
-                cancellationToken))
+            if (string.IsNullOrWhiteSpace(hopDong.SMaHD))
             {
-                ModelState.AddModelError(
-                    "FK_sMaNV", "Nhân viên không tồn tại.");
+                ModelState.AddModelError("SMaHD", "Vui lòng nhập mã hợp đồng.");
+            }
+            else
+            {
+                hopDong.SMaHD = hopDong.SMaHD.Trim();
+
+                if (await _context.HopDongs.AnyAsync(hd => hd.SMaHD == hopDong.SMaHD))
+                {
+                    ModelState.AddModelError("SMaHD", "Mã hợp đồng đã tồn tại.");
+                }
             }
 
-            if (await _db.HopDongs.AnyAsync(
-                hd => hd.SMaHD == model.SMaHD,
-                cancellationToken))
+            if (string.IsNullOrWhiteSpace(hopDong.SLoaiHD))
             {
-                ModelState.AddModelError(
-                    "SMaHD", "Mã hợp đồng đã tồn tại.");
+                ModelState.AddModelError("SLoaiHD", "Vui lòng chọn loại hợp đồng.");
             }
 
-            if (!TrangThaiHopLe(model.STrangThai))
+            if (string.IsNullOrWhiteSpace(hopDong.FK_sMaNV))
+            {
+                ModelState.AddModelError("FK_sMaNV", "Vui lòng chọn nhân viên.");
+            }
+            else
+            {
+                bool nhanVienTonTai = await _context.NhanViens
+                    .AnyAsync(nv => nv.SMaNV == hopDong.FK_sMaNV);
+
+                if (!nhanVienTonTai)
+                {
+                    ModelState.AddModelError("FK_sMaNV", "Nhân viên không tồn tại.");
+                }
+            }
+
+            if (hopDong.DNgayHetHan.HasValue &&
+                hopDong.DNgayHetHan.Value < hopDong.DNgayKy)
             {
                 ModelState.AddModelError(
-                    "STrangThai", "Trạng thái không hợp lệ.");
+                    "DNgayHetHan",
+                    "Ngày hết hạn không được trước ngày ký."
+                );
             }
 
             if (!ModelState.IsValid)
             {
-                NapDanhSachNhanVien(model.FK_sMaNV);
-                return View(model);
+                await LoadNhanVien();
+                return View("Create", hopDong);
             }
 
-            var hopDong = new HopDongLaoDong
-            {
-                SMaHD = model.SMaHD,
-                FK_sMaNV = model.FK_sMaNV,
-                SLoaiHD = model.SLoaiHD,
-                DNgayKy = model.DNgayKy,
-                DNgayHetHan = model.DNgayHetHan,
-                STrangThai = model.STrangThai
-            };
+            hopDong.STrangThai = "Còn hiệu lực";
 
-            _db.HopDongs.Add(hopDong);
+            _context.HopDongs.Add(hopDong);
+            await _context.SaveChangesAsync();
 
-            await _db.SaveChangesAsync(cancellationToken);
-
-            TempData["ThongBao"] =
-                "Tạo hợp đồng lao động thành công.";
-
+            TempData["Success"] = "Thêm hợp đồng thành công.";
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet("{ma}/sua")]
-        public async Task<IActionResult> Edit(
-            string ma,
-            CancellationToken cancellationToken = default)
+        [HttpGet("{id}/sua")]
+        public async Task<IActionResult> Sua(string id)
         {
-            if (!CoQuyenQuanLy())
-                return Forbid();
-
-            var hopDong = await _db.HopDongs
-                .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    hd => hd.SMaHD == ma,
-                    cancellationToken);
+            var hopDong = await _context.HopDongs
+                .FirstOrDefaultAsync(hd => hd.SMaHD == id);
 
             if (hopDong == null)
             {
-                TempData["Loi"] = "Không tìm thấy hợp đồng.";
+                TempData["Error"] = "Không tìm thấy hợp đồng.";
                 return RedirectToAction(nameof(Index));
             }
 
-            if (hopDong.STrangThai == DaHuy)
+            if (hopDong.STrangThai == "Đã huỷ")
             {
-                TempData["Loi"] =
-                    "Hợp đồng đã hủy, không thể sửa.";
-
+                TempData["Error"] = "Không thể sửa hợp đồng đã huỷ.";
                 return RedirectToAction(nameof(Index));
             }
 
-            await NapThongTinNhanVienAsync(
-                hopDong.FK_sMaNV,
-                cancellationToken);
+            var nhanVien = await _context.NhanViens
+                .FirstOrDefaultAsync(nv => nv.SMaNV == hopDong.FK_sMaNV);
 
-            return View(hopDong);
+            ViewBag.TenNhanVien = nhanVien?.STenNV;
+
+            return View("Edit", hopDong);
         }
 
-        [HttpPost("{ma}/sua")]
+        [HttpPost("{id}/sua")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            string ma,
-            HopDongLaoDong model,
-            CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Sua(string id, HopDongLaoDong hopDong)
         {
-            if (!CoQuyenQuanLy())
-                return Forbid();
-
-            var hopDong = await _db.HopDongs
-                .FirstOrDefaultAsync(
-                    hd => hd.SMaHD == ma,
-                    cancellationToken);
-
-            if (hopDong == null)
+            if (id != hopDong.SMaHD)
             {
-                TempData["Loi"] = "Không tìm thấy hợp đồng.";
+                return NotFound();
+            }
+
+            var hopDongCu = await _context.HopDongs
+                .FirstOrDefaultAsync(hd => hd.SMaHD == id);
+
+            if (hopDongCu == null)
+            {
+                TempData["Error"] = "Không tìm thấy hợp đồng.";
                 return RedirectToAction(nameof(Index));
             }
 
-            if (hopDong.STrangThai == DaHuy)
+            if (hopDongCu.STrangThai == "Đã huỷ")
             {
-                TempData["Loi"] =
-                    "Hợp đồng đã hủy, không thể sửa.";
-
+                TempData["Error"] = "Không thể sửa hợp đồng đã huỷ.";
                 return RedirectToAction(nameof(Index));
             }
 
-            if (!TrangThaiHopLe(model.STrangThai))
+            if (string.IsNullOrWhiteSpace(hopDong.SLoaiHD))
+            {
+                ModelState.AddModelError("SLoaiHD", "Vui lòng chọn loại hợp đồng.");
+            }
+
+            if (hopDong.DNgayHetHan.HasValue &&
+                hopDong.DNgayHetHan.Value < hopDong.DNgayKy)
             {
                 ModelState.AddModelError(
-                    "STrangThai", "Trạng thái không hợp lệ.");
+                    "DNgayHetHan",
+                    "Ngày hết hạn không được trước ngày ký."
+                );
             }
 
             if (!ModelState.IsValid)
             {
-                await NapThongTinNhanVienAsync(
-                    hopDong.FK_sMaNV,
-                    cancellationToken);
+                var nhanVien = await _context.NhanViens
+                    .FirstOrDefaultAsync(nv => nv.SMaNV == hopDongCu.FK_sMaNV);
 
-                model.SMaHD = hopDong.SMaHD;
-                model.FK_sMaNV = hopDong.FK_sMaNV;
-                model.SLoaiHD = hopDong.SLoaiHD;
-                model.DNgayHetHan = hopDong.DNgayHetHan;
-
-                return View(model);
+                ViewBag.TenNhanVien = nhanVien?.STenNV;
+                return View("Edit", hopDong);
             }
 
-            hopDong.DNgayKy = model.DNgayKy;
-            hopDong.STrangThai = model.STrangThai;
+            hopDongCu.SLoaiHD = hopDong.SLoaiHD;
+            hopDongCu.DNgayKy = hopDong.DNgayKy;
+            hopDongCu.DNgayHetHan = hopDong.DNgayHetHan;
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
 
-            TempData["ThongBao"] =
-                "Cập nhật hợp đồng thành công.";
-
+            TempData["Success"] = "Cập nhật hợp đồng thành công.";
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost("{ma}/xoa")]
+        [HttpPost("{id}/xoa")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Xoa(
-            string ma,
-            CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Xoa(string id)
         {
-            if (!CoQuyenQuanLy())
-                return Forbid();
-
-            var hopDong = await _db.HopDongs
-                .FirstOrDefaultAsync(
-                    hd => hd.SMaHD == ma,
-                    cancellationToken);
+            var hopDong = await _context.HopDongs
+                .FirstOrDefaultAsync(hd => hd.SMaHD == id);
 
             if (hopDong == null)
             {
-                TempData["Loi"] = "Không tìm thấy hợp đồng.";
+                TempData["Error"] = "Không tìm thấy hợp đồng.";
                 return RedirectToAction(nameof(Index));
             }
 
-            if (hopDong.STrangThai == DaHuy)
+            if (hopDong.STrangThai == "Đã huỷ")
             {
-                TempData["Loi"] =
-                    "Hợp đồng đã được hủy trước đó.";
-
+                TempData["Error"] = "Hợp đồng này đã được huỷ trước đó.";
                 return RedirectToAction(nameof(Index));
             }
 
-            hopDong.STrangThai = DaHuy;
+            hopDong.STrangThai = "Đã huỷ";
 
-            await _db.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
 
-            TempData["ThongBao"] =
-                "Đã hủy hợp đồng thành công.";
-
+            TempData["Success"] = "Huỷ hợp đồng thành công.";
             return RedirectToAction(nameof(Index));
         }
-
-        [HttpGet("{ma}")]
-        public async Task<IActionResult> Details(
-            string ma,
-            CancellationToken cancellationToken = default)
-        {
-            var hopDong = await ApDungPhamVi(
-                    _db.HopDongs.AsNoTracking())
-                .Where(hd => hd.SMaHD == ma)
-                .Join(
-                    _db.NhanViens.AsNoTracking(),
-                    hd => hd.FK_sMaNV,
-                    nv => nv.SMaNV,
-                    (hd, nv) => new HopDongChiTietVM
-                    {
-                        SMaHD = hd.SMaHD,
-                        MaNV = nv.SMaNV,
-                        TenNV = nv.STenNV,
-                        LoaiHD = hd.SLoaiHD,
-                        NgayKy = hd.DNgayKy,
-                        NgayHetHan = hd.DNgayHetHan,
-                        LuongCoBan = nv.FLuongcb,
-                        TrangThai = hd.STrangThai
-                    })
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (hopDong == null)
-            {
-                TempData["Loi"] =
-                    "Không tìm thấy hợp đồng hoặc bạn không có quyền xem.";
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(hopDong);
-        }
-    }
-
-    public class HopDongDanhSachVM
-    {
-        public string SMaHD { get; set; } = "";
-        public string MaNV { get; set; } = "";
-        public string TenNV { get; set; } = "";
-        public DateTime NgayKy { get; set; }
-        public DateTime? NgayHetHan { get; set; }
-        public decimal LuongCoBan { get; set; }
-        public string? TrangThai { get; set; }
-    }
-
-    public class HopDongDanhSachTrangVM
-    {
-        public List<HopDongDanhSachVM> DanhSach { get; set; } = new();
-        public string? TuKhoa { get; set; }
-        public string? TrangThai { get; set; }
-        public int TrangHienTai { get; set; }
-        public int TongSoTrang { get; set; }
-        public int TongSoHopDong { get; set; }
-    }
-
-    public class HopDongChiTietVM
-    {
-        public string SMaHD { get; set; } = "";
-        public string MaNV { get; set; } = "";
-        public string TenNV { get; set; } = "";
-        public string LoaiHD { get; set; } = "";
-        public DateTime NgayKy { get; set; }
-        public DateTime? NgayHetHan { get; set; }
-        public decimal LuongCoBan { get; set; }
-        public string? TrangThai { get; set; }
     }
 }
