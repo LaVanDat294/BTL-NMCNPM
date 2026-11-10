@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TocoTocoHRM")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f1ba30cdfe53e35ae81a26f36606beab5c87819")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b0fd2b210dee48681f19d718f06d067e762aa13")]
 [assembly: System.Reflection.AssemblyProductAttribute("TocoTocoHRM")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TocoTocoHRM")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
