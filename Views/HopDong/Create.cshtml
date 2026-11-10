@@ -1,123 +1,99 @@
-﻿@using NMCNPM.Models
-@using System.Linq
+﻿@model NMCNPM.Models.HopDongLaoDong
 
 @{
-    ViewData["Title"] = "Tạo hợp đồng mới";
-    Layout = "~/Views/HopDong/_LayoutHopDong.cshtml";
-
-    IEnumerable<NhanVien> nhanViens = ViewBag.NhanViens as IEnumerable<NhanVien> ?? Enumerable.Empty<NhanVien>();
+    ViewData["Title"] = "Tạo hợp đồng lao động mới";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <div class="text-muted small mb-2">
-            Quản lý hợp đồng / Danh sách hợp đồng / Tạo hợp đồng mới
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0">
+            <i class="bi bi-file-earmark-plus-fill me-2"></i>Tạo hợp đồng lao động mới
+        </h3>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 text-center">
+            <span class="fw-bold text-secondary">
+                <i class="bi bi-info-circle me-1"></i> Thông tin hợp đồng
+            </span>
         </div>
-        <h3 class="fw-bold text-primary mb-0">Tạo hợp đồng lao động mới</h3>
-    </div>
-    <a asp-controller="HopDong" asp-action="Index" class="btn btn-outline-primary">
-        &lt; Quay lại
-    </a>
-</div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-header text-center fw-bold text-primary bg-primary bg-opacity-10">
-        Thông tin hợp đồng
-    </div>
+        <div class="card-body">
+            <form asp-action="ThemMoi" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
 
-    <div class="card-body p-4">
-        <form asp-controller="HopDong" asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">
-                        Mã hợp đồng <span class="text-danger">(*)</span>
+                    <label asp-for="SMaHD" class="form-label fw-semibold">
+                        Mã hợp đồng (<span class="text-danger">*</span>)
                     </label>
-                    <input type="text" name="SMaHD" class="form-control"
-                           placeholder="Nhập mã hợp đồng" required />
+                    <input asp-for="SMaHD" class="form-control" placeholder="Nhập mã hợp đồng..." required />
+                    <span asp-validation-for="SMaHD" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">
-                        Nhân viên <span class="text-danger">(*)</span>
+                    <label asp-for="FK_sMaNV" class="form-label fw-semibold">
+                        Nhân viên (<span class="text-danger">*</span>)
                     </label>
-                    <select name="FK_sMaNV" id="nhanVien" class="form-select" required>
-                        <option value="">Chọn nhân viên</option>
-                        @foreach (var nv in nhanViens)
-                        {
-                            <option value="@nv.SMaNV" data-luong="@nv.FLuongcb">
-                                @nv.SMaNV - @nv.STenNV
-                            </option>
-                        }
+                    <select asp-for="FK_sMaNV" class="form-select"
+                            asp-items="ViewBag.DanhSachNhanVien" required>
+                        <option value="">-- Chọn nhân viên --</option>
                     </select>
+                    <span asp-validation-for="FK_sMaNV" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">
-                        Ngày ký hợp đồng <span class="text-danger">(*)</span>
+                    <label asp-for="SLoaiHD" class="form-label fw-semibold">
+                        Loại hợp đồng (<span class="text-danger">*</span>)
                     </label>
-                    <input type="date" name="DNgayKy" class="form-control" required />
+                    <input asp-for="SLoaiHD" class="form-control"
+                           placeholder="Nhập loại hợp đồng..." required />
+                    <span asp-validation-for="SLoaiHD" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">
-                        Loại hợp đồng <span class="text-danger">(*)</span>
+                    <label asp-for="DNgayKy" class="form-label fw-semibold">
+                        Ngày ký hợp đồng (<span class="text-danger">*</span>)
                     </label>
-                    <select name="SLoaiHD" class="form-select" required>
-                        <option value="">Chọn loại hợp đồng</option>
-                        <option value="Thử việc">Thử việc</option>
-                        <option value="Xác định thời hạn">Xác định thời hạn</option>
-                        <option value="Không xác định thời hạn">Không xác định thời hạn</option>
-                    </select>
+                    <input asp-for="DNgayKy" type="date" class="form-control" required />
+                    <span asp-validation-for="DNgayKy" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">
-                        Mức lương cơ bản (VNĐ)
+                    <label asp-for="DNgayHetHan" class="form-label fw-semibold">
+                        Ngày hết hạn
                     </label>
-                    <input type="text" id="luongCoBan" class="form-control"
-                           placeholder="Tự động hiển thị theo nhân viên"
-                           readonly />
+                    <input asp-for="DNgayHetHan" type="date" class="form-control" />
+                    <span asp-validation-for="DNgayHetHan" class="text-danger"></span>
                 </div>
 
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">
-                        Trạng thái <span class="text-danger">(*)</span>
-                    </label>
-                    <select name="STrangThai" class="form-select" required>
-                        <option value="">Chọn trạng thái</option>
-                        <option value="Còn hiệu lực">Còn hiệu lực</option>
-                        <option value="Hết hạn">Hết hạn</option>
-                        <option value="Đã hủy">Đã hủy</option>
-                    </select>
+                <div class="col-12">
+                    <div class="alert alert-info py-2 mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Trạng thái ban đầu của hợp đồng sẽ là
+                        <strong>Còn hiệu lực</strong>.
+                    </div>
                 </div>
 
-                <div class="col-12 d-flex justify-content-center gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary px-4">
-                        + Thêm mới
+                <div class="col-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-primary px-5 py-2 me-2">
+                        <i class="bi bi-plus-circle me-1"></i> Thêm mới
                     </button>
-                    <button type="reset" class="btn btn-outline-secondary px-4">
-                        Làm mới
+                    <button type="reset" class="btn btn-outline-secondary px-4 py-2">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
-<script>
-    const nhanVien = document.getElementById("nhanVien");
-    const luongCoBan = document.getElementById("luongCoBan");
-
-    nhanVien.addEventListener("change", function () {
-        const option = this.options[this.selectedIndex];
-        const luong = option.getAttribute("data-luong");
-
-        if (luong) {
-            luongCoBan.value = Number(luong).toLocaleString("vi-VN") + " VNĐ";
-        } else {
-            luongCoBan.value = "";
-        }
-    });
-</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

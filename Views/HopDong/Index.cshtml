@@ -1,233 +1,207 @@
-﻿@model NMCNPM.Controllers.HopDongDanhSachTrangVM
+﻿@model IEnumerable<NMCNPM.Models.HopDongLaoDong>
 
 @{
-    Layout = "~/Views/HopDong/_LayoutHopDong.cshtml";
     ViewData["Title"] = "Danh sách hợp đồng";
+    var tenNhanVienDict = ViewBag.TenNhanVien as Dictionary<string, string> ?? new Dictionary<string, string>();
 }
 
-<div class="breadcrumb-custom">
-    Quản lý hợp đồng / Danh sách hợp đồng
-</div>
-
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="page-title mb-0">Danh sách hợp đồng lao động</h2>
-    <a asp-controller="HopDong" asp-action="ThemMoi"
-       class="btn btn-primary">
-        + Tạo hợp đồng mới
-    </a>
-</div>
-
-@if (TempData["ThongBao"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["ThongBao"]
-    </div>
-}
-
-@if (TempData["Loi"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["Loi"]
-    </div>
-}
-
-<div class="card border-0 shadow-sm mb-3">
-    <div class="card-header bg-primary bg-opacity-10 fw-bold text-primary">
-        Bộ lọc
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0">
+            <i class="bi bi-file-earmark-text-fill me-2"></i>Danh sách hợp đồng lao động
+        </h3>
+        <a asp-action="ThemMoi" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Tạo hợp đồng mới
+        </a>
     </div>
 
-    <div class="card-body">
-        <form method="get" asp-controller="HopDong" asp-action="Index">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-4">
-                    <label class="form-label fw-semibold">
-                        Mã hợp đồng / Mã NV / Tên nhân viên
-                    </label>
-                    <input type="text" name="tuKhoa"
-                           value="@Model.TuKhoa"
-                           class="form-control"
-                           placeholder="Nhập từ khóa..." />
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light py-3">
+            <span class="fw-bold text-secondary">
+                <i class="bi bi-funnel-fill me-1"></i> Bộ lọc hợp đồng
+            </span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-muted">Mã hợp đồng / Mã NV / Tên nhân viên</label>
+                    <input type="text" name="searchString" class="form-control"
+                           placeholder="Nhập từ khóa..."
+                           value="@ViewBag.SearchString" />
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Trạng thái</label>
+                    <label class="form-label small fw-bold text-muted">Trạng thái</label>
                     <select name="trangThai" class="form-select">
                         <option value="">Tất cả trạng thái</option>
-                        <option value="Còn hiệu lực"
-                                selected="@(Model.TrangThai == "Còn hiệu lực")">
-                            Còn hiệu lực
-                        </option>
-                        <option value="Đã hủy"
-                                selected="@(Model.TrangThai == "Đã hủy")">
-                            Đã hủy
-                        </option>
-                        <option value="Hết hạn"
-                                selected="@(Model.TrangThai == "Hết hạn")">
-                            Hết hạn
-                        </option>
+                        <option value="Còn hiệu lực" selected="@(ViewBag.TrangThai?.ToString() == "Còn hiệu lực")">Còn hiệu lực</option>
+                        <option value="Đã huỷ" selected="@(ViewBag.TrangThai?.ToString() == "Đã huỷ")">Đã huỷ</option>
                     </select>
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-md-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
-                        Tìm kiếm
+                        <i class="bi bi-search me-1"></i> Tìm kiếm
                     </button>
-                    <a asp-controller="HopDong" asp-action="Index"
-                       class="btn btn-outline-secondary ms-2">
-                        Làm mới
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
                     </a>
                 </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-primary bg-opacity-10 fw-bold text-primary">
-        Bảng hợp đồng lao động
+            </form>
+        </div>
     </div>
 
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped align-middle text-center">
-                <thead class="table-primary">
-                    <tr>
-                        <th>STT</th>
-                        <th>Mã hợp đồng</th>
-                        <th>Mã NV</th>
-                        <th>Họ và tên</th>
-                        <th>Ngày ký</th>
-                        <th>Lương cơ bản (VNĐ)</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light py-3">
+            <span class="fw-bold text-secondary">
+                <i class="bi bi-table me-1"></i> Bảng hợp đồng lao động
+            </span>
+        </div>
 
-                <tbody>
-                    @if (Model.DanhSach != null && Model.DanhSach.Any())
-                    {
-                        @for (int i = 0; i < Model.DanhSach.Count; i++)
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-primary text-dark">
+                        <tr>
+                            <th class="ps-3">STT</th>
+                            <th>Mã hợp đồng</th>
+                            <th>Mã NV</th>
+                            <th>Họ và tên</th>
+                            <th>Loại hợp đồng</th>
+                            <th>Ngày ký</th>
+                            <th>Ngày hết hạn</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center pe-3">Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
                         {
-                            var hd = Model.DanhSach[i];
+                            int stt = 1;
 
-                            <tr>
-                                <td>@((Model.TrangHienTai - 1) * 10 + i + 1)</td>
-                                <td class="fw-semibold">@hd.SMaHD</td>
-                                <td>@hd.MaNV</td>
-                                <td>@hd.TenNV</td>
-                                <td>@hd.NgayKy.ToString("dd/MM/yyyy")</td>
-                                <td>@hd.LuongCoBan.ToString("N0")</td>
-                                <td>
-                                    @if (hd.TrangThai == "Còn hiệu lực")
-                                    {
-                                        <span class="badge bg-success bg-opacity-10 text-success">
-                                            Còn hiệu lực
-                                        </span>
-                                    }
-                                    else if (hd.TrangThai == "Đã hủy")
-                                    {
-                                        <span class="badge bg-danger bg-opacity-10 text-danger">
-                                            Đã hủy
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-warning bg-opacity-10 text-warning">
-                                            @hd.TrangThai
-                                        </span>
-                                    }
-                                </td>
-                                <td>
-                                    <div class="d-flex justify-content-center gap-1">
-                                        <a asp-controller="HopDong"
-                                           asp-action="ChiTiet"
-                                           asp-route-ma="@hd.SMaHD"
-                                           class="btn btn-sm btn-outline-primary">
-                                            Xem
+                            foreach (var item in Model)
+                            {
+                                var tenNhanVien = tenNhanVienDict.ContainsKey(item.FK_sMaNV ?? "")
+                                    ? tenNhanVienDict[item.FK_sMaNV]
+                                    : "Không tìm thấy";
+
+                                <tr>
+                                    <td class="ps-3">@(stt++)</td>
+                                    <td class="fw-bold text-primary">@item.SMaHD</td>
+                                    <td>@item.FK_sMaNV</td>
+                                    <td>@tenNhanVien</td>
+                                    <td>@item.SLoaiHD</td>
+                                    <td>@item.DNgayKy.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @(item.DNgayHetHan.HasValue
+                                            ? item.DNgayHetHan.Value.ToString("dd/MM/yyyy")
+                                            : "Không thời hạn")
+                                    </td>
+                                    <td>
+                                        @if (item.STrangThai == "Còn hiệu lực")
+                                        {
+                                            <span class="badge bg-success bg-opacity-75 text-white px-2 py-1">Còn hiệu lực</span>
+                                        }
+                                        else if (item.STrangThai == "Đã huỷ")
+                                        {
+                                            <span class="badge bg-danger bg-opacity-75 text-white px-2 py-1">Đã huỷ</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary px-2 py-1">Chưa cập nhật</span>
+                                        }
+                                    </td>
+                                    <td class="text-center pe-3">
+                                        <a asp-action="Details" asp-route-id="@item.SMaHD"
+                                           class="btn btn-sm btn-info text-white me-1" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
                                         </a>
 
-                                        @if (hd.TrangThai != "Đã hủy")
+                                        @if (item.STrangThai != "Đã huỷ")
                                         {
-                                            <a asp-controller="HopDong"
-                                               asp-action="ChinhSua"
-                                               asp-route-ma="@hd.SMaHD"
-                                               class="btn btn-sm btn-outline-primary">
-                                                Sửa
+                                            <a asp-action="Sua" asp-route-id="@item.SMaHD"
+                                               class="btn btn-sm btn-primary me-1" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
                                             </a>
 
-                                            <form asp-controller="HopDong"
-                                                  asp-action="Xoa"
-                                                  asp-route-ma="@hd.SMaHD"
-                                                  method="post"
-                                                  onsubmit="return confirm('Bạn có chắc chắn muốn hủy hợp đồng này không?');">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-outline-danger">
-                                                    Xóa
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal-@item.SMaHD"
+                                                    title="Hủy hợp đồng">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+
+                                            <div class="modal fade" id="deleteModal-@item.SMaHD" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title">
+                                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Xác nhận hủy hợp đồng
+                                                            </h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+
+                                                        <div class="modal-body text-start">
+                                                            <div class="text-center mb-3">
+                                                                <i class="bi bi-exclamation-circle text-danger fs-1"></i>
+                                                            </div>
+                                                            <p class="text-center">Bạn có chắc chắn muốn hủy hợp đồng này không?</p>
+                                                            <div class="alert alert-secondary text-center py-2">
+                                                                <strong>Mã hợp đồng: @item.SMaHD</strong>
+                                                                <br />
+                                                                Nhân viên: <strong>@tenNhanVien</strong>
+                                                            </div>
+                                                            <div class="text-danger small text-center">
+                                                                Hợp đồng sẽ được chuyển sang trạng thái "Đã huỷ".
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="modal-footer justify-content-center">
+                                                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                                                                Đóng
+                                                            </button>
+
+                                                            <form asp-action="Xoa" asp-route-id="@item.SMaHD" method="post">
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger px-4">Xác nhận hủy</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         }
-                                    </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center py-4 text-muted">
+                                    Không tìm thấy hợp đồng nào phù hợp.
                                 </td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="8" class="text-muted py-4">
-                                Không có dữ liệu hợp đồng.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div class="text-muted small">
-                Tổng số: @Model.TongSoHopDong hợp đồng
+                    </tbody>
+                </table>
             </div>
-
-            @if (Model.TongSoTrang > 1)
-            {
-                <nav>
-                    <ul class="pagination mb-0">
-                        <li class="page-item @(Model.TrangHienTai <= 1 ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-page="@(Model.TrangHienTai - 1)"
-                               asp-route-tuKhoa="@Model.TuKhoa"
-                               asp-route-trangThai="@Model.TrangThai">
-                                Trước
-                            </a>
-                        </li>
-
-                        @for (int p = 1; p <= Model.TongSoTrang; p++)
-                        {
-                            <li class="page-item @(p == Model.TrangHienTai ? "active" : "")">
-                                <a class="page-link"
-                                   asp-action="Index"
-                                   asp-route-page="@p"
-                                   asp-route-tuKhoa="@Model.TuKhoa"
-                                   asp-route-trangThai="@Model.TrangThai">
-                                    @p
-                                </a>
-                            </li>
-                        }
-
-                        <li class="page-item @(Model.TrangHienTai >= Model.TongSoTrang ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-page="@(Model.TrangHienTai + 1)"
-                               asp-route-tuKhoa="@Model.TuKhoa"
-                               asp-route-trangThai="@Model.TrangThai">
-                                Sau
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            }
         </div>
     </div>
 </div>
