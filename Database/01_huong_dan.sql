@@ -1,0 +1,3 @@
+-- Chạy toàn bộ script tạo database/bảng mà bạn đã gửi trước.
+-- Sau đó chạy tiếp file 02_tao_tai_khoan_admin.sql trong thư mục này.
+-- Nếu database đã tồn tại thì bỏ qua CREATE DATABASE và USE database tương ứng.

@@ -1,0 +1,27 @@
+@model NhanVienFormViewModel
+@{
+    bool edit = ViewContext.RouteData.Values["action"]?.ToString() == "Edit";
+    ViewData["Title"] = edit ? "Cập nhật nhân viên" : "Thêm nhân viên";
+}
+<div class="page-heading"><div><h1><i class="fa-solid fa-user-pen"></i> @(edit ? "Cập nhật nhân viên" : "Thêm nhân viên mới")</h1><p>Nhập đầy đủ thông tin hồ sơ nhân viên</p></div><a asp-action="Index" class="btn-light"><i class="fa-solid fa-arrow-left"></i> Quay lại</a></div>
+<div class="form-panel">
+<form asp-action="@(edit ? "Edit" : "Create")" asp-route-id="@Model.NhanVien.MaNV" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+    <div class="form-grid">
+        <div class="form-field"><label asp-for="NhanVien.MaNV">Mã nhân viên *</label><input asp-for="NhanVien.MaNV" readonly="@(edit)" placeholder="VD: NV001"/><span asp-validation-for="NhanVien.MaNV" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.TenNV">Họ và tên *</label><input asp-for="NhanVien.TenNV" placeholder="Nhập họ và tên"/><span asp-validation-for="NhanVien.TenNV" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.NgaySinh">Ngày sinh</label><input asp-for="NhanVien.NgaySinh" type="date"/><span asp-validation-for="NhanVien.NgaySinh" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.GioiTinh">Giới tính</label><select asp-for="NhanVien.GioiTinh"><option value="">-- Chọn giới tính --</option><option>Nam</option><option>Nữ</option><option>Khác</option></select></div>
+        <div class="form-field"><label asp-for="NhanVien.CCCD">CCCD *</label><input asp-for="NhanVien.CCCD" placeholder="Nhập số CCCD"/><span asp-validation-for="NhanVien.CCCD" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.SDT">Số điện thoại</label><input asp-for="NhanVien.SDT" placeholder="Nhập số điện thoại"/><span asp-validation-for="NhanVien.SDT" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.Email">Email</label><input asp-for="NhanVien.Email" placeholder="example@email.com"/><span asp-validation-for="NhanVien.Email" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.NgayVaoLam">Ngày vào làm</label><input asp-for="NhanVien.NgayVaoLam" type="date"/></div>
+        <div class="form-field"><label asp-for="NhanVien.MaPB">Phòng ban *</label><select asp-for="NhanVien.MaPB" asp-items="Model.PhongBans"><option value="">-- Chọn phòng ban --</option></select><span asp-validation-for="NhanVien.MaPB" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.MaCV">Chức vụ *</label><select asp-for="NhanVien.MaCV" asp-items="Model.ChucVus"><option value="">-- Chọn chức vụ --</option></select><span asp-validation-for="NhanVien.MaCV" class="field-error"></span></div>
+        <div class="form-field"><label asp-for="NhanVien.TrangThai">Trạng thái</label><select asp-for="NhanVien.TrangThai"><option>Đang làm việc</option><option>Tạm nghỉ</option><option>Nghỉ việc</option></select></div>
+        <div class="form-field"><label asp-for="NhanVien.LuongCB">Lương cơ bản (VNĐ)</label><input asp-for="NhanVien.LuongCB" type="number" min="0" step="1000"/><span asp-validation-for="NhanVien.LuongCB" class="field-error"></span></div>
+        <div class="form-field full"><label asp-for="NhanVien.DiaChi">Địa chỉ</label><textarea asp-for="NhanVien.DiaChi" rows="3" placeholder="Nhập địa chỉ"></textarea></div>
+    </div>
+    <div class="form-actions"><a asp-action="Index" class="btn-light">Hủy</a><button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> @(edit ? "Lưu thay đổi" : "Thêm nhân viên")</button></div>
+</form></div>

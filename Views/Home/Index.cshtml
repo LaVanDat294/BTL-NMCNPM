@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+<div class="welcome">
+    <div class="welcome-icon"><i class="fa-solid fa-users"></i></div>
+    <div><h1>Chào mừng đến với hệ thống<br/>Quản lý nhân sự TocoToco!</h1><p>Quản lý nhân sự hiệu quả - Phát triển cùng TocoToco</p></div>
+</div>
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-users"></i></div><div><span>Tổng số nhân viên</span><strong>@ViewBag.TongNhanVien</strong></div></div>
+    <div class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div><div><span>Đang làm việc</span><strong>@ViewBag.DangLam</strong></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-building"></i></div><div><span>Phòng ban</span><strong>@ViewBag.PhongBan</strong></div></div>
+    <div class="stat-card"><div class="stat-icon red"><i class="fa-solid fa-circle-minus"></i></div><div><span>Nghỉ việc / khác</span><strong>@ViewBag.NghiViec</strong></div></div>
+</div>
+<div class="home-panel">
+    <div class="panel-illustration"><i class="fa-solid fa-clipboard-list"></i><i class="fa-solid fa-user-check"></i></div>
+    <div><h3>Hệ thống Quản lý Nhân sự TocoToco</h3><p>Giải pháp quản lý nhân sự hiện đại, giúp doanh nghiệp vận hành hiệu quả và chuyên nghiệp hơn.</p>
+    <a class="btn-primary inline-btn" asp-controller="NhanVien" asp-action="Index"><i class="fa-solid fa-chart-column"></i> Quản lý nhân viên</a></div>
+</div>

@@ -1,0 +1,509 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\TocoTocoHRM\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|e:\\tocotocohrm\\1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|solutionrelative:1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\viewmodels\\nhanvienlistitemviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:viewmodels\\nhanvienlistitemviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\viewmodels\\nhanvienformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:viewmodels\\nhanvienformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\models\\phongban.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:models\\phongban.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\controllers\\nhanviencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:controllers\\nhanviencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\cookies.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:cookies.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\views\\nhanvien\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:views\\nhanvien\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\wwwroot\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:wwwroot\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|e:\\tocotocohrm\\tocotocohrm.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|solutionrelative:tocotocohrm.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\services\\passwordutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:services\\passwordutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\models\\taikhoan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:models\\taikhoan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\models\\chucvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:models\\chucvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\data\\hrmdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:data\\hrmdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\models\\nhanvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:models\\nhanvien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\views\\nhanvien\\form.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:views\\nhanvien\\form.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\database\\02_tao_tai_khoan_admin.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:database\\02_tao_tai_khoan_admin.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|e:\\tocotocohrm\\database\\01_huong_dan.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|NMCNPM.csproj|solutionrelative:database\\01_huong_dan.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|e:\\tocotocohrm\\database\\02_tao_tai_khoan_admin.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|solutionrelative:database\\02_tao_tai_khoan_admin.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|e:\\tocotocohrm\\database\\01_huong_dan.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|solutionrelative:database\\01_huong_dan.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|e:\\tocotocohrm\\1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame",
+      "RelativeMoniker": "D:0:0:{3C4B0218-A36F-B97D-4D66-8C360847B316}|TocoTocoHRM.csproj|solutionrelative:1.sql||{CC5D8DF0-88F4-4BB2-9DBB-B48CEE65C30A}|CodeFrame"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "1.sql ",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\1.sql",
+              "RelativeDocumentMoniker": "1.sql",
+              "ToolTip": "E:\\TocoTocoHRM\\1.sql",
+              "RelativeToolTip": "1.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-11-10T02:29:15.386Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Views\\Account\\Login.cshtml",
+              "RelativeDocumentMoniker": "Views\\Account\\Login.cshtml",
+              "ToolTip": "E:\\TocoTocoHRM\\Views\\Account\\Login.cshtml",
+              "RelativeToolTip": "Views\\Account\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-09T08:07:10.793Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "Views\\_ViewImports.cshtml",
+              "ToolTip": "E:\\TocoTocoHRM\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-09T18:49:45.75Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "Views\\_ViewStart.cshtml",
+              "ToolTip": "E:\\TocoTocoHRM\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-09T18:50:04.897Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T08:02:56.093Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Controllers\\AccountController.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAIBZwAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T07:51:23.381Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAsAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T18:47:35.032Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "NhanVienListItemViewModel.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\ViewModels\\NhanVienListItemViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\NhanVienListItemViewModel.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\ViewModels\\NhanVienListItemViewModel.cs",
+              "RelativeToolTip": "ViewModels\\NhanVienListItemViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T18:49:12.447Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "NhanVienFormViewModel.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\ViewModels\\NhanVienFormViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\NhanVienFormViewModel.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\ViewModels\\NhanVienFormViewModel.cs",
+              "RelativeToolTip": "ViewModels\\NhanVienFormViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T18:48:53.534Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LoginViewModel.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\ViewModels\\LoginViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\LoginViewModel.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\ViewModels\\LoginViewModel.cs",
+              "RelativeToolTip": "ViewModels\\LoginViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T18:48:43.516Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "PasswordUtil.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Services\\PasswordUtil.cs",
+              "RelativeDocumentMoniker": "Services\\PasswordUtil.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Services\\PasswordUtil.cs",
+              "RelativeToolTip": "Services\\PasswordUtil.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T07:57:47.783Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "TaiKhoan.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Models\\TaiKhoan.cs",
+              "RelativeDocumentMoniker": "Models\\TaiKhoan.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Models\\TaiKhoan.cs",
+              "RelativeToolTip": "Models\\TaiKhoan.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T07:59:00.75Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PhongBan.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Models\\PhongBan.cs",
+              "RelativeDocumentMoniker": "Models\\PhongBan.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Models\\PhongBan.cs",
+              "RelativeToolTip": "Models\\PhongBan.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T18:52:11.432Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ChucVu.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Models\\ChucVu.cs",
+              "RelativeDocumentMoniker": "Models\\ChucVu.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Models\\ChucVu.cs",
+              "RelativeToolTip": "Models\\ChucVu.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T07:34:19.671Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "HrmDbContext.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Data\\HrmDbContext.cs",
+              "RelativeDocumentMoniker": "Data\\HrmDbContext.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Data\\HrmDbContext.cs",
+              "RelativeToolTip": "Data\\HrmDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T07:58:23.93Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "NhanVienController.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Controllers\\NhanVienController.cs",
+              "RelativeDocumentMoniker": "Controllers\\NhanVienController.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Controllers\\NhanVienController.cs",
+              "RelativeToolTip": "Controllers\\NhanVienController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T18:47:53.594Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "NhanVien.cs",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Models\\NhanVien.cs",
+              "RelativeDocumentMoniker": "Models\\NhanVien.cs",
+              "ToolTip": "E:\\TocoTocoHRM\\Models\\NhanVien.cs",
+              "RelativeToolTip": "Models\\NhanVien.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-09T07:34:27.931Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "cookies.txt",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\cookies.txt",
+              "RelativeDocumentMoniker": "cookies.txt",
+              "ToolTip": "E:\\TocoTocoHRM\\cookies.txt",
+              "RelativeToolTip": "cookies.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-11-09T18:50:13.901Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "E:\\TocoTocoHRM\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-11-09T07:36:12.541Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Views\\NhanVien\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\NhanVien\\Index.cshtml",
+              "ToolTip": "E:\\TocoTocoHRM\\Views\\NhanVien\\Index.cshtml",
+              "RelativeToolTip": "Views\\NhanVien\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-09T18:49:44.525Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Form.cshtml",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Views\\NhanVien\\Form.cshtml",
+              "RelativeDocumentMoniker": "Views\\NhanVien\\Form.cshtml",
+              "ToolTip": "E:\\TocoTocoHRM\\Views\\NhanVien\\Form.cshtml",
+              "RelativeToolTip": "Views\\NhanVien\\Form.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-09T08:17:19.005Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "site.js",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\wwwroot\\js\\site.js",
+              "RelativeDocumentMoniker": "wwwroot\\js\\site.js",
+              "ToolTip": "E:\\TocoTocoHRM\\wwwroot\\js\\site.js",
+              "RelativeToolTip": "wwwroot\\js\\site.js",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-11-09T18:46:43.362Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "style.css",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\wwwroot\\css\\style.css",
+              "RelativeDocumentMoniker": "wwwroot\\css\\style.css",
+              "ToolTip": "E:\\TocoTocoHRM\\wwwroot\\css\\style.css",
+              "RelativeToolTip": "wwwroot\\css\\style.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-11-09T18:46:38.943Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "E:\\TocoTocoHRM\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-11-09T18:46:28.524Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "NMCNPM.csproj",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\TocoTocoHRM.csproj",
+              "RelativeDocumentMoniker": "TocoTocoHRM.csproj",
+              "ToolTip": "E:\\TocoTocoHRM\\TocoTocoHRM.csproj",
+              "RelativeToolTip": "TocoTocoHRM.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-11-09T07:40:52.739Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
+              "ToolTip": "E:\\TocoTocoHRM\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-09T08:17:07.293Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "02_tao_tai_khoan_admin.sql ",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Database\\02_tao_tai_khoan_admin.sql",
+              "RelativeDocumentMoniker": "Database\\02_tao_tai_khoan_admin.sql",
+              "ToolTip": "E:\\TocoTocoHRM\\Database\\02_tao_tai_khoan_admin.sql",
+              "RelativeToolTip": "Database\\02_tao_tai_khoan_admin.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-11-09T07:40:58.971Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "01_huong_dan.sql ",
+              "DocumentMoniker": "E:\\TocoTocoHRM\\Database\\01_huong_dan.sql",
+              "RelativeDocumentMoniker": "Database\\01_huong_dan.sql",
+              "ToolTip": "E:\\TocoTocoHRM\\Database\\01_huong_dan.sql",
+              "RelativeToolTip": "Database\\01_huong_dan.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-11-09T07:40:47.341Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

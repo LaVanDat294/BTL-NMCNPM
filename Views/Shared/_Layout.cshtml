@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - TocoToco HRM</title>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand"><i class="fa-solid fa-users"></i><div><b>TOCOTOCO</b><small>HỆ THỐNG QUẢN LÝ<br/>NHÂN SỰ</small></div></div>
+        <nav>
+            <a asp-controller="Home" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString()=="Home"?"active":"")"><i class="fa-solid fa-house"></i>Trang chủ</a>
+            <a asp-controller="NhanVien" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString()=="NhanVien"?"active":"")"><i class="fa-solid fa-users"></i>Quản lý nhân viên</a>
+            <a href="#"><i class="fa-solid fa-building"></i>Quản lý phòng ban</a>
+            <a href="#"><i class="fa-solid fa-clock"></i>Quản lý chấm công</a>
+            <a href="#"><i class="fa-solid fa-file-contract"></i>Quản lý hợp đồng</a>
+            <a href="#"><i class="fa-solid fa-chart-column"></i>Báo cáo</a>
+            <a href="#"><i class="fa-solid fa-gear"></i>Cài đặt</a>
+        </nav>
+        <div class="sidebar-bottom">© 2026 TocoToco HRM</div>
+    </aside>
+    <main class="main-area">
+        <header class="topbar">
+            <div class="crumb">Hệ thống quản lý nhân sự / @ViewData["Title"]</div>
+            <div class="user-area"><i class="fa-regular fa-bell"></i><i class="fa-solid fa-circle-user"></i><b>@User.Identity?.Name</b>
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()<button class="logout-btn" title="Đăng xuất"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </form>
+            </div>
+        </header>
+        <section class="page-content">
+            @if (TempData["Success"] != null) { <div class="alert success">@TempData["Success"]</div> }
+            @if (TempData["Error"] != null) { <div class="alert danger">@TempData["Error"]</div> }
+            @RenderBody()
+        </section>
+    </main>
+</div>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,37 @@
+@model IEnumerable<NhanVienListItemViewModel>
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+}
+<div class="page-heading">
+    <div><h1><i class="fa-solid fa-users"></i> Danh sách nhân viên</h1><p>Quản lý, tìm kiếm và cập nhật thông tin nhân viên</p></div>
+    <a asp-action="Create" class="btn-primary"><i class="fa-solid fa-plus"></i> Thêm nhân viên mới</a>
+</div>
+<form method="get" asp-action="Index" class="filter-panel">
+    <div class="filter-field keyword"><label>Từ khóa (Mã NV, họ tên, SĐT)</label><input name="tuKhoa" value="@ViewBag.TuKhoa" placeholder="Nhập mã, họ tên, SĐT..."/></div>
+    <div class="filter-field"><label>Phòng ban</label><select name="maPB"><option value="">Tất cả phòng ban</option>@foreach(var x in (SelectList)ViewBag.PhongBans){<option value="@x.Value" selected="@(x.Selected ? "selected" : null)">@x.Text</option>}</select></div>
+    <div class="filter-field"><label>Chức vụ</label><select name="maCV"><option value="">Tất cả chức vụ</option>@foreach(var x in (SelectList)ViewBag.ChucVus){<option value="@x.Value" selected="@(x.Selected ? "selected" : null)">@x.Text</option>}</select></div>
+    <div class="filter-field"><label>Trạng thái</label><select name="trangThai"><option value="">Tất cả trạng thái</option><option selected="@(ViewBag.TrangThai=="Đang làm việc")">Đang làm việc</option><option selected="@(ViewBag.TrangThai=="Nghỉ việc")">Nghỉ việc</option><option selected="@(ViewBag.TrangThai=="Tạm nghỉ")">Tạm nghỉ</option></select></div>
+    <button class="btn-primary search-btn"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
+    <a asp-action="Index" class="btn-reset" title="Làm mới"><i class="fa-solid fa-rotate-right"></i></a>
+</form>
+<div class="table-panel">
+    <div class="table-title"><i class="fa-solid fa-list"></i> Danh sách hồ sơ nhân viên <span>@Model.Count() nhân viên</span></div>
+    <div class="table-responsive"><table>
+        <thead><tr><th>STT</th><th>Mã NV</th><th>Họ và tên</th><th>Ngày sinh</th><th>Giới tính</th><th>Số điện thoại</th><th>Email</th><th>Phòng ban</th><th>Chức vụ</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody>
+        @{var i=0;}
+        @foreach (var item in Model) {
+            i++;
+            <tr>
+                <td>@i</td><td class="code">@item.NhanVien.MaNV</td><td class="name-cell">@item.NhanVien.TenNV</td>
+                <td>@(item.NhanVien.NgaySinh == null ? "" : ((DateTime)item.NhanVien.NgaySinh).ToString("dd/MM/yyyy"))</td>
+                <td>@item.NhanVien.GioiTinh</td><td>@item.NhanVien.SDT</td><td>@item.NhanVien.Email</td><td>@item.TenPB</td><td>@item.TenCV</td>
+                <td><span class="status @(item.NhanVien.TrangThai=="Đang làm việc"?"status-on":"status-off")">@item.NhanVien.TrangThai</span></td>
+                <td class="actions"><a asp-action="Edit" asp-route-id="@item.NhanVien.MaNV" class="icon-btn edit" title="Sửa"><i class="fa-solid fa-pen"></i></a>
+                    <form asp-action="Delete" asp-route-id="@item.NhanVien.MaNV" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhân viên này?')">@Html.AntiForgeryToken()<button class="icon-btn delete" title="Xóa"><i class="fa-solid fa-trash"></i></button></form></td>
+            </tr>
+        }
+        @if (!Model.Any()) { <tr><td colspan="11" class="empty">Không tìm thấy nhân viên phù hợp.</td></tr> }
+        </tbody>
+    </table></div>
+</div>
