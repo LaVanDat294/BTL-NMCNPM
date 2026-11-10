@@ -1,0 +1,50 @@
+@model NMCNPM.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Xóa nhân viên";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Xác nhận xóa nhân viên</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-danger fw-bold">Bạn có chắc chắn muốn xóa nhân viên này khỏi hệ thống không?</p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="35%">Mã nhân viên:</th>
+                            <td>@Model.SMaNV</td>
+                        </tr>
+                        <tr>
+                            <th>Họ và tên:</th>
+                            <td class="fw-bold">@Model.STenNV</td>
+                        </tr>
+                        <tr>
+                            <th>CCCD:</th>
+                            <td>@Model.SCCCD</td>
+                        </tr>
+                        <tr>
+                            <th>Phòng ban:</th>
+                            <td>@(Model.PhongBan?.STenPB ?? Model.FK_sMaPB)</td>
+                        </tr>
+                        <tr>
+                            <th>Chức vụ:</th>
+                            <td>@(Model.ChucVu?.STenCV ?? Model.FK_sMaCV)</td>
+                        </tr>
+                    </table>
+
+                    <form asp-action="Delete" method="post" class="mt-3">
+                        <input type="hidden" asp-for="SMaNV" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Hủy bỏ</a>
+                            <button type="submit" class="btn btn-danger"><i class="bi bi-trash-fill"></i> Xác nhận xóa</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

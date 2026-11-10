@@ -1,0 +1,40 @@
+@model NMCNPM.Models.ChucVu
+@{
+    ViewData["Title"] = "Thêm Chức vụ";
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Thêm Chức vụ Mới</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="SMaCV" class="form-label fw-semibold">Mã Chức vụ <span class="text-danger">*</span></label>
+                    <input asp-for="SMaCV" class="form-control" placeholder="VD: CV_QLCH" required />
+                    <span asp-validation-for="SMaCV" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="STenCV" class="form-label fw-semibold">Tên Chức vụ <span class="text-danger">*</span></label>
+                    <input asp-for="STenCV" class="form-control" placeholder="VD: Cửa hàng trưởng" required />
+                    <span asp-validation-for="STenCV" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FPhuCap" class="form-label fw-semibold">Phụ cấp (VNĐ)</label>
+                    <input asp-for="FPhuCap" type="number" step="1000" class="form-control" placeholder="VD: 1500000" />
+                    <span asp-validation-for="FPhuCap" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-save me-1"></i> Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

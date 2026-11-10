@@ -6,11 +6,10 @@ namespace NMCNPM.Models
     [Table("tbl_Quyen")]
     public class Quyen
     {
-        [Key]
-        [Column("sMaQuyen")]
+        [Key, Column("sMaQuyen"), StringLength(20)]
         public string SMaQuyen { get; set; } = null!;
 
-        [Column("sTenQuyen")]
+        [Required, Column("sTenQuyen"), StringLength(50)]
         public string STenQuyen { get; set; } = null!;
     }
 }

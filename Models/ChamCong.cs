@@ -6,14 +6,13 @@ namespace NMCNPM.Models
     [Table("tbl_ChamCong")]
     public class ChamCong
     {
-        [Key]
-        [Column("sMaChamCong")]
+        [Key, Column("sMaChamCong"), StringLength(20)]
         public string SMaChamCong { get; set; } = null!;
 
-        [Column("FK_sMaNV")]
+        [Required, Column("FK_sMaNV"), StringLength(20)]
         public string FK_sMaNV { get; set; } = null!;
 
-        [Column("dNgayChamCong")]
+        [Required, Column("dNgayChamCong")]
         public DateTime DNgayChamCong { get; set; }
 
         [Column("dGioVao")]
@@ -25,10 +24,13 @@ namespace NMCNPM.Models
         [Column("iSoGioLam")]
         public int ISoGioLam { get; set; }
 
-        [Column("sTrangThai")]
+        [Column("sTrangThai"), StringLength(50)]
         public string? STrangThai { get; set; }
 
-        [Column("sGhiChu")]
+        [Column("sGhiChu"), StringLength(255)]
         public string? SGhiChu { get; set; }
+
+        [ForeignKey("FK_sMaNV")]
+        public virtual NhanVien? NhanVien { get; set; }
     }
 }
