@@ -1,0 +1,96 @@
+@model IEnumerable<NMCNPM.Models.Luong>
+@{
+    ViewData["Title"] = "Quản lý Lương";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cash-stack text-success me-2"></i>Quản lý Bảng Lương</h2>
+        <div>
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#calcSalaryModal">
+                <i class="bi bi-calculator me-1"></i> Tính lương tự động
+            </button>
+            <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Thêm thủ công</a>
+        </div>
+    </div>
+
+    <!-- Modal tính lương tự động -->
+    <div class="modal fade" id="calcSalaryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="CalculateSalary" method="post">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Chạy tính lương tự động</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Chọn Nhân Viên</label>
+                            <select name="maNV" class="form-select" asp-items="ViewBag.NhanViens" required>
+                                <option value="">-- Chọn nhân viên --</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Kỳ Lương (Tháng/Năm)</label>
+                            <input type="date" name="kyLuong" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-01")" required />
+                        </div>
+                        <p class="text-muted small">Hệ thống sẽ tự động tổng hợp số giờ làm từ bảng chấm công và tính toán lương theo quy chế.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-success">Tính và Lưu Lương</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã Lương</th>
+                        <th>Nhân viên</th>
+                        <th>Kỳ lương</th>
+                        <th>Số giờ làm</th>
+                        <th>Lương cơ bản</th>
+                        <th>Thưởng</th>
+                        <th>Phạt</th>
+                        <th>Thực lĩnh</th>
+                        <th>Ngày tính</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.SMaLuong</td>
+                                <td>@(item.NhanVien?.STenNV ?? item.FK_sMaNV)</td>
+                                <td>@item.DKyLuong.ToString("MM/yyyy")</td>
+                                <td><span class="badge bg-info text-dark">@item.ISoGioLam h</span></td>
+                                <td>@item.FLuongCoBan.ToString("N0") đ</td>
+                                <td class="text-success">+@item.FThuong.ToString("N0") đ</td>
+                                <td class="text-danger">-@item.FPhat.ToString("N0") đ</td>
+                                <td class="fw-bold text-primary">@item.FThucLinh.ToString("N0") đ</td>
+                                <td>@(item.DNgayTinhLuong.HasValue ? item.DNgayTinhLuong.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.SMaLuong" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="10" class="text-center text-muted py-4">Chưa có bản ghi lương nào. Hãy chạy tính lương tự động hoặc thêm thủ công.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

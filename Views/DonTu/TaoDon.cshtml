@@ -1,0 +1,50 @@
+@model NMCNPM.Models.DonTu
+@{
+    ViewData["Title"] = "Tạo đơn mới";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="bi bi-file-earmark-plus me-2"></i>Tạo Đơn Nghỉ Phép / Đổi Ca</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="TaoDon" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="SMaDon" class="form-label fw-bold">Mã Đơn</label>
+                                <input asp-for="SMaDon" class="form-control" placeholder="DON001..." required />
+                                <span asp-validation-for="SMaDon" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="FK_sMaNV" class="form-label fw-bold">Nhân Viên Gửi</label>
+                                <select asp-for="FK_sMaNV" class="form-select" asp-items="ViewBag.FK_sMaNV" required>
+                                    <option value="">-- Chọn nhân viên --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="SLoaiDon" class="form-label fw-bold">Loại Đơn</label>
+                                <select asp-for="SLoaiDon" class="form-select" required>
+                                    <option value="Đơn nghỉ phép">Đơn nghỉ phép</option>
+                                    <option value="Đơn đăng ký đổi ca">Đơn đăng ký đổi ca</option>
+                                    <option value="Đơn làm thêm giờ (OT)">Đơn làm thêm giờ (OT)</option>
+                                    <option value="Đơn xin thôi việc">Đơn xin thôi việc</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="SLyDo" class="form-label fw-bold">Lý Do / Nội Dung Đơn</label>
+                                <textarea asp-for="SLyDo" class="form-control" rows="4" placeholder="Nhập lý do xin nghỉ hoặc chi tiết đổi ca..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                            <button type="submit" class="btn btn-warning"><i class="bi bi-send"></i> Gửi đơn trình duyệt</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

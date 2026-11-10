@@ -1,0 +1,60 @@
+﻿@model NMCNPM.Models.HopDongLaoDong
+
+@{
+    ViewData["Title"] = "Chi tiết hợp đồng";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Chi tiết hợp đồng lao động</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Mã hợp đồng:</div>
+                <div class="col-md-8">@Model.SMaHD</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Nhân viên:</div>
+                <div class="col-md-8">
+                    @(Model.NhanVien?.STenNV ?? Model.FK_sMaNV)
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Loại hợp đồng:</div>
+                <div class="col-md-8">@Model.SLoaiHD</div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Ngày ký:</div>
+                <div class="col-md-8">
+                    @(Model.DNgayKy.ToString("dd/MM/yyyy"))
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Ngày hết hạn:</div>
+                <div class="col-md-8">
+                    @(Model.DNgayHetHan?.ToString("dd/MM/yyyy") ?? "Không xác định")
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 fw-bold">Trạng thái:</div>
+                <div class="col-md-8">@Model.STrangThai</div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <a asp-action="Index" class="btn btn-secondary">
+                Quay lại
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.SMaHD" class="btn btn-primary">
+                Chỉnh sửa
+            </a>
+        </div>
+    </div>
+</div>
