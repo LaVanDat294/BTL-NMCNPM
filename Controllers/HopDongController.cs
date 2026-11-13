@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NMCNPM.Models;
+using NMCNPM.Filters;
 
 namespace NMCNPM.Controllers
 {
+    [AuthorizeRole("Q_ADMIN", "Q_MANAGER")]
     public class HopDongController : Controller
     {
         private readonly HrmDbContext _context;
@@ -14,10 +16,31 @@ namespace NMCNPM.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string loaiHD, string trangThai)
         {
-            var danhSach = _context.HopDongs.Include(h => h.NhanVien);
-            return View(await danhSach.ToListAsync());
+            var query = _context.HopDongs.Include(h => h.NhanVien).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                searchString = searchString.Trim().ToLower();
+                query = query.Where(h => h.SMaHD.ToLower().Contains(searchString) ||
+                                         (h.NhanVien != null && h.NhanVien.STenNV.ToLower().Contains(searchString)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(loaiHD))
+            {
+                query = query.Where(h => h.SLoaiHD == loaiHD);
+            }
+
+            if (!string.IsNullOrWhiteSpace(trangThai))
+            {
+                query = query.Where(h => h.STrangThai == trangThai);
+            }
+
+            ViewBag.LoaiHDList = new SelectList(await _context.HopDongs.Select(h => h.SLoaiHD).Distinct().ToListAsync(), loaiHD);
+            ViewBag.TrangThaiList = new SelectList(new[] { "Hiệu lực", "Hết hạn", "Đã hủy" }, trangThai);
+
+            return View(await query.ToListAsync());
         }
 
         public async Task<IActionResult> Details(string id)

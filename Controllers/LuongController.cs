@@ -3,13 +3,15 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NMCNPM.Models;
- 
+using NMCNPM.Filters;
+
 namespace NMCNPM.Controllers;
- 
+
 // Quản lý lương: chốt kỳ lương theo dKyLuong (ngày 01 của tháng).
 // Thực lĩnh = Lương cơ bản + Thưởng − Phạt.
 // Một nhân viên chỉ có một bản ghi lương trong mỗi kỳ; đã chốt thì không tính lại,
 // nhưng vẫn được điều chỉnh thưởng/phạt ở màn DieuChinh.
+[AuthorizeRole("Q_ADMIN", "Q_MANAGER")]
 public class LuongController : Controller
 {
     private const string TrangThaiDangLam = "Đang làm việc";

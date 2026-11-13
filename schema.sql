@@ -1,14 +1,5 @@
--- ====================================================================
--- HỆ THỐNG QUẢN LÝ NHÂN SỰ TOCOTOCO (db_HRM_Tocotoco)
--- SCRIPT GỘP DỮ LIỆU CƠ SỞ DỮ LIỆU & DỮ LIỆU MẪU ĐẦY ĐỦ ĐỂ TEST
--- MẬT KHẨU MẶC ĐỊNH CHO CÁC TÀI KHOẢN: 123456
--- ====================================================================
 
--- 1. TẠO CƠ SỞ DỮ LIỆU NẾU CHƯA CÓ
-IF NOT EXISTS (SELECT 1 FROM sys.databases WHERE name = 'db_HRM_Tocotoco')
-BEGIN
-    CREATE DATABASE db_HRM_Tocotoco;
-END
+CREATE DATABASE db_HRM_Tocotoco;
 GO
 
 USE db_HRM_Tocotoco;
@@ -236,40 +227,40 @@ IF NOT EXISTS (SELECT 1 FROM tbl_NhanVien WHERE sMaNV = 'NV_NV02')
     VALUES ('NV_NV02', N'Phạm Văn Pha Chế', '2002-11-10', '012345678904', N'Nam', N'Hà Nội', '0933333333', 'phache@tocotoco.vn', 'CV_PC', 'PB_CH02', 6500000);
 GO
 
--- 3.5. DỮ LIỆU TÀI KHOẢN (tbl_TaiKhoan - Mật khẩu Hash PBKDF2 của '123456')
+-- 3.5. DỮ LIỆU TÀI KHOẢN (tbl_TaiKhoan)
 IF NOT EXISTS (SELECT 1 FROM tbl_TaiKhoan WHERE sTenDangNhap = 'admin')
 BEGIN
     INSERT INTO tbl_TaiKhoan (sMaTK, FK_sMaNV, sTenDangNhap, sMatKhauHash, FK_sMaQuyen, bTrangThai)
-    VALUES ('TK_ADMIN', 'NV_ADMIN', 'admin', 'PBKDF2$100000$n6ebWubN6S/iIh3e2HxlIg==$KZ0sEabZ6L/eIrM+vsqnOHTJ/vqjQng+edA1vK91n6k=', 'Q_ADMIN', 1);
+    VALUES ('TK_ADMIN', 'NV_ADMIN', 'admin', '123456', 'Q_ADMIN', 1);
 END
 ELSE
 BEGIN
     UPDATE tbl_TaiKhoan
-    SET sMatKhauHash = 'PBKDF2$100000$n6ebWubN6S/iIh3e2HxlIg==$KZ0sEabZ6L/eIrM+vsqnOHTJ/vqjQng+edA1vK91n6k=', bTrangThai = 1
+    SET sMatKhauHash = '123456', bTrangThai = 1
     WHERE sTenDangNhap = 'admin';
 END
 
 IF NOT EXISTS (SELECT 1 FROM tbl_TaiKhoan WHERE sTenDangNhap = 'quanly')
 BEGIN
     INSERT INTO tbl_TaiKhoan (sMaTK, FK_sMaNV, sTenDangNhap, sMatKhauHash, FK_sMaQuyen, bTrangThai)
-    VALUES ('TK_QL01', 'NV_QL01', 'quanly', 'PBKDF2$100000$n6ebWubN6S/iIh3e2HxlIg==$KZ0sEabZ6L/eIrM+vsqnOHTJ/vqjQng+edA1vK91n6k=', 'Q_MANAGER', 1);
+    VALUES ('TK_QL01', 'NV_QL01', 'quanly', '123456', 'Q_MANAGER', 1);
 END
 ELSE
 BEGIN
     UPDATE tbl_TaiKhoan
-    SET sMatKhauHash = 'PBKDF2$100000$n6ebWubN6S/iIh3e2HxlIg==$KZ0sEabZ6L/eIrM+vsqnOHTJ/vqjQng+edA1vK91n6k=', bTrangThai = 1
+    SET sMatKhauHash = '123456', bTrangThai = 1
     WHERE sTenDangNhap = 'quanly';
 END
 
 IF NOT EXISTS (SELECT 1 FROM tbl_TaiKhoan WHERE sTenDangNhap = 'nhanvien')
 BEGIN
     INSERT INTO tbl_TaiKhoan (sMaTK, FK_sMaNV, sTenDangNhap, sMatKhauHash, FK_sMaQuyen, bTrangThai)
-    VALUES ('TK_NV01', 'NV_NV01', 'nhanvien', 'PBKDF2$100000$n6ebWubN6S/iIh3e2HxlIg==$KZ0sEabZ6L/eIrM+vsqnOHTJ/vqjQng+edA1vK91n6k=', 'Q_STAFF', 1);
+    VALUES ('TK_NV01', 'NV_NV01', 'nhanvien', '123456', 'Q_STAFF', 1);
 END
 ELSE
 BEGIN
     UPDATE tbl_TaiKhoan
-    SET sMatKhauHash = 'PBKDF2$100000$n6ebWubN6S/iIh3e2HxlIg==$KZ0sEabZ6L/eIrM+vsqnOHTJ/vqjQng+edA1vK91n6k=', bTrangThai = 1
+    SET sMatKhauHash = '123456', bTrangThai = 1
     WHERE sTenDangNhap = 'nhanvien';
 END
 GO

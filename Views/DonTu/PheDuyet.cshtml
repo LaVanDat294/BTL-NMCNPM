@@ -23,10 +23,6 @@
                     <form asp-action="PheDuyet" method="post">
                         <input type="hidden" name="id" value="@Model.SMaDon" />
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Người duyệt (Admin)</label>
-                            <input type="text" name="nguoiDuyet" class="form-control" value="Admin" required />
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label fw-bold">Trạng thái duyệt</label>
                             <select name="trangThai" class="form-select">
                                 <option value="Đã duyệt">Đã duyệt (Phê duyệt)</option>

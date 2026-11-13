@@ -11,6 +11,44 @@
     <title>Đăng nhập - TocoToco HRM</title>
     <link rel="stylesheet" href="~/css/style.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <style>
+        /* CSS tùy chỉnh cho khung gợi ý tài khoản BTL */
+        .btl-demo-box {
+            margin: 20px 0 15px 0;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border: 1px dashed #0d6efd;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #333;
+            text-align: left;
+        }
+        .btl-demo-title {
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btl-demo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .btl-demo-list li {
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btl-demo-list code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body class="login-page">
 <div class="login-card">
@@ -20,28 +58,35 @@
     <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+        
         <label class="login-input">
             <i class="fa-solid fa-user"></i>
-            <input asp-for="TenDangNhap" placeholder="Tên đăng nhập" autocomplete="username"/>
+            <input asp-for="TenDangNhap" placeholder="Tên đăng nhập (admin / quanly / nhanvien)" autocomplete="username"/>
         </label>
         <span asp-validation-for="TenDangNhap" class="field-error"></span>
+        
         <label class="login-input">
             <i class="fa-solid fa-lock"></i>
-            <input asp-for="MatKhau" id="password" placeholder="Mật khẩu" autocomplete="current-password"/>
+            <input asp-for="MatKhau" id="password" placeholder="Mật khẩu (123456)" autocomplete="current-password"/>
             <button type="button" class="eye-btn" onclick="togglePassword()" aria-label="Hiện/ẩn mật khẩu">
                 <i class="fa-regular fa-eye" id="eyeIcon"></i>
             </button>
         </label>
         <span asp-validation-for="MatKhau" class="field-error"></span>
+        
         <label class="remember">
             <input asp-for="GhiNho" type="checkbox"/> Ghi nhớ đăng nhập
         </label>
+        
         <button class="btn-primary login-submit" type="submit">
             <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
         </button>
     </form>
+
+
     <div class="login-footer">© 2026 TocoToco. All rights reserved.</div>
 </div>
+
 <script>
     function togglePassword() {
         const p = document.getElementById('password');
@@ -56,4 +101,3 @@
 </script>
 </body>
 </html>
-

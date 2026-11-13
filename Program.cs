@@ -8,7 +8,7 @@ using NMCNPM.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Lưu DataProtection keys trong thư mục nội bộ dự án để đảm bảo tính ổn định của Cookie session
+// 1. Lưu DataProtection keys trong thư mục nội bộ dự án để đảm bảo tính ổn định của Cookie session
 var keysFolder = Path.Combine(builder.Environment.ContentRootPath, "obj", "dp_keys");
 if (!Directory.Exists(keysFolder))
 {
@@ -18,7 +18,7 @@ builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(keysFolder))
     .SetApplicationName("NMCNPM");
 
-// Yêu cầu xác thực (đăng nhập) cho toàn bộ ứng dụng, ngoại trừ các action có [AllowAnonymous]
+// 2. Yêu cầu xác thực (đăng nhập) cho toàn bộ ứng dụng, ngoại trừ các action có [AllowAnonymous]
 builder.Services.AddControllersWithViews(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
@@ -33,10 +33,29 @@ builder.Services.AddControllersWithViews(options =>
     options.ViewLocationFormats.Add("/Views/Account/{0}.cshtml");
 });
 
-builder.Services.AddDbContext<HrmDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// 3. Cấu hình DbContext linh hoạt cho SQL Server và SQLite
+var dbProvider = builder.Configuration.GetValue<string>("DbProvider") ?? "SqlServer";
 
-// Cấu hình Cookie Authentication
+builder.Services.AddDbContext<HrmDbContext>(options =>
+{
+    switch (dbProvider.ToLower())
+    {
+        case "sqlite":
+            var sqliteConn = builder.Configuration.GetConnectionString("SqliteConnection") 
+                          ?? "Data Source=db_HRM_Tocotoco.db";
+            options.UseSqlite(sqliteConn);
+            break;
+
+        case "sqlserver":
+        default:
+            var sqlServerConn = builder.Configuration.GetConnectionString("DefaultConnection") 
+                             ?? builder.Configuration.GetConnectionString("SqlServerConnection");
+            options.UseSqlServer(sqlServerConn);
+            break;
+    }
+});
+
+// 4. Cấu hình Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -49,13 +68,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+// 5. Cấu hình HTTP Request Pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
