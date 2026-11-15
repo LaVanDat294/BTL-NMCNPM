@@ -1,0 +1,675 @@
+﻿
+@model NMCNPM.Models.TrucTuyenViewModel
+
+@{
+    ViewBag.Title = "Chấm công trực tuyến";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string trangThai = Model.TrangThaiChamCong ?? "";
+    string badgeClass = "badge-secondary";
+
+    if (trangThai == "Đúng giờ")
+    {
+        badgeClass = "badge-success";
+    }
+    else if (trangThai.Contains("muộn") || trangThai.Contains("Muộn"))
+    {
+        badgeClass = "badge-warning";
+    }
+    else if (trangThai.Contains("sớm") || trangThai.Contains("Sớm"))
+    {
+        badgeClass = "badge-danger";
+    }
+}
+
+<style>
+    /* ===== HEADER ===== */
+    .attendance-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .attendance-header h2 {
+        margin: 0 0 6px;
+        color: #1e293b;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .attendance-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .attendance-date {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 16px;
+        background: #fff;
+        border: 1px solid #dbe4ee;
+        border-radius: 10px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .attendance-layout {
+        display: grid;
+        grid-template-columns: minmax(340px, 0.85fr) minmax(0, 1.5fr);
+        gap: 20px;
+        align-items: stretch;
+        margin-bottom: 22px;
+    }
+
+    .attendance-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 22px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 20px;
+        color: #1e293b;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .card-title i {
+        color: #1877f2;
+        font-size: 17px;
+    }
+
+    /* ===== LEFT: CLOCK ===== */
+    .clock-section {
+        padding: 20px;
+        text-align: center;
+        background: linear-gradient(145deg, #eff6ff, #f8fbff);
+        border: 1px solid #dbeafe;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .clock-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 12px;
+        border-radius: 50%;
+        background: #dbeafe;
+        color: #1877f2;
+        font-size: 23px;
+    }
+
+    .clock-label {
+        margin-bottom: 7px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    #realtime-clock {
+        color: #1877f2;
+        font-size: clamp(32px, 4vw, 43px);
+        font-weight: 800;
+        letter-spacing: 2px;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.3;
+    }
+
+    #realtime-date {
+        margin-top: 7px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* ===== LEFT: STATUS ===== */
+    .attendance-status-block {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 14px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .status-label {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .attendance-badge {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .badge-success {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .badge-secondary {
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    /* ===== LEFT: CHECK-IN / CHECK-OUT TIME ===== */
+    .time-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .time-box {
+        padding: 15px 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+    }
+
+    .time-box-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 9px;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .time-box-value {
+        font-size: 20px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .time-in {
+        color: #16a34a;
+    }
+
+    .time-out {
+        color: #ea580c;
+    }
+
+    /* ===== LEFT: BUTTONS ===== */
+    .attendance-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .attendance-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        min-height: 47px;
+        padding: 12px 10px;
+        border: none;
+        border-radius: 9px;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .attendance-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .btn-checkin {
+        background: #1877f2;
+    }
+
+    .btn-checkin:not(:disabled):hover {
+        background: #0d5fc7;
+    }
+
+    .btn-checkout {
+        background: #f97316;
+    }
+
+    .btn-checkout:not(:disabled):hover {
+        background: #ea580c;
+    }
+
+    /* ===== RIGHT: EMPLOYEE INFO ===== */
+    .employee-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .employee-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .employee-info-row:first-child {
+        padding-top: 0;
+    }
+
+    .employee-info-row:last-child {
+        border-bottom: none;
+    }
+
+    .employee-info-label {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .employee-info-value {
+        color: #1e293b;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    /* ===== RIGHT: HISTORY ===== */
+    .history-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin: 22px 0 13px;
+        padding-top: 18px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .history-heading h4 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .history-heading span {
+        color: #64748b;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 560px;
+    }
+
+    .attendance-table th {
+        padding: 12px 10px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: left;
+        white-space: nowrap;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .attendance-table td {
+        padding: 12px 10px;
+        color: #334155;
+        font-size: 12px;
+        border-bottom: 1px solid #f1f5f9;
+        white-space: nowrap;
+    }
+
+    .attendance-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .attendance-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .empty-history {
+        padding: 30px 12px;
+        color: #94a3b8;
+        font-size: 13px;
+        text-align: center;
+        white-space: normal;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @@media (max-width: 1100px) {
+        .attendance-layout {
+            grid-template-columns: 1fr 1.2fr;
+        }
+    }
+
+    @@media (max-width: 850px) {
+        .attendance-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .attendance-card {
+            padding: 16px;
+        }
+
+        .attendance-header h2 {
+            font-size: 21px;
+        }
+
+        .attendance-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .time-box-value {
+            font-size: 18px;
+        }
+
+        .employee-info-row {
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<!-- HEADER -->
+<div class="attendance-header">
+    <div>
+        <h2>Chấm công trực tuyến</h2>
+        <p>Thực hiện chấm công vào và chấm công ra trong ngày.</p>
+    </div>
+
+    <div class="attendance-date">
+        <i class="fa-regular fa-calendar"></i>
+        <span id="header-date-display">
+            @Model.NgayHienTai.ToString("dd/MM/yyyy")
+        </span>
+    </div>
+</div>
+
+<!-- THÔNG BÁO -->
+@if (ViewBag.ThongBao != null)
+{
+    <div class="alert alert-info" role="alert">
+        @ViewBag.ThongBao
+    </div>
+}
+
+@Html.AntiForgeryToken()
+
+<!-- MAIN CONTENT -->
+<div class="attendance-layout">
+
+    <!-- CỘT TRÁI: ĐỒNG HỒ VÀ CHẤM CÔNG -->
+    <div class="attendance-card">
+
+        <h3 class="card-title">
+            <i class="fa-regular fa-clock"></i>
+            Khu vực chấm công
+        </h3>
+
+        <!-- ĐỒNG HỒ THỜI GIAN THỰC -->
+        <div class="clock-section">
+
+            <div class="clock-icon">
+                <i class="fa-regular fa-clock"></i>
+            </div>
+
+            <div class="clock-label">
+                Thời gian hiện tại
+            </div>
+
+            <div id="realtime-clock">
+                @Model.GioHienTai.ToString("HH:mm:ss")
+            </div>
+
+            <div id="realtime-date">
+                @Model.NgayHienTai.ToString("dddd, dd/MM/yyyy")
+            </div>
+
+        </div>
+
+        <!-- TRẠNG THÁI -->
+        <div class="attendance-status-block">
+
+            <span class="status-label">Trạng thái hôm nay</span>
+
+            <span id="attendance-status"
+                  class="attendance-badge @badgeClass">
+                @(string.IsNullOrWhiteSpace(trangThai)
+                    ? "Chưa chấm công"
+                    : trangThai)
+            </span>
+
+        </div>
+
+        <!-- GIỜ VÀO / GIỜ RA -->
+        <div class="time-row">
+
+            <div class="time-box">
+                <div class="time-box-label">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Giờ vào
+                </div>
+
+                <div class="time-box-value time-in" id="check-in-time">
+                    @(Model.GioVao.HasValue
+                        ? Model.GioVao.Value.ToString("HH:mm:ss")
+                        : "--:--:--")
+                </div>
+            </div>
+
+            <div class="time-box">
+                <div class="time-box-label">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Giờ ra
+                </div>
+
+                <div class="time-box-value time-out" id="check-out-time">
+                    @(Model.GioRa.HasValue
+                        ? Model.GioRa.Value.ToString("HH:mm:ss")
+                        : "--:--:--")
+                </div>
+            </div>
+
+        </div>
+
+        <!-- NÚT CHẤM CÔNG -->
+        <div class="attendance-actions">
+
+            <button type="button"
+                    class="attendance-btn btn-checkin"
+                    id="btn-checkin"
+                    onclick="handleCheckIn()"
+                    @(Model.GioVao.HasValue ? "disabled" : "")>
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Chấm công vào
+            </button>
+
+            <button type="button"
+                    class="attendance-btn btn-checkout"
+                    id="btn-checkout"
+                    onclick="handleCheckOut()"
+                    @(!Model.GioVao.HasValue || Model.GioRa.HasValue
+                        ? "disabled"
+                        : "")>
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Chấm công ra
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- CỘT PHẢI: NHÂN VIÊN VÀ LỊCH SỬ -->
+    <div class="attendance-card">
+
+        <h3 class="card-title">
+            <i class="fa-solid fa-user"></i>
+            Thông tin nhân viên
+        </h3>
+
+        <div class="employee-info">
+
+            <div class="employee-info-row">
+                <span class="employee-info-label">Mã nhân viên</span>
+                <span class="employee-info-value">@Model.MaNV</span>
+            </div>
+
+            <div class="employee-info-row">
+                <span class="employee-info-label">Họ và tên</span>
+                <span class="employee-info-value">@Model.TenNV</span>
+            </div>
+
+            <div class="employee-info-row">
+                <span class="employee-info-label">Phòng ban</span>
+                <span class="employee-info-value">@Model.TenPB</span>
+            </div>
+
+        </div>
+
+        <!-- LỊCH SỬ 7 NGÀY -->
+        <div class="history-heading">
+            <h4>
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                Lịch sử chấm công
+            </h4>
+
+            <span>7 ngày gần nhất</span>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="attendance-table">
+
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Giờ vào</th>
+                        <th>Giờ ra</th>
+                        <th>Số giờ</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.LichSu7Ngay != null &&
+                         Model.LichSu7Ngay.Any())
+                    {
+                        foreach (var item in Model.LichSu7Ngay)
+                        {
+                            string itemBadge = "badge-secondary";
+
+                            if (item.TrangThai == "Đúng giờ")
+                            {
+                                itemBadge = "badge-success";
+                            }
+                            else if (item.TrangThai != null &&
+                                     (item.TrangThai.Contains("muộn") ||
+                                      item.TrangThai.Contains("Muộn")))
+                            {
+                                itemBadge = "badge-warning";
+                            }
+                            else if (item.TrangThai != null &&
+                                     (item.TrangThai.Contains("sớm") ||
+                                      item.TrangThai.Contains("Sớm")))
+                            {
+                                itemBadge = "badge-danger";
+                            }
+
+                            <tr>
+                                <td>
+                                    <strong>
+                                        @item.NgayChamCong.ToString("dd/MM/yyyy")
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @(item.GioVao.HasValue
+                                        ? item.GioVao.Value.ToString("HH:mm:ss")
+                                        : "--:--:--")
+                                </td>
+
+                                <td>
+                                    @(item.GioRa.HasValue
+                                        ? item.GioRa.Value.ToString("HH:mm:ss")
+                                        : "--:--:--")
+                                </td>
+
+                                <td>@item.SoGioLam giờ</td>
+
+                                <td>
+                                    <span class="attendance-badge @itemBadge">
+                                        @(string.IsNullOrWhiteSpace(item.TrangThai)
+                                            ? "Không xác định"
+                                            : item.TrangThai)
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-history">
+                                    <i class="fa-regular fa-calendar-xmark"
+                                       style="font-size: 25px; display: block; margin-bottom: 10px;">
+                                    </i>
+                                    Chưa có dữ liệu chấm công trong 7 ngày gần nhất.
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/ChamCongTrucTuyen.js"></script>
+}
