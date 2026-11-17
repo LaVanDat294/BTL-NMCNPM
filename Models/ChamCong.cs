@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,31 +7,50 @@ namespace NMCNPM.Models
     [Table("tbl_ChamCong")]
     public class ChamCong
     {
-        [Key, Column("sMaChamCong"), StringLength(20)]
-        public string SMaChamCong { get; set; } = null!;
+        [Key]
+        [Column("sMaChamCong")]
+        [StringLength(20)]
+        public string MaChamCong { get; set; }
 
-        [Required, Column("FK_sMaNV"), StringLength(20)]
-        public string FK_sMaNV { get; set; } = null!;
+        [Column("FK_sMaNV")]
+        public string FK_sMaNV { get; set; }
 
-        [Required, Column("dNgayChamCong")]
-        public DateTime DNgayChamCong { get; set; }
+        // Tên nhân viên lấy từ bảng tbl_NhanVien khi JOIN
+        [NotMapped]
+        public string TenNV { get; set; }
+
+        [Column("dNgayChamCong")]
+        public DateTime NgayChamCong { get; set; }
+
+        // Tương thích với LuongController
+        [NotMapped]
+        public DateTime DNgayChamCong
+        {
+            get { return NgayChamCong; }
+            set { NgayChamCong = value; }
+        }
 
         [Column("dGioVao")]
-        public DateTime? DGioVao { get; set; }
+        public DateTime? GioVao { get; set; }
 
         [Column("dGioRa")]
-        public DateTime? DGioRa { get; set; }
+        public DateTime? GioRa { get; set; }
 
         [Column("iSoGioLam")]
-        public int ISoGioLam { get; set; }
+        public int SoGioLam { get; set; }
 
-        [Column("sTrangThai"), StringLength(50)]
-        public string? STrangThai { get; set; }
+        // Tương thích với LuongController
+        [NotMapped]
+        public int ISoGioLam
+        {
+            get { return SoGioLam; }
+            set { SoGioLam = value; }
+        }
 
-        [Column("sGhiChu"), StringLength(255)]
-        public string? SGhiChu { get; set; }
+        [Column("sTrangThai")]
+        public string TrangThai { get; set; }
 
-        [ForeignKey("FK_sMaNV")]
-        public virtual NhanVien? NhanVien { get; set; }
+        [Column("sGhiChu")]
+        public string GhiChu { get; set; }
     }
 }
