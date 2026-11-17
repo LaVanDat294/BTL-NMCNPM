@@ -1,0 +1,561 @@
+﻿
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@model NMCNPM.Models.TheoDoiViewModel
+
+@{
+    ViewBag.Title = "Theo dõi chấm công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var danhSachPhongBan = Model.DanhSachPhongBan
+        ?? new List<SelectListItem>();
+}
+
+<style>
+    .attendance-page {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .page-title {
+        margin: 0;
+        color: #1e293b;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .page-description {
+        margin: 6px 0 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .panel {
+        background: #fff;
+        border: 1px solid #dbe4ee;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .panel-title {
+        margin: 0 0 18px;
+        color: #1e293b;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .filter-group label {
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .filter-control {
+        width: 100%;
+        height: 40px;
+        padding: 8px 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background: #fff;
+        color: #334155;
+        font-size: 13px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .filter-control:focus {
+        border-color: #1877f2;
+        box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.1);
+    }
+
+    .filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 39px;
+        padding: 8px 17px;
+        border: none;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-primary {
+        background: #1877f2;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background: #1264cf;
+        color: #fff;
+    }
+
+    .btn-reset {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .btn-reset:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .attendance-table {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: collapse;
+    }
+
+    .attendance-table th {
+        padding: 13px 12px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        text-align: left;
+        white-space: nowrap;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .attendance-table td {
+        padding: 13px 12px;
+        color: #334155;
+        font-size: 13px;
+        border-bottom: 1px solid #edf2f7;
+        vertical-align: middle;
+    }
+
+    .attendance-table tbody tr:hover {
+        background: #f8fbff;
+    }
+
+    .employee-name {
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .employee-code {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .badge-success {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .badge-early {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .empty-state {
+        padding: 35px 15px !important;
+        color: #94a3b8 !important;
+        text-align: center;
+    }
+
+    .result-count {
+        margin-bottom: 14px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    @@media (max-width: 1100px) {
+        .filter-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .panel {
+            padding: 15px;
+        }
+
+        .page-title {
+            font-size: 20px;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+        .filter-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="attendance-page">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Theo dõi chấm công</h2>
+            <p class="page-description">
+                Theo dõi và tra cứu tình hình chấm công của nhân viên.
+            </p>
+        </div>
+    </div>
+
+    <!-- BỘ LỌC -->
+    <div class="panel">
+        <h3 class="panel-title">Bộ lọc tìm kiếm</h3>
+
+        <form asp-controller="ChamCong"
+              asp-action="TheoDoi"
+              method="get">
+
+            <div class="filter-grid">
+
+                <div class="filter-group">
+                    <label for="TuNgay">Từ ngày</label>
+                    @Html.TextBoxFor(
+                        m => m.TuNgay,
+                        "{0:yyyy-MM-dd}",
+                        new {
+                            @class = "filter-control",
+                            type = "date",
+                            id = "TuNgay"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="DenNgay">Đến ngày</label>
+                    @Html.TextBoxFor(
+                        m => m.DenNgay,
+                        "{0:yyyy-MM-dd}",
+                        new {
+                            @class = "filter-control",
+                            type = "date",
+                            id = "DenNgay"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="TenNhanVien">Tên nhân viên</label>
+                    @Html.TextBoxFor(
+                        m => m.TenNhanVien,
+                        new {
+                            @class = "filter-control",
+                            placeholder = "Nhập tên nhân viên...",
+                            id = "TenNhanVien"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="MaPhongBan">Phòng ban</label>
+                    @Html.DropDownListFor(
+                        m => m.MaPhongBan,
+                        danhSachPhongBan,
+                        "Tất cả phòng ban",
+                        new {
+                            @class = "filter-control",
+                            id = "MaPhongBan"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="TuGioVao">Từ giờ vào</label>
+                    @Html.TextBoxFor(
+                        m => m.TuGioVao,
+                        new {
+                            @class = "filter-control",
+                            type = "time",
+                            id = "TuGioVao"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="DenGioVao">Đến giờ vào</label>
+                    @Html.TextBoxFor(
+                        m => m.DenGioVao,
+                        new {
+                            @class = "filter-control",
+                            type = "time",
+                            id = "DenGioVao"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="TuGioRa">Từ giờ ra</label>
+                    @Html.TextBoxFor(
+                        m => m.TuGioRa,
+                        new {
+                            @class = "filter-control",
+                            type = "time",
+                            id = "TuGioRa"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="DenGioRa">Đến giờ ra</label>
+                    @Html.TextBoxFor(
+                        m => m.DenGioRa,
+                        new {
+                            @class = "filter-control",
+                            type = "time",
+                            id = "DenGioRa"
+                        })
+                </div>
+
+                <div class="filter-group">
+                    <label for="TrangThai">Trạng thái</label>
+                    <select name="TrangThai"
+                            id="TrangThai"
+                            class="filter-control">
+
+                        @if (Model.TrangThai == null || Model.TrangThai == "")
+                        {
+                            <option value="" selected>Tất cả trạng thái</option>
+                        }
+                        else
+                        {
+                            <option value="">Tất cả trạng thái</option>
+                        }
+
+                        @if (Model.TrangThai == "Đúng giờ")
+                        {
+                            <option value="Đúng giờ" selected>Đúng giờ</option>
+                        }
+                        else
+                        {
+                            <option value="Đúng giờ">Đúng giờ</option>
+                        }
+
+                        @if (Model.TrangThai == "Đến muộn")
+                        {
+                            <option value="Đến muộn" selected>Đến muộn</option>
+                        }
+                        else
+                        {
+                            <option value="Đến muộn">Đến muộn</option>
+                        }
+
+                        @if (Model.TrangThai == "Ra về sớm")
+                        {
+                            <option value="Ra về sớm" selected>Ra về sớm</option>
+                        }
+                        else
+                        {
+                            <option value="Ra về sớm">Ra về sớm</option>
+                        }
+
+                        @if (Model.TrangThai == "Vắng")
+                        {
+                            <option value="Vắng" selected>Vắng</option>
+                        }
+                        else
+                        {
+                            <option value="Vắng">Vắng</option>
+                        }
+
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="filter-actions">
+                <a asp-controller="ChamCong"
+                   asp-action="TheoDoi"
+                   class="btn btn-reset">
+                    Đặt lại
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    Tìm kiếm
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- BẢNG KẾT QUẢ -->
+    <div class="panel">
+
+        <h3 class="panel-title">Danh sách chấm công</h3>
+
+        <div class="result-count">
+            Tổng số bản ghi:
+            <strong>@(Model.DanhSachChamCong?.Count ?? 0)</strong>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="attendance-table">
+
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã nhân viên</th>
+                        <th>Họ tên nhân viên</th>
+                        <th>Ngày chấm công</th>
+                        <th>Giờ vào</th>
+                        <th>Giờ ra</th>
+                        <th>Số giờ làm</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.DanhSachChamCong != null
+                        && Model.DanhSachChamCong.Any())
+                    {
+                        var stt = 1;
+
+                        foreach (var item in Model.DanhSachChamCong)
+                        {
+                            var badgeClass = "badge-success";
+
+                            switch (item.TrangThai)
+                            {
+                                case "Đúng giờ":
+                                    badgeClass = "badge-success";
+                                    break;
+
+                                case "Đến muộn":
+                                    badgeClass = "badge-warning";
+                                    break;
+
+                                case "Ra về sớm":
+                                    badgeClass = "badge-early";
+                                    break;
+
+                                case "Vắng":
+                                    badgeClass = "badge-danger";
+                                    break;
+                            }
+
+                            <tr>
+                                <td>@stt</td>
+
+                                <td>
+                                    <span class="employee-code">
+                                        @item.FK_sMaNV
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="employee-name">
+                                        @item.TenNV
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @item.NgayChamCong.ToString("dd/MM/yyyy")
+                                </td>
+
+                                <td>
+                                    @(item.GioVao.HasValue
+                                        ? item.GioVao.Value.ToString("HH:mm")
+                                        : "--:--")
+                                </td>
+
+                                <td>
+                                    @(item.GioRa.HasValue
+                                        ? item.GioRa.Value.ToString("HH:mm")
+                                        : "--:--")
+                                </td>
+
+                                <td>
+                                    @item.SoGioLam giờ
+                                </td>
+
+                                <td>
+                                    <span class="badge @badgeClass">
+                                        @(string.IsNullOrEmpty(item.TrangThai)
+                                            ? "Chưa xác định"
+                                            : item.TrangThai)
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrEmpty(item.GhiChu)
+                                        ? "-"
+                                        : item.GhiChu)
+                                </td>
+                            </tr>
+
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="empty-state">
+                                Không tìm thấy dữ liệu chấm công phù hợp.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>

@@ -14,7 +14,19 @@
         (currentAction == "Index" ||
          currentAction == "ChotKy" ||
          currentAction == "DieuChinh");
+    
+    bool isChamCong = string.Equals(
+        currentController, "ChamCong",
+        StringComparison.OrdinalIgnoreCase
+    );
+
+    bool isChamCongTrucTuyen = isChamCong && currentAction == "TrucTuyen";
+    bool isLichSuChamCong = isChamCong && currentAction == "LichSu";
+    bool isTheoDoiChamCong = isChamCong && currentAction == "TheoDoi";
+
+
 }
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -235,14 +247,66 @@
             </li>
 
             <!-- Chấm công -->
+            <!-- CHẤM CÔNG -->
+<li class="nav-item">
+
+    <a class="nav-link menu-toggle @(isChamCong ? "active" : "")"
+       data-bs-toggle="collapse"
+       href="#menuChamCong"
+       role="button"
+       aria-expanded="@(isChamCong ? "true" : "false")"
+       aria-controls="menuChamCong">
+
+        <span class="menu-title">
+            <i class="bi bi-clock"></i>
+            Chấm công
+        </span>
+
+        <i class="bi bi-chevron-down chevron"></i>
+    </a>
+
+    <!-- Tự mở khi đang ở ChamCongController -->
+    <div class="collapse @(isChamCong ? "show" : "")"
+         id="menuChamCong">
+
+        <ul class="nav flex-column submenu">
+
+            <!-- Chấm công trực tuyến -->
             <li class="nav-item">
-                <a class="nav-link @(currentController == "ChamCong" ? "active" : "")"
+                <a class="nav-link @(isChamCongTrucTuyen ? "active" : "")"
                    asp-controller="ChamCong"
-                   asp-action="Index">
-                    <i class="bi bi-clock"></i>
-                    Chấm công
+                   asp-action="TrucTuyen">
+
+                    <i class="bi bi-dot"></i>
+                    Chấm công trực tuyến
                 </a>
             </li>
+
+            <!-- Lịch sử chấm công -->
+            <li class="nav-item">
+                <a class="nav-link @(isLichSuChamCong ? "active" : "")"
+                   asp-controller="ChamCong"
+                   asp-action="LichSu">
+
+                    <i class="bi bi-dot"></i>
+                    Lịch sử chấm công
+                </a>
+            </li>
+
+            <!-- Theo dõi chấm công -->
+            <li class="nav-item">
+                <a class="nav-link @(isTheoDoiChamCong ? "active" : "")"
+                   asp-controller="ChamCong"
+                   asp-action="TheoDoi">
+
+                    <i class="bi bi-dot"></i>
+                    Theo dõi chấm công
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</li>
 
             <!-- LƯƠNG -->
             <li class="nav-item">
