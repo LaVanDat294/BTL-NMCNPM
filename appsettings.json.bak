@@ -1,0 +1,16 @@
+{
+  "DbProvider": "SqlServer", 
+
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=db_HRM_Tocotoco;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true",
+    "SqliteConnection": "Data Source=db_HRM_Tocotoco.db",
+    "MySqlConnection": "Server=localhost;Database=db_HRM_Tocotoco;User=root;Password=123456;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
