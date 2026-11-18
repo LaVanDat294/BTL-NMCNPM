@@ -25,7 +25,9 @@ namespace NMCNPM.Controllers
 
         public ChamCongController(IConfiguration configuration)
         {
-            connectionString = configuration.GetConnectionString("DefaultConnection");
+            connectionString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
+        
+
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -39,11 +41,12 @@ namespace NMCNPM.Controllers
         // HÀM LẤY THÔNG TIN NHÂN VIÊN TỪ CLAIMS
         // =====================================================
 
-        private string LayMaNhanVien()
+        private string? LayMaNhanVien()
         {
             return User.FindFirst("MaNV")?.Value
                 ?? User.FindFirst("FK_sMaNV")?.Value;
         }
+
 
         private string LayTenNhanVien()
         {
@@ -59,7 +62,7 @@ namespace NMCNPM.Controllers
         [HttpGet]
         public ActionResult TrucTuyen()
         {
-            string maNV = LayMaNhanVien();
+            string? maNV = LayMaNhanVien();
 
             if (string.IsNullOrWhiteSpace(maNV))
             {
@@ -101,7 +104,7 @@ namespace NMCNPM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ChamCongVao()
         {
-            string maNV = LayMaNhanVien();
+            string? maNV = LayMaNhanVien();
 
             if (string.IsNullOrWhiteSpace(maNV))
             {
@@ -112,7 +115,7 @@ namespace NMCNPM.Controllers
                 });
             }
 
-            ChamCong chamCong;
+            ChamCong? chamCong;
             string thongBao;
 
             bool thanhCong = XuLyChamCongVao(
@@ -120,6 +123,7 @@ namespace NMCNPM.Controllers
                 out chamCong,
                 out thongBao
             );
+
 
             if (!thanhCong)
             {
@@ -154,7 +158,7 @@ namespace NMCNPM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ChamCongRa()
         {
-            string maNV = LayMaNhanVien();
+            string? maNV = LayMaNhanVien();
 
             if (string.IsNullOrWhiteSpace(maNV))
             {
@@ -211,7 +215,8 @@ namespace NMCNPM.Controllers
         [AuthorizeRole("Q_ADMIN", "Q_MANAGER", "Q_STAFF")]
         public ActionResult LichSu(LichSuViewModel boLoc)
         {
-            string maNV = LayMaNhanVien();
+            string? maNV = LayMaNhanVien();
+
 
             if (string.IsNullOrWhiteSpace(maNV))
             {
@@ -499,13 +504,14 @@ namespace NMCNPM.Controllers
                             {
                                 ChamCong item = new ChamCong
                                 {
-                                    MaChamCong = rd["sMaChamCong"].ToString(),
+                                    MaChamCong = rd["sMaChamCong"].ToString() ?? string.Empty,
 
-                                    FK_sMaNV = rd["FK_sMaNV"].ToString(),
+                                    FK_sMaNV = rd["FK_sMaNV"].ToString() ?? string.Empty,
 
                                     NgayChamCong = Convert.ToDateTime(
                                         rd["dNgayChamCong"]
                                     ),
+
 
                                     GioVao = rd["dGioVao"] == DBNull.Value
                                         ? (DateTime?)null
@@ -550,7 +556,7 @@ namespace NMCNPM.Controllers
 
         private bool XuLyChamCongVao(
             string maNV,
-            out ChamCong chamCong,
+            out ChamCong? chamCong, // Thêm dấu ? vào đây
             out string thongBao)
         {
             chamCong = null;
@@ -702,7 +708,7 @@ namespace NMCNPM.Controllers
 
         private bool XuLyChamCongRa(
             string maNV,
-            out ChamCong chamCong,
+            out ChamCong? chamCong, // Thêm dấu ? vào đây
             out string thongBao)
         {
             chamCong = null;
@@ -1157,9 +1163,10 @@ namespace NMCNPM.Controllers
 
             return new ChamCong
             {
-                MaChamCong = rd["sMaChamCong"].ToString(),
+                MaChamCong = rd["sMaChamCong"].ToString() ?? string.Empty,
 
-                FK_sMaNV = rd["FK_sMaNV"].ToString(),
+                FK_sMaNV = rd["FK_sMaNV"].ToString() ?? string.Empty,
+
 
                 TenNV = viTriTenNV >= 0 && rd[viTriTenNV] != DBNull.Value
                     ? rd[viTriTenNV].ToString()

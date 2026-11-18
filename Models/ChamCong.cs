@@ -10,14 +10,14 @@ namespace NMCNPM.Models
         [Key]
         [Column("sMaChamCong")]
         [StringLength(20)]
-        public string MaChamCong { get; set; }
+        public string MaChamCong { get; set; } = string.Empty;
 
         [Column("FK_sMaNV")]
-        public string FK_sMaNV { get; set; }
+        public string FK_sMaNV { get; set; } = string.Empty;
 
         // Tên nhân viên lấy từ bảng tbl_NhanVien khi JOIN
         [NotMapped]
-        public string TenNV { get; set; }
+        public string? TenNV { get; set; }
 
         [Column("dNgayChamCong")]
         public DateTime NgayChamCong { get; set; }
@@ -48,9 +48,9 @@ namespace NMCNPM.Models
         }
 
         [Column("sTrangThai")]
-        public string TrangThai { get; set; }
+        public string? TrangThai { get; set; }
 
         [Column("sGhiChu")]
-        public string GhiChu { get; set; }
+        public string? GhiChu { get; set; }
     }
 }
